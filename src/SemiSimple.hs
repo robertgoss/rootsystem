@@ -2,6 +2,7 @@ module SemiSimple where
 
 import RootSystem
 import Weyl
+import CartanAlgebra
 
 import qualified Data.Matrix as M
 import Data.Ratio
@@ -84,24 +85,27 @@ swapRoot m i = BasicRoot $ M.setElem (-1) (1,i+1) $ M.setElem 1 (i,1) $ M.zero 1
 swapNegRoot m i = BasicRoot $ M.setElem 1 (1,i+1) $ M.setElem 1 (i,1) $ M.zero 1 m
 
 rootSystem :: SemiSimple -> BasicRootSystem
-rootSystem (A n) = BasicRootSystem $ map (swapRoot (n+1)) [1..(n-1)]
-rootSystem (B n) = BasicRootSystem $ singleRoot n 1 : map (swapRoot n) [1..(n-2)]
-rootSystem (C n) = BasicRootSystem $ singleDoubleRoot n 1 : map (swapRoot n) [1..(n-2)]
-rootSystem (D n) = BasicRootSystem $ swapNegRoot n 1 : map (swapRoot n) [1..(n-2)]
-rootSystem G2 = BasicRootSystem $ map (BasicRoot . (M.fromList 1 3)) [[0,1,-1] , [1,-2,1]]
-rootSystem F4 = BasicRootSystem $ map (BasicRoot . (M.fromList 1 4)) [[0,1,-1,0] , [0,0,1,-1],[0,0,0,1],[1%2,-1%2,-1%2,-1%2]]
-rootSystem E8 = BasicRootSystem $ BasicRoot (M.fromList 1 8 []) : spin16
-    where (BasicRootSystem spin16) = rootSystem (D 8)
-rootSystem E7 = BasicRootSystem $ drop 1 e8
-    where (BasicRootSystem e8) = rootSystem E8
-rootSystem E6 = BasicRootSystem $ drop 2 e8
-    where (BasicRootSystem e8) = rootSystem E8
-rootSystem Trivial = BasicRootSystem []
-rootSystem (Torus n) = BasicRootSystem []
-rootSystem (Product semis) = BasicRootSystem $ concat $ zipWith3 pad subSystems leftPad rightPad
+rootSystem (A n) = fromRoots $ map (swapRoot (n+1)) [1..(n-1)]
+rootSystem (B n) = fromRoots $ singleRoot n 1 : map (swapRoot n) [1..(n-2)]
+rootSystem (C n) = fromRoots $ singleDoubleRoot n 1 : map (swapRoot n) [1..(n-2)]
+rootSystem (D n) = fromRoots $ swapNegRoot n 1 : map (swapRoot n) [1..(n-2)]
+rootSystem G2 = fromRoots $ map (BasicRoot . (M.fromList 1 3)) [[0,1,-1] , [1,-2,1]]
+rootSystem F4 = fromRoots $ map (BasicRoot . (M.fromList 1 4)) [[0,1,-1,0] , [0,0,1,-1],[0,0,0,1],[1%2,-1%2,-1%2,-1%2]]
+rootSystem E8 = fromRoots $ BasicRoot (M.fromList 1 8 []) : spin16
+    where (BasicRootSystem _ spin16) = rootSystem (D 8)
+rootSystem E7 = fromRoots $ drop 1 e8
+    where (BasicRootSystem _ e8) = rootSystem E8
+rootSystem E6 = fromRoots $ drop 2 e8
+    where (BasicRootSystem _ e8) = rootSystem E8
+rootSystem Trivial = torus $ fullSubAlgebra 0
+rootSystem (Torus n) = torus $ fullSubAlgebra n
+rootSystem (Product semis) = BasicRootSystem newCartan newRoots
     where leftPad = scanl (+) 0 $ map basicDim subSystems
-          rightPad = tail $ scanl (-) total $ map basicDim subSystems
-          total = sum $ map basicDim subSystems
-          pad (BasicRootSystem roots) i j = map (pad' i j) roots
-          pad' i j (BasicRoot root) = BasicRoot $ M.zero 1 i M.<|> root M.<|> M.zero 1 j
+          rightPad = tail $ scanl (-) totalDim $ map basicDim subSystems
+          totalDim = sum $ map basicDim subSystems
+          padRoot (BasicRootSystem _ roots) i j = map (BasicRoot . pad' i j . coroot) roots
+          padVec (BasicRootSystem cartan _) i j = map (pad' i j) $ orthogonalBasis cartan
+          pad' i j root = M.zero 1 i M.<|> root M.<|> M.zero 1 j
+          newRoots = concat $ zipWith3 padRoot subSystems leftPad rightPad
+          newCartan = CartanAlgebra.span $ concat $ zipWith3 padVec subSystems leftPad rightPad
           subSystems = map rootSystem semis

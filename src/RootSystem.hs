@@ -17,9 +17,10 @@ class RootSystem r where
     type RootType
     generators :: (Root RootType) => r -> [RootType]
     rank :: r -> Int
+    cartanAlgebra :: r -> CartanAlgebra
 
 newtype BasicRoot = BasicRoot (Vector (Ratio Int))
-newtype BasicRootSystem = BasicRootSystem [BasicRoot]
+data BasicRootSystem = BasicRootSystem CartanAlgebra [BasicRoot]
 
 instance Root BasicRoot where
     reflect (BasicRoot r) (BasicRoot s) = BasicRoot $ r - scaleMatrix (2*dot/len) s
@@ -29,14 +30,22 @@ instance Root BasicRoot where
 
 instance RootSystem BasicRootSystem where
     type RootType = BasicRoot
-    generators (BasicRootSystem roots) = roots
-    rank (BasicRootSystem roots) = nrows $ coroot (head roots)
+    generators (BasicRootSystem _ roots) = roots
+    rank (BasicRootSystem cartan _) = cartanRank cartan
+    cartanAlgebra (BasicRootSystem cartan _) = cartan
 
+fromRoots :: [BasicRoot] -> BasicRootSystem
+fromRoots roots = BasicRootSystem (CartanAlgebra.span (map coroot roots)) roots
 
-basicDim (BasicRootSystem []) = 0
-basicDim (BasicRootSystem roots) = nrows $ coroot (head roots)
+torus :: CartanAlgebra -> BasicRootSystem
+torus cartan = BasicRootSystem cartan []
+
+basicDim (BasicRootSystem cartan _) | null basis = 0
+                                    | otherwise = nrows $ head basis
+                                    where basis = orthogonalBasis cartan
 
 canonicalRootSystem :: (RootSystem s,Root RootType) => s -> BasicRootSystem
-canonicalRootSystem rootsystem = BasicRootSystem roots
+canonicalRootSystem rootsystem = BasicRootSystem cartan roots
     where   gens = generators rootsystem :: [RootType]
             roots = map (BasicRoot . coroot) gens
+            cartan = cartanAlgebra rootsystem
