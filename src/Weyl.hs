@@ -20,7 +20,7 @@ class WeylGroupElement g where
 
     simpleReflection :: (Root WeylRootType) => WeylRootType -> g
 
-    torusRepresentation :: g -> Matrix (Ratio Int)
+    torusRepresentation :: g -> Matrix (Ratio Integer)
 
 
 class WeylGroup w where
@@ -30,7 +30,7 @@ class WeylGroup w where
     weylGroup :: (RootSystem RootSystemType) => RootSystemType -> w
 
 
-newtype BasicWeylGroupElement = BasicElement [Vector (Ratio Int)]
+newtype BasicWeylGroupElement = BasicElement [Vector (Ratio Integer)]
 newtype BasicWeylGroup = BasicGroup [BasicWeylGroupElement]
 
 instance WeylGroupElement BasicWeylGroupElement where

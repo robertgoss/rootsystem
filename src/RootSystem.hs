@@ -1,19 +1,20 @@
-{-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE FlexibleContexts       #-}
+{-# LANGUAGE FlexibleInstances      #-}
 {-# LANGUAGE FunctionalDependencies #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE MultiParamTypeClasses  #-}
+{-# LANGUAGE TypeFamilies           #-}
 module RootSystem where
 
-import Data.Ratio
-import Data.Matrix
-import Test.QuickCheck.Arbitrary
+import           Data.Matrix
+import           Data.Ratio
+import qualified Data.Vector               as V
+import           Test.QuickCheck.Arbitrary
 
-import CartanAlgebra
+import           CartanAlgebra
 
 class Root r where
     reflect :: r -> r -> r
-    coroot :: r -> Vector (Ratio Int)
+    coroot :: r -> Vector (Ratio Integer)
 
 class RootSystem r where
     type RootType
@@ -21,7 +22,7 @@ class RootSystem r where
     rank :: r -> Int
     cartanAlgebra :: r -> CartanAlgebra
 
-newtype BasicRoot = BasicRoot (Vector (Ratio Int)) deriving (Eq,Show)
+newtype BasicRoot = BasicRoot (Vector (Ratio Integer)) deriving (Eq,Show)
 data BasicRootSystem = BasicRootSystem CartanAlgebra [BasicRoot]
 
 instance Root BasicRoot where
@@ -31,7 +32,7 @@ instance Root BasicRoot where
     coroot (BasicRoot r) = r
 
 isNonZero :: BasicRoot -> Bool
-isNonZero (BasicRoot vec) = vec /= zero 1 (nrows vec)
+isNonZero (BasicRoot vec) = V.any (/=0) (getCol 1 vec)
 
 instance RootSystem BasicRootSystem where
     type RootType = BasicRoot
