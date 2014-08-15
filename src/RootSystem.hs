@@ -20,7 +20,9 @@ newtype BasicRoot = BasicRoot (Vector (Ratio Int))
 newtype BasicRootSystem = BasicRootSystem [BasicRoot]
 
 instance Root BasicRoot where
-    reflect (BasicRoot r) (BasicRoot s) = undefined
+    reflect (BasicRoot r) (BasicRoot s) = BasicRoot $ r - scaleMatrix (2*dot/len) s
+        where dot = getElem 1 1 $ r*transpose s
+              len = getElem 1 1 $ s*transpose s
     coroot (BasicRoot r) = r
 
 instance RootSystem BasicRootSystem BasicRoot where
