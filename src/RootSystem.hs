@@ -7,7 +7,7 @@ module RootSystem where
 import Data.Ratio
 import Data.Matrix
 
-type Vector a = Matrix a
+import CartanAlgebra
 
 class Root r where
     reflect :: r -> r -> r

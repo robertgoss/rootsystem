@@ -8,6 +8,7 @@ import Data.Ratio
 import Data.Matrix
 
 import RootSystem
+import CartanAlgebra
 
 class WeylGroupElement g where
 
