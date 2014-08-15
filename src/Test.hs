@@ -5,7 +5,7 @@ import Test.Tasty.SmallCheck as SC
 import Test.Tasty.QuickCheck as QC
 import Test.Tasty.HUnit
 
-import TestRootSystem
+import Test.TestRootSystem
 
 main = defaultMain tests
 

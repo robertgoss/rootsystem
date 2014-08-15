@@ -1,4 +1,4 @@
-module TestRootSystem(testBasicRoot) where
+module Test.TestRootSystem(testBasicRoot) where
 
 import Test.Tasty
 import Test.Tasty.SmallCheck as SC
