@@ -1,3 +1,4 @@
+{-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE FunctionalDependencies #-}
@@ -6,6 +7,7 @@ module RootSystem where
 
 import Data.Ratio
 import Data.Matrix
+import Test.SmallCheck.Series
 
 import CartanAlgebra
 
@@ -49,3 +51,7 @@ canonicalRootSystem rootsystem = BasicRootSystem cartan roots
     where   gens = generators rootsystem :: [RootType]
             roots = map (BasicRoot . coroot) gens
             cartan = cartanAlgebra rootsystem
+
+instance (Monad m) => Serial m BasicRoot where
+    series = cons4 root4
+        where root4 a b c d = BasicRoot $ fromList 1 1 [a,b,c,d]
