@@ -15,7 +15,6 @@ class RootSystem r rt | r -> rt where
     generators :: Root rt => r -> [rt]
     rank :: r -> Int
 
-
 newtype BasicRoot = BasicRoot (Vector (Ratio Int))
 newtype BasicRootSystem = BasicRootSystem [BasicRoot]
 
