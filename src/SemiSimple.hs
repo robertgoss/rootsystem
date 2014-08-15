@@ -1,5 +1,11 @@
 module SemiSimple where
 
+import RootSystem
+import Weyl
+
+import qualified Data.Matrix as M
+import Data.Ratio
+
 data SemiSimple = Torus Int
                 | Trivial
                 | A Int
@@ -71,3 +77,31 @@ instance Eq SemiSimple where
                 ((Torus n),(Torus m)) -> m==n
                 (Trivial,Trivial) -> True
                 ((Product xs),(Product ys)) -> xs == ys
+
+singleRoot m i = BasicRoot $ M.setElem 1 (1,i) $ M.zero 1 m
+singleDoubleRoot m i = BasicRoot $ M.setElem 2 (1,i) $ M.zero 1 m
+swapRoot m i = BasicRoot $ M.setElem (-1) (1,i+1) $ M.setElem 1 (i,1) $ M.zero 1 m
+swapNegRoot m i = BasicRoot $ M.setElem 1 (1,i+1) $ M.setElem 1 (i,1) $ M.zero 1 m
+
+rootSystem :: SemiSimple -> BasicRootSystem
+rootSystem (A n) = BasicRootSystem $ map (swapRoot (n+1)) [1..(n-1)]
+rootSystem (B n) = BasicRootSystem $ singleRoot n 1 : map (swapRoot n) [1..(n-2)]
+rootSystem (C n) = BasicRootSystem $ singleDoubleRoot n 1 : map (swapRoot n) [1..(n-2)]
+rootSystem (D n) = BasicRootSystem $ swapNegRoot n 1 : map (swapRoot n) [1..(n-2)]
+rootSystem G2 = BasicRootSystem $ map (BasicRoot . (M.fromList 1 3)) [[0,1,-1] , [1,-2,1]]
+rootSystem F4 = BasicRootSystem $ map (BasicRoot . (M.fromList 1 4)) [[0,1,-1,0] , [0,0,1,-1],[0,0,0,1],[1%2,-1%2,-1%2,-1%2]]
+rootSystem E8 = BasicRootSystem $ BasicRoot (M.fromList 1 8 []) : spin16
+    where (BasicRootSystem spin16) = rootSystem (D 8)
+rootSystem E7 = BasicRootSystem $ drop 1 e8
+    where (BasicRootSystem e8) = rootSystem E8
+rootSystem E6 = BasicRootSystem $ drop 2 e8
+    where (BasicRootSystem e8) = rootSystem E8
+rootSystem Trivial = BasicRootSystem []
+rootSystem (Torus n) = BasicRootSystem []
+rootSystem (Product semis) = BasicRootSystem $ concat $ zipWith3 pad subSystems leftPad rightPad
+    where leftPad = scanl (+) 0 $ map basicDim subSystems
+          rightPad = tail $ scanl (-) total $ map basicDim subSystems
+          total = sum $ map basicDim subSystems
+          pad (BasicRootSystem roots) i j = map (pad' i j) roots
+          pad' i j (BasicRoot root) = BasicRoot $ M.zero 1 i M.<|> root M.<|> M.zero 1 j
+          subSystems = map rootSystem semis

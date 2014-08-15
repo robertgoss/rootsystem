@@ -1,3 +1,5 @@
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE FunctionalDependencies #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 module Weyl where
@@ -7,26 +9,31 @@ import Data.Matrix
 
 import RootSystem
 
-class WeylGroupElement g r | g -> r where
+class WeylGroupElement g where
+
+    type WeylRootType
 
     one :: g
     inverse :: g -> g
     multiply :: g -> g -> g
 
-    simpleReflection :: (Root r) => r -> g
+    simpleReflection :: (Root WeylRootType) => WeylRootType -> g
 
     torusRepresentation :: g -> Matrix (Ratio Int)
 
 
-class WeylGroup w e | w -> e where
-    generators :: (WeylGroupElement e r) => w -> [e]
-    weylGroup :: (WeylGroupElement e r,RootSystem s r,Root r) => s -> w
+class WeylGroup w where
+    type ElementType
+    type RootSystemType
+    generators :: (WeylGroupElement ElementType) => w -> [ElementType]
+    weylGroup :: (RootSystem RootSystemType) => RootSystemType -> w
 
 
 newtype BasicWeylGroupElement = BasicElement [Vector (Ratio Int)]
 newtype BasicWeylGroup = BasicGroup [BasicWeylGroupElement]
 
-instance WeylGroupElement BasicWeylGroupElement BasicRoot where
+instance WeylGroupElement BasicWeylGroupElement where
+    type WeylRootType = BasicRoot
     one = BasicElement []
     inverse (BasicElement vs) = BasicElement $ reverse vs
     multiply (BasicElement vs) (BasicElement ws) = BasicElement $ vs++ws
@@ -39,6 +46,8 @@ instance WeylGroupElement BasicWeylGroupElement BasicRoot where
 
     simpleReflection (BasicRoot v) = BasicElement $ [v]
 
-instance WeylGroup BasicWeylGroup BasicWeylGroupElement where
+instance WeylGroup BasicWeylGroup where
+    type ElementType = BasicWeylGroupElement
+    type RootSystemType = BasicRootSystem
     generators (BasicGroup gens) = gens
     weylGroup rootsystem = BasicGroup $ map simpleReflection $ RootSystem.generators rootsystem
