@@ -45,7 +45,7 @@ canonicalForm (C 2) = (B 2)  -- Sp2 == Spin5
 canonicalForm (D 1) = Torus 1 --Spin2 == S^1
 --Normalize products
 --Flatten products - pull all torus elements together and remove trivial elements
-canonicalForm (Product semis)@product
+canonicalForm product@(Product semis)
     | null simples && isTrivial torus = Trivial
     | null simples = torus
     | isTrivial torus = Product simples
