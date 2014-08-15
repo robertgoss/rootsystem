@@ -51,3 +51,19 @@ canonicalForm (Product semis) = Product (torus:simples)
           torus = Torus (torusRank semis)
           nonTrivial = filter (not . isTrivial) (flatten semis)
           simples = map canonicalForm $ filter isSimple nonTrivial
+
+
+instance Eq SemiSimple where
+    x == y = case canonicalForm x,canonicalForm y of
+                (A n),(A m) -> n==m
+                (B n),(B m) -> n==m
+                (C n),(C m) -> n==m
+                (D n),(D m) -> n==m
+                G2,G2 -> True
+                F4,F4 -> True
+                E6,E6 -> True
+                E7,E7 -> True
+                E8,E8 -> True
+                (Torus n),(Torus m) -> m==n
+                Trivial,Trivial = True
+                (Product xs),(Product ys) -> xs == ys
