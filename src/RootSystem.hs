@@ -7,7 +7,7 @@ module RootSystem where
 
 import Data.Ratio
 import Data.Matrix
-import Test.SmallCheck.Series
+import Test.QuickCheck.Arbitrary
 
 import CartanAlgebra
 
@@ -52,6 +52,8 @@ canonicalRootSystem rootsystem = BasicRootSystem cartan roots
             roots = map (BasicRoot . coroot) gens
             cartan = cartanAlgebra rootsystem
 
-instance (Monad m) => Serial m BasicRoot where
-    series = cons4 root4
-        where root4 a b c d = BasicRoot $ fromList 1 1 [a,b,c,d]
+instance Arbitrary BasicRoot where
+    arbitrary = do a <- arbitrary
+                   b <- arbitrary
+                   c <- arbitrary
+                   return (BasicRoot (fromList 1 1 [a,b,c]))

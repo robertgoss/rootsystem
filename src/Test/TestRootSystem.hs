@@ -17,7 +17,7 @@ testBasicRootUnit = testGroup "Unit tests" [testReflect1]
 
 root3 a b c = BasicRoot (fromList 1 3 [a,b,c])
 
-testReflectIdo = SC.testProperty "(x `reflect` y) `reflect` y == x" $ \r1 r2->
+testReflectIdo = QC.testProperty "(x `reflect` y) `reflect` y == x" $ \r1 r2->
     (r1 `reflect` r2) `reflect` r2 == (r1 :: BasicRoot)
 
 testReflect1 = testCase "Test reflection 1" $ r1 `reflect` r2  @?= r3
