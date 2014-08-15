@@ -1,5 +1,7 @@
 module SemiSimple where
 
+import Test.QuickCheck.Arbitrary
+
 import RootSystem
 import Weyl
 import CartanAlgebra
@@ -109,3 +111,13 @@ rootSystem (Product semis) = BasicRootSystem newCartan newRoots
           newRoots = concat $ zipWith3 padRoot subSystems leftPad rightPad
           newCartan = CartanAlgebra.span $ concat $ zipWith3 padVec subSystems leftPad rightPad
           subSystems = map rootSystem semis
+
+
+
+instance Arbitrary SemiSimple where
+    arbitrary = do n <- arbitrary
+                   let m = (n `mod` 6) + 1
+                   xs <- arbitrary
+                   let types = [A m,B m,C m,D m,Torus m,Trivial,Product (take 3 xs)]
+                   i <- arbitrary
+                   return $ types !! (i `mod` 7)
