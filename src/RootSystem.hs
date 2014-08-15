@@ -19,7 +19,7 @@ class RootSystem r where
     rank :: r -> Int
     cartanAlgebra :: r -> CartanAlgebra
 
-newtype BasicRoot = BasicRoot (Vector (Ratio Int))
+newtype BasicRoot = BasicRoot (Vector (Ratio Int)) deriving (Eq,Show)
 data BasicRootSystem = BasicRootSystem CartanAlgebra [BasicRoot]
 
 instance Root BasicRoot where
