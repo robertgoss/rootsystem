@@ -1,14 +1,14 @@
+{-# LANGUAGE TypeFamilies #-}
 module RootSystem where
 
 import Data.Ratio
 
-class RootSystem r where
-    rank :: r -> Int
-    generators :: [r]
+class Root r where
     reflect :: r -> r -> r
     coroot :: r -> [Ratio Int]
 
-
-class SubRootSystem s where
-    injection :: (RootSystem r) => s -> r
+class RootSystem r where
+    type RootType r
+    generators :: r -> [RootType r]
+    rank :: r -> Int
 
