@@ -45,29 +45,29 @@ canonicalForm (C 2) = (B 2)  -- Sp2 == Spin5
 canonicalForm (D 1) = Torus 1 --Spin2 == S^1
 --Normalize products
 --Flatten products - pull all torus elements together and remove trivial elements
-canonicalForm (Product semis)
+canonicalForm (Product semis)@product
     | null simples && isTrivial torus = Trivial
     | null simples = torus
     | isTrivial torus = Product simples
     | otherwise = Product (torus:simples)
     where flatten [] = []
           flatten ((Product xs):ys) = flatten xs ++ flatten ys
-          torus = Torus (torusRank semis)
+          torus = Torus (torusRank product)
           nonTrivial = filter (not . isTrivial) (flatten semis)
           simples = map canonicalForm $ filter isSimple nonTrivial
 
 
 instance Eq SemiSimple where
-    x == y = case canonicalForm x,canonicalForm y of
-                (A n),(A m) -> n==m
-                (B n),(B m) -> n==m
-                (C n),(C m) -> n==m
-                (D n),(D m) -> n==m
-                G2,G2 -> True
-                F4,F4 -> True
-                E6,E6 -> True
-                E7,E7 -> True
-                E8,E8 -> True
-                (Torus n),(Torus m) -> m==n
-                Trivial,Trivial = True
-                (Product xs),(Product ys) -> xs == ys
+    x == y = case (canonicalForm x,canonicalForm y) of
+                ((A n),(A m)) -> n==m
+                ((B n),(B m)) -> n==m
+                ((C n),(C m)) -> n==m
+                ((D n),(D m)) -> n==m
+                (G2,G2) -> True
+                (F4,F4) -> True
+                (E6,E6) -> True
+                (E7,E7) -> True
+                (E8,E8) -> True
+                ((Torus n),(Torus m)) -> m==n
+                (Trivial,Trivial) -> True
+                ((Product xs),(Product ys)) -> xs == ys
