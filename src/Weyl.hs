@@ -1,4 +1,5 @@
-{-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE FunctionalDependencies #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
 module Weyl where
 
 import Data.Ratio
@@ -17,13 +18,11 @@ class WeylGroupElement g where
     torusRepresentation :: g -> Matrix (Ratio Int)
 
 
-class WeylGroup w where
-    type WeylElems e
-    type WeylSystem r
-    generators :: (WeylGroupElement e) => w -> [WeylElems e]
-    rootSystem :: (RootSystem r) => w -> WeylSystem r
-    weylReflection :: (RootSystem r, WeylGroupElement e) => w -> (RootType (WeylSystem r)) -> (WeylElems e)
-    weylAction :: (RootSystem r, WeylGroupElement e) => w -> (WeylElems e) -> (RootType (WeylSystem r)) -> (RootType (WeylSystem r))
+class WeylGroup w e r s | w -> e, w -> r, r -> s where
+    generators :: (WeylGroupElement e) => w -> e
+    rootSystem :: (RootSystem r s) => w -> r
+    weylReflection :: (RootSystem r s, WeylGroupElement e) => w -> s -> e
+    weylAction :: (RootSystem r s, WeylGroupElement e) => w -> e -> s -> s
 
 
 
