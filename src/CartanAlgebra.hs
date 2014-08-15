@@ -18,7 +18,7 @@ orthogonalBasis (CartanAlgebra basis) = basis
 span :: [Vector (Ratio Integer)] -> CartanAlgebra
 span vectors = CartanAlgebra $ foldl gSmitt [] vectors
     where gSmitt partialBasis vector
-            | reducedVector == zero 1 (nrows vector) = partialBasis
+            | dot reducedVector reducedVector == 0 = partialBasis
             | otherwise = reducedVector : partialBasis
             where reducedVector = foldl reduce vector partialBasis
                   reduce vec base = vec - scaleMatrix ((dot vec base) / (dot base base)) base

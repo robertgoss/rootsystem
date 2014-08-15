@@ -6,8 +6,9 @@ import Test.Tasty.QuickCheck as QC
 import Test.Tasty.HUnit
 
 import Test.TestRootSystem
+import Test.TestCartanAlgebra
 
 main = defaultMain tests
 
 tests :: TestTree
-tests = testGroup "Tests" [testBasicRoot]
+tests = testGroup "Tests" [testBasicRoot, testOrthogonalBasis]
