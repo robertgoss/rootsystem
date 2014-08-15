@@ -18,6 +18,7 @@ testBasicRootUnit = testGroup "Unit tests" [testReflect1]
 root3 a b c = BasicRoot (fromList 1 3 [a,b,c])
 
 testReflectIdo = QC.testProperty "(x `reflect` y) `reflect` y == x" $ \r1 r2->
+    isNonZero r1 && isNonZero r2 QC.==> 
     (r1 `reflect` r2) `reflect` r2 == (r1 :: BasicRoot)
 
 testReflect1 = testCase "Test reflection 1" $ r1 `reflect` r2  @?= r3

@@ -30,6 +30,9 @@ instance Root BasicRoot where
               len = getElem 1 1 $ s*transpose s
     coroot (BasicRoot r) = r
 
+isNonZero :: BasicRoot -> Bool
+isNonZero (BasicRoot vec) = vec /= zero 1 (nrows vec)
+
 instance RootSystem BasicRootSystem where
     type RootType = BasicRoot
     generators (BasicRootSystem _ roots) = roots
@@ -56,4 +59,4 @@ instance Arbitrary BasicRoot where
     arbitrary = do a <- arbitrary
                    b <- arbitrary
                    c <- arbitrary
-                   return (BasicRoot (fromList 1 1 [a,b,c]))
+                   return (BasicRoot (fromList 1 3 [a,b,c]))
