@@ -14,7 +14,7 @@ import CartanAlgebra
 testOrthogonalBasis = testGroup "" [testOrthogonalBasisProp, testOrthogonalBasisUnit]
 
 testOrthogonalBasisProp = testGroup "Properties" [testOrthogonalality, testOrthIdopotent, testOrthRepeat, testOrthNonZero]
-testOrthogonalBasisUnit = testGroup "Unit tests" []
+testOrthogonalBasisUnit = testGroup "Unit tests" [testOrth1]
 
 makeBasis :: [Vector (Ratio Integer)] -> [Vector (Ratio Integer)]
 makeBasis vecs = orthogonalBasis . CartanAlgebra.span $ vecs
@@ -31,6 +31,10 @@ testOrthRepeat = QC.testProperty "Orthogonal basis should be reduce a repeated r
 
 testOrthNonZero = QC.testProperty "Orthogonal basis should be non zero" $ \roots -> 
         all (isNonZero . BasicRoot) $ makeBasis (map coroot (roots::[BasicRoot]))
+
+testOrth1 = testCase "Orthogonal basis 1" $ makeBasis vs @?= ws
+        where vs = map (fromList 1 4) [[1,0,0,1],[1,2,3,4],[2,2,3,5]]
+              ws = map (fromList 1 4) [[1,0,0,1],[-3%2,2,3,3%2]]
 
 testOrthogonal :: [Vector (Ratio Integer)] -> Bool
 testOrthogonal [] = True
