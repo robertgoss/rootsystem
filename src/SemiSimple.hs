@@ -74,7 +74,7 @@ rootSystemSimple F4 = fromRoots $ map (BasicRoot . M.fromList 1 4) $ [[0,1,-1,0]
                                                                       [1/2,-1/2,-1/2,-1/2]]
 rootSystemSimple E8 = fromRoots $ excepRoot : spin14Roots'
     where (BasicRootSystem _ spin14Roots) = rootSystemSimple (D 7)
-          spin14Roots' = map (BasicRoot . (M.extendTo 1 8) . coroot) spin14Roots
+          spin14Roots' = map (BasicRoot . (M.extendTo 0 1 8) . coroot) spin14Roots
           excepRoot = BasicRoot $ (M.fromList 1 8) $ replicate 8 (-1/2)
 rootSystemSimple E7 = fromRoots $ take 7 e8roots
     where (BasicRootSystem _ e8roots) = rootSystemSimple E8

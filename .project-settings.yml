@@ -6,28 +6,32 @@ environment: ghc-7.4.2-stable-13.09
 cabal-file: project.cabal
 hidden-packages: ''
 version: 1
-extra-packages: ! 'Hackage: ansi-terminal 0.6.1
-
-  Hackage: transformers-compat 0.3
-
-  Hackage: optparse-applicative 0.9.1.1
-
-  Hackage: regex-tdfa-rc 1.1.8.3
+extra-packages: ! 'Hackage: smallcheck 1.1.1
 
   Hackage: tf-random 0.5
 
   Hackage: QuickCheck 2.7.6
 
-  Hackage: smallcheck 1.1.1
+  Hackage: loop 0.2.0
+
+  Hackage: matrix 0.3.4.0
+
+  Hackage: ansi-terminal 0.6.1.1
+
+  Hackage: transformers 0.4.1.0
+
+  Hackage: transformers-compat 0.3.3.4
+
+  Hackage: optparse-applicative 0.9.1.1
+
+  Hackage: regex-tdfa-rc 1.1.8.3
 
   Hackage: tasty 0.8.1.3
 
-  Hackage: tasty-quickcheck 0.8.1
-
   Hackage: tasty-hunit 0.9
 
-  Hackage: tasty-smallcheck 0.8
+  Hackage: tasty-quickcheck 0.8.1
 
-'
+  Hackage: tasty-smallcheck 0.8'
 ghc-args: []
 excluded-modules: []
