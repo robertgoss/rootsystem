@@ -6,8 +6,8 @@ import Test.Tasty.QuickCheck as QC
 import Test.Tasty.HUnit
 
 import Data.Matrix
-import Data.Ratio
 
+import Rational
 import RootSystem
 import CartanAlgebra
 
@@ -16,7 +16,7 @@ testOrthogonalBasis = testGroup "" [testOrthogonalBasisProp, testOrthogonalBasis
 testOrthogonalBasisProp = testGroup "Properties" [testOrthogonalality, testOrthIdopotent, testOrthRepeat, testOrthNonZero]
 testOrthogonalBasisUnit = testGroup "Unit tests" [testOrth1]
 
-makeBasis :: [Vector (Ratio Integer)] -> [Vector (Ratio Integer)]
+makeBasis :: [Vector QQ] -> [Vector QQ]
 makeBasis vecs = orthogonalBasis . CartanAlgebra.span $ vecs
 
 testOrthogonalality = QC.testProperty "Orthogonal Basis should be orthogonal" $ \roots ->
@@ -34,9 +34,9 @@ testOrthNonZero = QC.testProperty "Orthogonal basis should be non zero" $ \roots
 
 testOrth1 = testCase "Orthogonal basis 1" $ makeBasis vs @?= ws
         where vs = map (fromList 1 4) [[1,0,0,1],[1,2,3,4],[2,2,3,5]]
-              ws = map (fromList 1 4) [[1,0,0,1],[-3%2,2,3,3%2]]
+              ws = map (fromList 1 4) [[1,0,0,1],[-3/2,2,3,3/2]]
 
-testOrthogonal :: [Vector (Ratio Integer)] -> Bool
+testOrthogonal :: [Vector QQ] -> Bool
 testOrthogonal [] = True
 testOrthogonal (v:vs) = all (\w -> dot v w == 0) vs
                         && testOrthogonal vs

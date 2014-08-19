@@ -4,9 +4,9 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 module Weyl where
 
-import Data.Ratio
 import Data.Matrix
 
+import Rational
 import RootSystem
 import CartanAlgebra
 
@@ -20,7 +20,7 @@ class WeylGroupElement g where
 
     simpleReflection :: (Root WeylRootType) => WeylRootType -> g
 
-    torusRepresentation :: g -> Matrix (Ratio Integer)
+    torusRepresentation :: g -> Matrix QQ
 
 
 class WeylGroup w where
@@ -30,7 +30,7 @@ class WeylGroup w where
     weylGroup :: (RootSystem RootSystemType) => RootSystemType -> w
 
 
-newtype BasicWeylGroupElement = BasicElement [Vector (Ratio Integer)]
+newtype BasicWeylGroupElement = BasicElement [Vector QQ]
 newtype BasicWeylGroup = BasicGroup [BasicWeylGroupElement]
 
 instance WeylGroupElement BasicWeylGroupElement where

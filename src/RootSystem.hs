@@ -11,10 +11,11 @@ import qualified Data.Vector               as V
 import           Test.QuickCheck.Arbitrary
 
 import           CartanAlgebra
+import           Rational
 
 class Root r where
     reflect :: r -> r -> r
-    coroot :: r -> Vector (Ratio Integer)
+    coroot :: r -> Vector QQ
 
 class RootSystem r where
     type RootType
@@ -22,7 +23,7 @@ class RootSystem r where
     rank :: r -> Int
     cartanAlgebra :: r -> CartanAlgebra
 
-newtype BasicRoot = BasicRoot (Vector (Ratio Integer)) deriving (Eq,Show)
+newtype BasicRoot = BasicRoot (Vector QQ) deriving (Eq,Show)
 data BasicRootSystem = BasicRootSystem CartanAlgebra [BasicRoot]
 
 instance Root BasicRoot where

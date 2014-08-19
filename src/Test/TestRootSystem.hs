@@ -6,7 +6,6 @@ import Test.Tasty.QuickCheck as QC
 import Test.Tasty.HUnit
 
 import Data.Matrix
-import Data.Ratio
 
 import RootSystem
 
@@ -22,6 +21,6 @@ testReflectIdo = QC.testProperty "(x `reflect` y) `reflect` y == x" $ \r1 r2->
     (r1 `reflect` r2) `reflect` r2 == (r1 :: BasicRoot)
 
 testReflect1 = testCase "Test reflection 1" $ r1 `reflect` r2  @?= r3
-    where r1 = (BasicRoot (fromList 1 4 [1,2,3,1%2]))
+    where r1 = (BasicRoot (fromList 1 4 [1,2,3,1/2]))
           r2 = (BasicRoot (fromList 1 4 [1,0,1,0]))
-          r3 = (BasicRoot (fromList 1 4 [-3,2,-1,1%2]))
+          r3 = (BasicRoot (fromList 1 4 [-3,2,-1,1/2]))

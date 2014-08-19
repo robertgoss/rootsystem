@@ -2,12 +2,12 @@ module SemiSimple where
 
 import Test.QuickCheck.Arbitrary
 
+import Rational
 import RootSystem
 import Weyl
 import CartanAlgebra
 
 import qualified Data.Matrix as M
-import Data.Ratio
 
 data SemiSimple = Torus Int
                 | Trivial
@@ -92,7 +92,7 @@ rootSystem (B n) = fromRoots $ singleRoot n 1 : map (swapRoot n) [1..(n-2)]
 rootSystem (C n) = fromRoots $ singleDoubleRoot n 1 : map (swapRoot n) [1..(n-2)]
 rootSystem (D n) = fromRoots $ swapNegRoot n 1 : map (swapRoot n) [1..(n-2)]
 rootSystem G2 = fromRoots $ map (BasicRoot . (M.fromList 1 3)) [[0,1,-1] , [1,-2,1]]
-rootSystem F4 = fromRoots $ map (BasicRoot . (M.fromList 1 4)) [[0,1,-1,0] , [0,0,1,-1],[0,0,0,1],[1%2,-1%2,-1%2,-1%2]]
+rootSystem F4 = fromRoots $ map (BasicRoot . (M.fromList 1 4)) [[0,1,-1,0] , [0,0,1,-1],[0,0,0,1],[1/2,-1/2,-1/2,-1/2]]
 rootSystem E8 = fromRoots $ BasicRoot (M.fromList 1 8 []) : spin16
     where (BasicRootSystem _ spin16) = rootSystem (D 8)
 rootSystem E7 = fromRoots $ drop 1 e8
