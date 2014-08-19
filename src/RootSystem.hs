@@ -32,8 +32,11 @@ instance Root BasicRoot where
               len = getElem 1 1 $ s*transpose s
     coroot (BasicRoot r) = r
 
+dot :: BasicRoot -> BasicRoot -> QQ
+dot (BasicRoot v1) (BasicRoot v2) = getElem 1 1 $ v1 * transpose v2
+
 isNonZero :: BasicRoot -> Bool
-isNonZero (BasicRoot vec) = V.any (/=0) (getCol 1 vec)
+isNonZero root = (dot root root) /= 0
 
 instance RootSystem BasicRootSystem where
     type RootType = BasicRoot
