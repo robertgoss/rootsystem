@@ -7,10 +7,12 @@ import Rational
 import RootSystem
 import Weyl
 import CartanAlgebra
+import Components
 
 import Data.List(sort)
 
 import qualified Data.Matrix as M
+import qualified Data.Map as Map
 
 data Simple = A Int
             | B Int
@@ -96,7 +98,42 @@ rootSystem (SemiSimple torusDim simples) = foldl basicSystemProduct torusSystem 
 
 
 determine :: (RootSystem r) => r -> SemiSimple
-determine = undefined
+determine system = fromSimples torusPart simpleParts
+    where connectedComps = components connected $ simpleRoots system
+          connected r1 r2 = dot r1 r2 /= 0
+          simpleParts = map determineSimple connectedComps
+          simpleRank = sum $ map rankSimple simpleParts
+          torusPart = RootSystem.rank system - simpleRank
+          determineSimple roots
+                | bondCounts Map.! 3 /= 0 = G2
+                | bondCounts Map.! 1 == (rank-1) = A rank
+                | bondCounts Map.! 2 == 1 = determineBCF roots
+                | otherwise = determineDE roots
+              where bondCounts = Map.fromListWith (+) $ zip bonds [1..]
+                    bonds = map (\(a,b)-> dot a b / dot a a) [(r1,r2) | r1<-roots, r2<-roots , r1 < r2]
+                    rank = length roots
+          determineBCF roots
+                | longCount == 2 && shortCount==2 = F4
+                | longCount == 1 = C rank
+                | shortCount == 1 = B rank
+              where lengths = map (\a->dot a a) roots
+                    longest = maximum lengths
+                    longCount = length $ filter (==longest) lengths
+                    shortCount = rank - longCount
+                    rank = length roots
+          determineDE roots
+              | endToTriple = D rank
+              | rank==6 = E6
+              | rank==7 = E7
+              | rank==8 = E8
+              where edges = map fst $ filter (uncurry connected) [(r1,r2) | r1<-roots, r2<-roots]
+                    edgeCounts = Map.fromListWith (+) $ zip edges [1..]
+                    tripleVertex = head $ Map.keys $ Map.filter (==3) edgeCounts
+                    endVertices = Map.keys $ Map.filter (==1) edgeCounts
+                    endToTriple = any (connected tripleVertex) endVertices
+                    rank = length roots
+
+
 
 instance Arbitrary Simple where
     arbitrary = do n <- arbitrary
