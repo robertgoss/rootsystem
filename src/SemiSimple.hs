@@ -95,7 +95,8 @@ rootSystem (SemiSimple torusDim simples) = foldl basicSystemProduct torusSystem 
     where torusSystem = torus $ fullSubAlgebra torusDim
           simpleSystems = map rootSystemSimple simples
 
-
+bondNum (a,b) = if bond'>0 then bond' else (-bond')
+    where bond'= 2*(dot a b / dot a a)
 
 determine :: (RootSystem r) => r -> SemiSimple
 determine system = fromSimples torusPart simpleParts
@@ -111,7 +112,7 @@ determine system = fromSimples torusPart simpleParts
                 | bondCounts Map.! 1 == (rank-1) = A rank
                 | otherwise = determineDE roots
               where bondCounts = Map.fromListWith (+) $ zip bonds [1..]
-                    bonds = map (\(a,b)-> dot a b / dot a a) [(r1,r2) | r1<-roots, r2<-roots , r1 < r2]
+                    bonds = map bondNum [(r1,r2) | r1<-roots, r2<-roots , r1 < r2]
                     rank = length roots
           determineBCF roots
                 | longCount == 2 && shortCount==2 = F4
