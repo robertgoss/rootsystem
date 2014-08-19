@@ -8,7 +8,7 @@ import RootSystem
 import Weyl
 import CartanAlgebra
 
-
+import Data.List(sort)
 
 import qualified Data.Matrix as M
 
@@ -16,9 +16,12 @@ data Simple = A Int
             | B Int
             | C Int
             | D Int
-            | G2 | F4 | E6 | E7 | E8
+            | G2 | F4 | E6 | E7 | E8 deriving(Eq,Ord,Show)
 
-data SemiSimple = SemiSimple Int [Simple]
+data SemiSimple = SemiSimple Int [Simple] deriving(Eq,Ord,Show)
+
+fromSimples :: Int -> [Simple] -> SemiSimple
+fromSimples torus simples = SemiSimple torus (sort simples)
 
 dimSimple :: Simple -> Int
 dimSimple (A n) = n*n + 2*n
