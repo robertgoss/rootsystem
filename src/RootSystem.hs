@@ -50,6 +50,9 @@ fromRoots roots = BasicRootSystem (CartanAlgebra.span (map coroot roots)) roots
 torus :: CartanAlgebra -> BasicRootSystem
 torus cartan = BasicRootSystem cartan []
 
+trivialSystem :: BasicRootSystem
+trivialSystem = torus $ trivialAlgebra
+
 ambientDim (BasicRootSystem cartan _) | null basis = 0
                                       | otherwise = ncols $ head basis
                                       where basis = orthogonalBasis cartan

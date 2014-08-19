@@ -56,6 +56,10 @@ rank (SemiSimple torus simples) = torus + sum (map rankSimple simples)
 
 
 rootSystemSimple :: Simple -> BasicRootSystem
+rootSystemSimple (A 0) = trivialSystem
+rootSystemSimple (B 0) = trivialSystem
+rootSystemSimple (C 0) = trivialSystem
+rootSystemSimple (D 0) = trivialSystem
 rootSystemSimple (A n) = fromRoots $ map (BasicRoot . swapRoot (n+1)) [1..n]
     where swapRoot m i = M.setElem 1 (1,i) $ M.setElem (-1) (1,i+1) $ M.zero 1 m
 rootSystemSimple (B n) = fromRoots $ negRoot : aRoots

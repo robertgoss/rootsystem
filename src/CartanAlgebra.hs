@@ -15,6 +15,10 @@ fullSubAlgebra :: Int -> CartanAlgebra
 fullSubAlgebra n = CartanAlgebra $ map basis [1..n]
     where basis i = setElem 1 (1,i) $ zero 1 n
 
+
+trivialAlgebra :: CartanAlgebra
+trivialAlgebra = CartanAlgebra []
+
 orthogonalBasis :: CartanAlgebra -> [Vector QQ]
 orthogonalBasis (CartanAlgebra basis) = basis
 
