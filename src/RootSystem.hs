@@ -54,6 +54,9 @@ basicDim (BasicRootSystem cartan _) | null basis = 0
                                     | otherwise = ncols $ head basis
                                     where basis = orthogonalBasis cartan
 
+basicSystemProduct :: BasicRootSystem -> BasicRootSystem -> BasicRootSystem
+basicSystemProduct = undefined
+
 canonicalRootSystem :: (RootSystem s,Root RootType) => s -> BasicRootSystem
 canonicalRootSystem rootsystem = BasicRootSystem cartan roots
     where   gens = generators rootsystem :: [RootType]

@@ -76,10 +76,17 @@ rootSystemSimple E8 = fromRoots $ excepRoot : spin14Roots'
     where (BasicRootSystem _ spin14Roots) = rootSystemSimple (D 7)
           spin14Roots' = map (BasicRoot . M.extendTo 1 8 . coroot) spin14Roots
           excepRoot = BasicRoot $ M.fromList 1 8 $ replicate 8 (-1/2)
-rootSystem E7 = fromRoots $ take 7 e8roots
+rootSystemSimple E7 = fromRoots $ take 7 e8roots
     where (BasicRootSystem _ e8roots) = rootSystemSimple E8
-rootSystem E6 = fromRoots $ take 6 e8roots
+rootSystemSimple E6 = fromRoots $ take 6 e8roots
     where (BasicRootSystem _ e8roots) = rootSystemSimple E8
+
+
+
+rootSystem :: SemiSimple -> BasicRootSystem
+rootSystem (SemiSimple torusDim simples) = foldl basicSystemProduct torusSystem simpleSystems
+    where torusSystem = torus $ fullSubAlgebra torusDim
+          simpleSystems = map rootSystemSimple simples
 
 instance Arbitrary Simple where
     arbitrary = do n <- arbitrary
