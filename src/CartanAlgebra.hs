@@ -29,3 +29,13 @@ span vectors = CartanAlgebra . reverse $ foldl gSmitt [] vectors
 
 cartanRank :: CartanAlgebra -> Int
 cartanRank = length . orthogonalBasis
+
+
+cartanProduct :: CartanAlgebra -> CartanAlgebra -> CartanAlgebra
+cartanProduct cartan (CartanAlgebra []) = cartan
+cartanProduct (CartanAlgebra []) cartan = cartan
+cartanProduct (CartanAlgebra basis1) (CartanAlgebra basis2) = CartanAlgebra (leftExtend++rightExtend)
+    where leftPad = zero 1 . ncols . head $ basis1
+          rightPad = zero 1 . ncols . head $ basis2
+          leftExtend = map (<|> rightPad) basis1
+          rightExtend = map (leftPad <|>) basis2

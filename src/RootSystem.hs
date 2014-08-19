@@ -50,12 +50,18 @@ fromRoots roots = BasicRootSystem (CartanAlgebra.span (map coroot roots)) roots
 torus :: CartanAlgebra -> BasicRootSystem
 torus cartan = BasicRootSystem cartan []
 
-basicDim (BasicRootSystem cartan _) | null basis = 0
-                                    | otherwise = ncols $ head basis
-                                    where basis = orthogonalBasis cartan
+ambientDim (BasicRootSystem cartan _) | null basis = 0
+                                      | otherwise = ncols $ head basis
+                                      where basis = orthogonalBasis cartan
 
 basicSystemProduct :: BasicRootSystem -> BasicRootSystem -> BasicRootSystem
-basicSystemProduct = undefined
+basicSystemProduct system1 system2 = BasicRootSystem cartanProd rootProd
+                where cartanProd = cartanProduct (cartanAlgebra system1) (cartanAlgebra system2)
+                      rootProd = leftExtendRoots ++ rightExtendRoots
+                      leftPad = zero 1 $ ambientDim system1
+                      rightPad = zero 1 $ ambientDim system2
+                      leftExtendRoots = map ( BasicRoot . (<|> rightPad) . coroot ) $ generators system1
+                      rightExtendRoots = map (BasicRoot . (leftPad <|>) . coroot ) $ generators system2
 
 canonicalRootSystem :: (RootSystem s,Root RootType) => s -> BasicRootSystem
 canonicalRootSystem rootsystem = BasicRootSystem cartan roots
