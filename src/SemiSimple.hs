@@ -128,7 +128,7 @@ determine system = fromSimples torusPart simpleParts
               | rank==6 = E6
               | rank==7 = E7
               | rank==8 = E8
-              where edges = map fst $ filter (uncurry connected) [(r1,r2) | r1<-roots, r2<-roots]
+              where edges = map fst $ filter (uncurry connected) [(r1,r2) | r1<-roots, r2<-roots, r1 /= r2]
                     edgeCounts = Map.fromListWith (+) $ zip edges [1..]
                     tripleVertex = head $ Map.keys $ Map.filter (==3) edgeCounts
                     endVertices = Map.keys $ Map.filter (==1) edgeCounts
