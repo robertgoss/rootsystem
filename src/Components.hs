@@ -12,4 +12,4 @@ closure edge vertices seed = closureNext (fromList []) seed
     where closureNext old current | Prelude.null current = (old, Set.difference vertices old)
                                   | otherwise = closureNext (Set.union old new) (toList (Set.difference new old))
               where new = Set.filter connectedCurr vertices
-                    connectedCurr vertex = all (edge vertex) current
+                    connectedCurr vertex = any (edge vertex) current
