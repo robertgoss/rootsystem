@@ -12,6 +12,7 @@ import           Test.QuickCheck.Arbitrary
 
 import           CartanAlgebra
 import           Rational
+import           Generate
 
 class Root r where
     reflect :: r -> r -> r
@@ -23,8 +24,14 @@ class RootSystem r where
     rank :: r -> Int
     cartanAlgebra :: r -> CartanAlgebra
 
+roots :: (RootSystem r) => r -> [RootType]
+roots system = generate reflect $ generators system
+
 newtype BasicRoot = BasicRoot (Vector QQ) deriving (Eq,Show)
 data BasicRootSystem = BasicRootSystem CartanAlgebra [BasicRoot]
+
+instance Ord BasicRoot where
+    (BasicRoot v1) `compare` (BasicRoot v2) = (getRow 1 v1) `compare` (getRow 1 v2)
 
 instance Root BasicRoot where
     reflect (BasicRoot r) (BasicRoot s) = BasicRoot $ r - scaleMatrix (2*dot/len) s
