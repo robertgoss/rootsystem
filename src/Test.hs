@@ -13,4 +13,5 @@ main = defaultMain tests
 
 tests :: TestTree
 tests = testGroup "Tests" [testBasicRoot,
-                           testOrthogonalBasis]
+                           testOrthogonalBasis,
+                           testRootSystem]
