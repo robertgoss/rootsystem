@@ -24,7 +24,7 @@ class RootSystem r where
     rank :: r -> Int
     cartanAlgebra :: r -> CartanAlgebra
 
-rootsScan :: (RootSystem r) => r -> [[RootType]]
+rootsScan :: (RootSystem r) => r -> [([RootType],[RootType])]
 rootsScan = generateScan reflect . generators
 
 roots :: (RootSystem r) => r -> [RootType]
