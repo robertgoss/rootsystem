@@ -105,9 +105,10 @@ determine system = fromSimples torusPart simpleParts
           simpleRank = sum $ map rankSimple simpleParts
           torusPart = RootSystem.rank system - simpleRank
           determineSimple roots
-                | bondCounts Map.! 3 /= 0 = G2
+                | 3 `Map.member` bondCounts = G2
+                | 2 `Map.member` bondCounts = determineBCF roots
+                | 1 `Map.notMember` bondCounts = A 1
                 | bondCounts Map.! 1 == (rank-1) = A rank
-                | bondCounts Map.! 2 == 1 = determineBCF roots
                 | otherwise = determineDE roots
               where bondCounts = Map.fromListWith (+) $ zip bonds [1..]
                     bonds = map (\(a,b)-> dot a b / dot a a) [(r1,r2) | r1<-roots, r2<-roots , r1 < r2]
