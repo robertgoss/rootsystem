@@ -10,3 +10,11 @@ generate comb gens = toList $ generateStep genSet genSet
             where new = Set.unions $ Prelude.map (act current) gens
                   act x g = Set.map (comb g) x
           genSet = fromList gens
+
+generateScan :: (Ord a) => (a -> a -> a) -> [a] -> [[a]]
+generateScan comb gens = generateStep [] genSet genSet
+    where generateStep past old current | Set.null current = past
+                                        | otherwise = generateStep (toList old:past) (union old new) (difference new old)
+            where new = Set.unions $ Prelude.map (act current) gens
+                  act x g = Set.map (comb g) x
+          genSet = fromList gens
