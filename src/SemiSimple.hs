@@ -68,6 +68,7 @@ rootSystemSimple (B n) = fromRoots $ negRoot : aRoots
 rootSystemSimple (C n) = fromRoots $ negLongRoot : aRoots
     where (BasicRootSystem _ aRoots) = rootSystemSimple (A (n-1))
           negLongRoot = BasicRoot $ M.setElem 2 (1,1) $ M.zero 1 n
+rootSystemSimple (D 1) = torus . fullSubAlgebra $ 1
 rootSystemSimple (D n) = fromRoots $ negSwapRoot : aRoots
     where (BasicRootSystem _ aRoots) = rootSystemSimple (A (n-1))
           negSwapRoot = BasicRoot $ M.setElem 1 (1,1) $ M.setElem 1 (1,2) $ M.zero 1 n
