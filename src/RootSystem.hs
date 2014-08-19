@@ -27,6 +27,9 @@ class RootSystem r where
 roots :: (RootSystem r) => r -> [RootType]
 roots system = generate reflect $ generators system
 
+dim :: (RootSystem r) => r -> Int
+dim system = rank system + length (roots system)
+
 newtype BasicRoot = BasicRoot (Vector QQ) deriving (Eq,Show)
 data BasicRootSystem = BasicRootSystem CartanAlgebra [BasicRoot]
 

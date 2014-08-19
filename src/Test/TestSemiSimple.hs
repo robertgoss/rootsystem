@@ -14,9 +14,13 @@ import SemiSimple as SS
 
 testRootSystem = testGroup "Basic Root" [testRootSystemProp, testRootSystemUnit]
 
-testRootSystemProp = testGroup "Properties" [testRootSystemRank]
+testRootSystemProp = testGroup "Properties" [testRootSystemRank,testRootSystemDim]
 testRootSystemUnit = testGroup "Unit tests" []
 
 
 testRootSystemRank = QC.testProperty "The rank of the root system should be the same as the rank of the algebra" $ \semi ->
     RS.rank (rootSystem semi) == SS.rank semi
+
+
+testRootSystemDim = QC.testProperty "The dimension of the root system should be the same as the dimension of the algebra" $ \semi ->
+   RS.dim (rootSystem semi) == SS.dim semi
