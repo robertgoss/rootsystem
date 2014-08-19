@@ -111,7 +111,7 @@ determine system = fromSimples torusPart simpleParts
                 | 1 `Map.notMember` bondCounts = A 1
                 | bondCounts Map.! 1 == (rank-1) = A rank
                 | otherwise = determineDE roots
-              where bondCounts = Map.fromListWith (+) $ zip bonds [1..]
+              where bondCounts = Map.fromListWith (+) $ zip bonds $ repeat 1
                     bonds = map bondNum [(r1,r2) | r1<-roots, r2<-roots , r1 < r2]
                     rank = length roots
           determineBCF roots
@@ -129,7 +129,7 @@ determine system = fromSimples torusPart simpleParts
               | rank==7 = E7
               | rank==8 = E8
               where edges = map fst $ filter (uncurry connected) [(r1,r2) | r1<-roots, r2<-roots, r1 /= r2]
-                    edgeCounts = Map.fromListWith (+) $ zip edges [1..]
+                    edgeCounts = Map.fromListWith (+) $ zip edges $ repeat 1
                     tripleVertex = head $ Map.keys $ Map.filter (==3) edgeCounts
                     endVertices = Map.keys $ Map.filter (==1) edgeCounts
                     endToTriple = any (connected tripleVertex) endVertices
