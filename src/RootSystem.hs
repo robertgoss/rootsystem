@@ -25,10 +25,10 @@ class RootSystem r where
     cartanAlgebra :: r -> CartanAlgebra
 
 rootsScan :: (RootSystem r) => r -> [([RootType],[RootType])]
-rootsScan = generateScan reflect . generators
+rootsScan = generateScan (flip reflect) . generators
 
 roots :: (RootSystem r) => r -> [RootType]
-roots system = generate reflect $ generators system
+roots system = generate (flip reflect) $ generators system
 
 dim :: (RootSystem r) => r -> Int
 dim system = rank system + length (roots system)
