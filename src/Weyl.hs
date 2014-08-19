@@ -40,8 +40,8 @@ instance WeylGroupElement BasicWeylGroupElement where
     multiply (BasicElement vs) (BasicElement ws) = BasicElement $ vs++ws
 
     torusRepresentation (BasicElement vs) = product $ map basicReflect vs
-        where basicReflect v = identity (nrows v) - inv
-                           where inv = matrix (nrows v) (nrows v) invk
+        where basicReflect v = identity (ncols v) - inv
+                           where inv = matrix (ncols v) (ncols v) invk
                                  invk (i,j) = 2 * getElem 1 i v * getElem 1 j v / len
                                  len = getElem 1 1 $ v*transpose v
 

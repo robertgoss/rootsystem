@@ -51,7 +51,7 @@ torus :: CartanAlgebra -> BasicRootSystem
 torus cartan = BasicRootSystem cartan []
 
 basicDim (BasicRootSystem cartan _) | null basis = 0
-                                    | otherwise = nrows $ head basis
+                                    | otherwise = ncols $ head basis
                                     where basis = orthogonalBasis cartan
 
 canonicalRootSystem :: (RootSystem s,Root RootType) => s -> BasicRootSystem
