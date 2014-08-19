@@ -18,7 +18,7 @@ import           Generate
 class Root r where
     reflect :: r -> r -> r
     coroot :: r -> Vector QQ
-    sub :: r -> r -> r
+    add :: r -> r -> r
     positive :: r -> Bool
 
 class RootSystem r where
@@ -36,10 +36,10 @@ roots system = generate (flip reflect) $ generators system
 positiveRoots :: (RootSystem r) => r -> [RootType]
 positiveRoots = filter positive . roots
 
-principleRoots :: (RootSystem r) => r -> [RootType]
-principleRoots r = Set.toList $ Set.difference (Set.fromList positiveR) (Set.fromList differences)
+simpleRoots :: (RootSystem r) => r -> [RootType]
+simpleRoots r = Set.toList $ Set.difference (Set.fromList positiveR) (Set.fromList sums)
     where positiveR = positiveRoots r
-          differences = [r `sub` s | r<-positiveR, s<-positiveR, r > s]
+          sums = [r `add` s | r<-positiveR, s<-positiveR, r > s]
 
 dim :: (RootSystem r) => r -> Int
 dim system = rank system + length (roots system)
@@ -58,7 +58,7 @@ instance Root BasicRoot where
         where dot = getElem 1 1 $ r*transpose s
               len = getElem 1 1 $ s*transpose s
     coroot (BasicRoot r) = r
-    (BasicRoot r) `sub` (BasicRoot s) = BasicRoot $ r-s
+    (BasicRoot r) `add` (BasicRoot s) = BasicRoot $ r + s
     positive r = r > (BasicRoot $ zero 1 (basicDim r))
 
 dot :: BasicRoot -> BasicRoot -> QQ
