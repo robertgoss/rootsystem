@@ -7,8 +7,11 @@ import Test.Tasty.HUnit
 
 import Test.TestRootSystem
 import Test.TestCartanAlgebra
+import Test.TestSemiSimple
 
 main = defaultMain tests
 
 tests :: TestTree
-tests = testGroup "Tests" [testBasicRoot, testOrthogonalBasis]
+tests = testGroup "Tests" [testBasicRoot,
+                           testOrthogonalBasis,
+                           testCanonicalForm]

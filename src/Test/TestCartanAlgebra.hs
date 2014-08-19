@@ -11,7 +11,7 @@ import Rational
 import RootSystem
 import CartanAlgebra
 
-testOrthogonalBasis = testGroup "" [testOrthogonalBasisProp, testOrthogonalBasisUnit]
+testOrthogonalBasis = testGroup "Orthogonal Basis" [testOrthogonalBasisProp, testOrthogonalBasisUnit]
 
 testOrthogonalBasisProp = testGroup "Properties" [testOrthogonalality, testOrthIdopotent, testOrthRepeat, testOrthNonZero]
 testOrthogonalBasisUnit = testGroup "Unit tests" [testOrth1]
