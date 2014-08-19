@@ -9,6 +9,7 @@ import           Data.Matrix
 import           Data.Ratio
 import qualified Data.Vector               as V
 import           Test.QuickCheck.Arbitrary
+import qualified Data.Set as Set (toList,fromList,difference)
 
 import           CartanAlgebra
 import           Rational
@@ -17,6 +18,8 @@ import           Generate
 class Root r where
     reflect :: r -> r -> r
     coroot :: r -> Vector QQ
+    sub :: r -> r -> r
+    positive :: r -> Bool
 
 class RootSystem r where
     type RootType
@@ -30,6 +33,14 @@ rootsScan = generateScan (flip reflect) . generators
 roots :: (RootSystem r) => r -> [RootType]
 roots system = generate (flip reflect) $ generators system
 
+positiveRoots :: (RootSystem r) => r -> [RootType]
+positiveRoots = filter positive . roots
+
+principleRoots :: (RootSystem r) => r -> [RootType]
+principleRoots r = Set.toList $ Set.difference (Set.fromList positiveR) (Set.fromList differences)
+    where positiveR = positiveRoots r
+          differences = [r `sub` s | r<-positiveR, s<-positiveR, r > s]
+
 dim :: (RootSystem r) => r -> Int
 dim system = rank system + length (roots system)
 
@@ -39,11 +50,16 @@ data BasicRootSystem = BasicRootSystem CartanAlgebra [BasicRoot]
 instance Ord BasicRoot where
     (BasicRoot v1) `compare` (BasicRoot v2) = (getRow 1 v1) `compare` (getRow 1 v2)
 
+basicDim :: BasicRoot -> Int
+basicDim (BasicRoot r) = ncols r
+
 instance Root BasicRoot where
     reflect (BasicRoot r) (BasicRoot s) = BasicRoot $ r - scaleMatrix (2*dot/len) s
         where dot = getElem 1 1 $ r*transpose s
               len = getElem 1 1 $ s*transpose s
     coroot (BasicRoot r) = r
+    (BasicRoot r) `sub` (BasicRoot s) = BasicRoot $ r-s
+    positive r = r > (BasicRoot $ zero 1 (basicDim r))
 
 dot :: BasicRoot -> BasicRoot -> QQ
 dot (BasicRoot v1) (BasicRoot v2) = getElem 1 1 $ v1 * transpose v2

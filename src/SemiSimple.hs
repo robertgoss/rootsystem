@@ -93,6 +93,11 @@ rootSystem (SemiSimple torusDim simples) = foldl basicSystemProduct torusSystem 
     where torusSystem = torus $ fullSubAlgebra torusDim
           simpleSystems = map rootSystemSimple simples
 
+
+
+determine :: (RootSystem r) => r -> SemiSimple
+determine = undefined
+
 instance Arbitrary Simple where
     arbitrary = do n <- arbitrary
                    m <- liftM (`mod` 8) arbitrary
