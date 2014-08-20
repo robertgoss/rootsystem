@@ -9,12 +9,12 @@ import Data.Matrix
 import Rational
 import RootSystem
 import CartanAlgebra
+import Generate
 
 class WeylGroupElement g where
 
     type WeylRootType
 
-    one :: g
     inverse :: g -> g
     multiply :: g -> g -> g
 
@@ -26,29 +26,46 @@ class WeylGroupElement g where
 class WeylGroup w where
     type ElementType
     type RootSystemType
+    one :: w -> ElementType
     generators :: (WeylGroupElement ElementType) => w -> [ElementType]
     weylGroup :: (RootSystem RootSystemType) => RootSystemType -> w
 
 
-newtype BasicWeylGroupElement = BasicElement [Vector QQ]
+newtype BasicWeylGroupElement = BasicElement (Matrix QQ) deriving(Eq)
 newtype BasicWeylGroup = BasicGroup [BasicWeylGroupElement]
+
+instance Ord BasicWeylGroupElement where
+    (BasicElement m1) `compare` (BasicElement m2) = (toList m1) `compare` (toList m2)
+
+reflectMatrix :: Vector QQ -> Matrix QQ
+reflectMatrix vec = identity (ncols vec) - inv
+    where inv = matrix (ncols vec) (ncols vec) invk
+          invk (i,j) = 2 * getElem 1 i vec * getElem 1 j vec / len
+          len = getElem 1 1 $ vec*transpose vec
+
 
 instance WeylGroupElement BasicWeylGroupElement where
     type WeylRootType = BasicRoot
-    one = BasicElement []
-    inverse (BasicElement vs) = BasicElement $ reverse vs
-    multiply (BasicElement vs) (BasicElement ws) = BasicElement $ vs++ws
 
-    torusRepresentation (BasicElement vs) = product $ map basicReflect vs
-        where basicReflect v = identity (ncols v) - inv
-                           where inv = matrix (ncols v) (ncols v) invk
-                                 invk (i,j) = 2 * getElem 1 i v * getElem 1 j v / len
-                                 len = getElem 1 1 $ v*transpose v
+    inverse (BasicElement m) = BasicElement $ transpose m
+    multiply (BasicElement m1) (BasicElement m2) = BasicElement $ m1*m2
 
-    simpleReflection (BasicRoot v) = BasicElement $ [v]
+    torusRepresentation (BasicElement m) = m
+
+    simpleReflection (BasicRoot v) = BasicElement $ reflectMatrix v
 
 instance WeylGroup BasicWeylGroup where
     type ElementType = BasicWeylGroupElement
     type RootSystemType = BasicRootSystem
+    one (BasicGroup gens) = BasicElement $ identity . nrows . torusRepresentation . head $ gens
+
     generators (BasicGroup gens) = gens
     weylGroup rootsystem = BasicGroup $ map simpleReflection $ RootSystem.generators rootsystem
+
+
+elements :: (WeylGroup w,Ord ElementType) => w -> [ElementType]
+elements group = generate multiply gens
+    where gens = Weyl.generators group
+
+order :: (WeylGroup w, Ord ElementType) => w -> Integer
+order = toInteger . length . elements 

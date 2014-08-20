@@ -7,12 +7,13 @@ import Test.Tasty.HUnit
 
 import Data.Matrix
 
+import Weyl as W
 import RootSystem as RS
 import SemiSimple as SS
 
 
 
-testRootSystem = testGroup "Basic Root" [testRootSystemProp, testRootSystemUnit]
+testRootSystem = testGroup "Root System" [testRootSystemProp, testRootSystemUnit]
 
 testRootSystemProp = testGroup "Properties" [testRootSystemRank,testRootSystemDim,testDetermineRootSystem]
 testRootSystemUnit = testGroup "Unit tests" []
@@ -28,3 +29,13 @@ testRootSystemDim = QC.testProperty "The dimension of the root system should be 
 
 testDetermineRootSystem = QC.testProperty "Determine should be partial inverse to rootSystem" $ \semi ->
    determine (rootSystem semi) == semi
+
+
+
+testWeylGroup = testGroup "Weyl Group" [testWeylGroupProp, testWeylGroupUnit]
+
+testWeylGroupProp = testGroup "Properties" [testWeylGroupOrder]
+testWeylGroupUnit = testGroup "Unit  tests" []
+
+testWeylGroupOrder = QC.testProperty "The order of the weyl group should be the weyl order" $ \semi ->
+    W.order (SS.weylGroup semi) == SS.weylOrder semi

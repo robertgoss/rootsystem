@@ -34,4 +34,5 @@ extra-packages: ! 'Hackage: smallcheck 1.1.1
 
   Hackage: tasty-smallcheck 0.8'
 ghc-args: []
-excluded-modules: []
+excluded-modules:
+- src/Test/TestWeyl.hs
