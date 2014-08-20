@@ -125,6 +125,7 @@ determine system = fromSimples torusPart simpleParts
           determineADE roots
               | null tripleVertices = A rank
               | endToTripleNum == 2 = D rank
+              | rank < 6 = D rank
               | rank==6 = E6
               | rank==7 = E7
               | rank==8 = E8
