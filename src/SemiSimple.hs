@@ -124,7 +124,7 @@ determine system = fromSimples torusPart simpleParts
                     rank = length roots
           determineADE roots
               | null tripleVertices = A rank
-              | endToTriple = D rank
+              | endToTripleNum == 2 = D rank
               | rank==6 = E6
               | rank==7 = E7
               | rank==8 = E8
@@ -133,7 +133,7 @@ determine system = fromSimples torusPart simpleParts
                     tripleVertices = Map.keys $ Map.filter (==3) edgeCounts
                     tripleVertex = head tripleVertices
                     endVertices = Map.keys $ Map.filter (==1) edgeCounts
-                    endToTriple = any (connected tripleVertex) endVertices
+                    endToTripleNum = length $ filter (connected tripleVertex) endVertices
                     rank = length roots
 
 
