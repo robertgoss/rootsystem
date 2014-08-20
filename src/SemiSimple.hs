@@ -155,7 +155,22 @@ determine system = fromSimples torusPart simpleParts
                     endToTripleNum = length $ filter (connected tripleVertex) endVertices
                     rank = length roots
 
+factorial :: Int -> Integer
+factorial n = Prelude.product $ map toInteger [1..n]
 
+weylOrderSimple :: Simple -> Integer
+weylOrderSimple (A n) = factorial n
+weylOrderSimple (B n) = 2^n * factorial n
+weylOrderSimple (C n) = 2^n * factorial n
+weylOrderSimple (D n) = 2^(n-1) * factorial n
+weylOrderSimple G2 = 12
+weylOrderSimple F4 = 1152
+weylOrderSimple E6 = 51840
+weylOrderSimple E7 = 2903040
+weylOrderSimple E8 = 696729600
+
+weylOrder :: SemiSimple -> Integer
+weylOrder (SemiSimple torus semis) = sum $ map weylOrderSimple semis
 
 instance Arbitrary Simple where
     arbitrary = do n <- arbitrary
