@@ -23,7 +23,15 @@ data Simple = A Int
 data SemiSimple = SemiSimple Int [Simple] deriving(Eq,Ord,Show)
 
 fromSimples :: Int -> [Simple] -> SemiSimple
-fromSimples torus simples = SemiSimple torus (sort simples)
+fromSimples torus simples = SemiSimple torus (sort nonTrivialSimples)
+    where nonTrivialSimples = filter isTrivial simples
+
+isTrivial :: Simple -> Bool
+isTrivial (A 0) = True
+isTrivial (B 0) = True
+isTrivial (C 0) = True
+isTrivial (D 0) = True
+isTrivial _ = False
 
 product :: SemiSimple -> SemiSimple -> SemiSimple
 product (SemiSimple torus1 simples1) (SemiSimple torus2 simples2) = fromSimples (torus1+torus2) (simples1++simples2)
