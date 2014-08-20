@@ -24,7 +24,7 @@ data SemiSimple = SemiSimple Int [Simple] deriving(Eq,Ord,Show)
 
 fromSimples :: Int -> [Simple] -> SemiSimple
 fromSimples torus simples = SemiSimple (torus+d2Count) (sort reducedSimples)
-    where nonTrivialSimples = filter (\s -> isTrivial s && s /= D 1) simples
+    where nonTrivialSimples = filter (\s -> not (isTrivial s) && s /= D 1) simples
           d2Count = length $ filter (==D 1) simples
           exceptional (C 1) = [A 1]
           exceptional (B 1) = [A 1]
