@@ -148,4 +148,4 @@ instance Arbitrary SemiSimple where
     arbitrary = do n <- arbitrary
                    m <- arbitrary
                    xs <- arbitrary
-                   return $ SemiSimple (m `mod` 8) (take (n `mod` 3) xs)
+                   return $ fromSimples (m `mod` 8) (take (n `mod` 3) xs)
