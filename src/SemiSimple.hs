@@ -170,7 +170,7 @@ weylOrderSimple E7 = 2903040
 weylOrderSimple E8 = 696729600
 
 weylOrder :: SemiSimple -> Integer
-weylOrder (SemiSimple torus semis) = sum $ map weylOrderSimple semis
+weylOrder (SemiSimple torus semis) = Prelude.product $ map weylOrderSimple semis
 
 weylGroup :: SemiSimple -> BasicWeylGroup
 weylGroup = Weyl.weylGroup . rootSystem
