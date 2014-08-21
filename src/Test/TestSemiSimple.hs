@@ -38,5 +38,5 @@ testWeylGroupProp = testGroup "Properties" [testWeylGroupOrder]
 testWeylGroupUnit = testGroup "Unit  tests" []
 
 testWeylGroupOrder = QC.testProperty "The order of the weyl group should be the weyl order" $ \semi ->
-    SS.rank semi < 7 QC.==>
+    SS.rank semi < 6 QC.==>
     W.order (SS.weylGroup semi) == SS.weylOrder semi
