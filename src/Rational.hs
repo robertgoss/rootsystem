@@ -5,7 +5,10 @@ import Data.Ratio
 import Test.QuickCheck.Arbitrary
 
 
-newtype Rational = Rational (Ratio Integer) deriving(Eq,Ord,Show,Num,Fractional)
+newtype Rational = Rational (Ratio Integer) deriving(Eq,Ord,Num,Fractional)
+
+instance Show Rational.Rational where
+    show (Rational q) = show q
 
 type QQ = Rational.Rational
 
