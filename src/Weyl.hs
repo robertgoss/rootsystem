@@ -32,7 +32,7 @@ class WeylGroup w where
 
 
 newtype BasicWeylGroupElement = BasicElement (Matrix QQ) deriving(Eq)
-newtype BasicWeylGroup = BasicGroup [BasicWeylGroupElement]
+data BasicWeylGroup = BasicGroup Int [BasicWeylGroupElement]
 
 instance Ord BasicWeylGroupElement where
     (BasicElement m1) `compare` (BasicElement m2) = (toList m1) `compare` (toList m2)
@@ -57,15 +57,18 @@ instance WeylGroupElement BasicWeylGroupElement where
 instance WeylGroup BasicWeylGroup where
     type ElementType = BasicWeylGroupElement
     type RootSystemType = BasicRootSystem
-    one (BasicGroup gens) = BasicElement $ identity . nrows . torusRepresentation . head $ gens
+    one (BasicGroup dim gens) = BasicElement $ identity dim
 
-    generators (BasicGroup gens) = gens
-    weylGroup rootsystem = BasicGroup $ map simpleReflection $ RootSystem.generators rootsystem
+    generators (BasicGroup _ gens) = gens
+    weylGroup rootsystem = BasicGroup dim gens
+        where gens = map simpleReflection $ RootSystem.generators rootsystem
+              dim | null (RootSystem.generators rootsystem) = 1
+                  | otherwise = ncols . coroot . head . RootSystem.generators $ rootsystem
 
 
 elements :: (WeylGroup w,Ord ElementType) => w -> [ElementType]
-elements group = generate multiply gens
+elements group = generate multiply (one group:gens)
     where gens = Weyl.generators group
 
 order :: (WeylGroup w, Ord ElementType) => w -> Integer
-order = toInteger . length . elements 
+order = toInteger . length . elements
