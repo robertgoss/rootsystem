@@ -159,7 +159,7 @@ factorial :: Int -> Integer
 factorial n = Prelude.product $ map toInteger [1..n]
 
 weylOrderSimple :: Simple -> Integer
-weylOrderSimple (A n) = factorial n
+weylOrderSimple (A n) = factorial (n+1)
 weylOrderSimple (B n) = 2^n * factorial n
 weylOrderSimple (C n) = 2^n * factorial n
 weylOrderSimple (D n) = 2^(n-1) * factorial n
