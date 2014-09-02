@@ -8,6 +8,7 @@ import Test.Tasty.HUnit
 import Test.TestRootSystem
 import Test.TestCartanAlgebra
 import Test.TestSemiSimple
+import Test.TestSpin
 
 main = defaultMain tests
 
@@ -15,4 +16,5 @@ tests :: TestTree
 tests = testGroup "Tests" [testBasicRoot,
                            testOrthogonalBasis,
                            testRootSystem,
-                           testWeylGroup]
+                           testWeylGroup,
+                           testSpin]

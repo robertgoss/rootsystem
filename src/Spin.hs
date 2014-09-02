@@ -8,7 +8,7 @@ import RootSystem
 
 data SpinRoot = SwapRoot Int Int
                 | SignSwapRoot Int Int
-                | Neg SpinRoot
+                | Neg SpinRoot deriving(Eq,Ord,Show)
 
 makeSwapRoot i j | i < j = SwapRoot i j
                  | otherwise = Neg $ SwapRoot i j
