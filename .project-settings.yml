@@ -32,7 +32,10 @@ extra-packages: ! 'Hackage: smallcheck 1.1.1
 
   Hackage: tasty-quickcheck 0.8.1
 
-  Hackage: tasty-smallcheck 0.8'
+  Hackage: tasty-smallcheck 0.8
+
+  Hackage: permutation 0.5.0.4'
 ghc-args: []
 excluded-modules:
+- src/E8.hs
 - src/Test/TestWeyl.hs
