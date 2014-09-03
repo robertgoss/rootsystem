@@ -12,14 +12,12 @@ import RootSystem
 import CartanAlgebra
 import Generate
 
-class WeylGroupElement g where
-
-    type WeylRootType
+class (Root r) => WeylGroupElement g r | g -> r where
 
     inverse :: g -> g
     multiply :: g -> g -> g
 
-    simpleReflection :: (Root WeylRootType) => WeylRootType -> g
+    simpleReflection :: r -> g
 
     torusRepresentation :: g -> Matrix QQ
 
@@ -29,7 +27,7 @@ class WeylGroup w where
     type ElementType
     type RootSystemType
     one :: w -> ElementType
-    generators :: (WeylGroupElement ElementType) => w -> [ElementType]
+    generators :: (WeylGroupElement ElementType RootType) => w -> [ElementType]
     weylGroup :: (RootSystem RootSystemType RootType) => RootSystemType -> w
 
 
@@ -51,8 +49,7 @@ reflectMatrix vec = identity (ncols vec) - inv
           len = getElem 1 1 $ vec*transpose vec
 
 
-instance WeylGroupElement BasicWeylGroupElement where
-    type WeylRootType = BasicRoot
+instance WeylGroupElement BasicWeylGroupElement BasicRoot where
 
     inverse (BasicElement m) = BasicElement $ transpose m
     multiply (BasicElement m1) (BasicElement m2) = BasicElement $ m1*m2

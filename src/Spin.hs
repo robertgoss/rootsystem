@@ -9,6 +9,8 @@ import Rational
 import RootSystem
 import CartanAlgebra
 import Permutation
+import Signs
+import Weyl
 
 data SpinRoot = SwapRoot Int Int
                 | SignSwapRoot Int Int
@@ -18,7 +20,7 @@ data SpinRoot = SwapRoot Int Int
 
 newtype SpinSystem = SpinSystem Int deriving(Eq,Ord,Show)
 
-data SpinWeylElement = SpinElement (Vector QQ) Permutation
+data SpinWeylElement = SpinElement Signs Permutation
 
 
 makeSwapRoot pos neg | pos < neg = SwapRoot pos neg
@@ -126,7 +128,15 @@ instance RootSystem SpinSystem SpinRoot where
     rank (SpinSystem n) = n
     cartanAlgebra (SpinSystem n) = fullSubAlgebra n
 
+instance WeylGroupElement SpinWeylElement SpinRoot where
+    multiply (SpinElement sign1 perm1) (SpinElement sign2 perm2) = SpinElement sign perm
+        where perm = perm2 `Permutation.combine` perm1
+              sign = sign1 `Signs.combine` signPerm
+              signPerm = permute perm1 sign2
 
+    inverse (SpinElement sign perm) = SpinElement isign iperm
+        where iperm = Permutation.inverse perm
+              isign = permute iperm sign
 
 instance Arbitrary SpinRoot where
     arbitrary = do i <- arbitrary

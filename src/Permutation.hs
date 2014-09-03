@@ -1,5 +1,6 @@
 module Permutation where
 
+import Data.List(sort)
 import Data.Matrix
 import Test.QuickCheck.Arbitrary
 
@@ -38,6 +39,13 @@ pad :: Int -> Permutation -> Permutation
 pad k p@(Perm v) | n >= k = p
                  | otherwise = Perm $ v <-> fromList (k-n) 1 [(n+1)..k]
     where n = nrows v
+
+inverse :: Permutation -> Permutation
+inverse (Perm v) = Perm $ fromList n 1 $ iList
+    where assList = zip [1..] $ toList v
+          iAssList = map (\(a,b) -> (b,a)) iAssList
+          iList = map snd $ sort iAssList
+          n = nrows v
 
 
 instance Arbitrary Permutation where
