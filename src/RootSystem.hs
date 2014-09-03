@@ -10,6 +10,7 @@ import           Data.Ratio
 import qualified Data.Vector               as V
 import           Test.QuickCheck.Arbitrary
 import qualified Data.Set as Set (toList,fromList,difference)
+import Data.Maybe(catMaybes)
 
 import           CartanAlgebra
 import           Rational
@@ -18,7 +19,7 @@ import           Generate
 class Root r where
     reflect :: r -> r -> r
     coroot :: r -> Vector QQ
-    add :: r -> r -> r
+    add :: r -> r -> Maybe r
     positive :: r -> Bool
 
 class RootSystem r where
@@ -53,7 +54,7 @@ positiveRoots = filter positive . roots
 simpleRoots :: (RootSystem r) => r -> [RootType]
 simpleRoots r = Set.toList $ Set.difference (Set.fromList positiveR) (Set.fromList sums)
     where positiveR = positiveRoots r
-          sums = [r `add` s | r<-positiveR, s<-positiveR, r > s]
+          sums = catMaybes $ [r `add` s | r<-positiveR, s<-positiveR, r > s]
 
 dim :: (RootSystem r) => r -> Int
 dim system = rank system + length (roots system)
@@ -78,7 +79,7 @@ instance Root BasicRoot where
               s' | ncols s >= ncols r = s
                  | otherwise = s <|> zero 1 (ncols r - ncols s)
     coroot (BasicRoot r) = r
-    (BasicRoot r) `add` (BasicRoot s) = BasicRoot $ r + s
+    (BasicRoot r) `add` (BasicRoot s) = Just . BasicRoot $ r + s
     positive r = r > (BasicRoot $ zero 1 (basicDim r))
 
 dot :: BasicRoot -> BasicRoot -> QQ
