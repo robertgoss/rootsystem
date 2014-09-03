@@ -11,7 +11,28 @@ import CartanAlgebra
 
 data SpinRoot = SwapRoot Int Int
                 | SignSwapRoot Int Int
-                | Neg SpinRoot deriving(Eq,Ord,Show)
+                | Neg SpinRoot deriving(Show)
+
+instance Eq SpinRoot where
+    (SwapRoot i j) (SwapRoot m n) = i==m && j==n
+    (SignSwapRoot i j) (SignSwapRoot m n) = i==m && j==n
+    (Neg root1) (Neg root2) = root1 == root2
+
+instance Ord SpinRoot where
+    (SwapRoot i j) `compare` (SwapRoot m n) | i/=m = m `compare` i
+                                            | otherwise = j `compare` n
+    (SwapRoot i j) `compare` (SignSwapRoot m n) | i/=m = m `compare` i
+                                                | j/=n = j `compare` n
+                                                | otherwise = LT
+    (SignSwapRoot i j) `compare` (SignSwapRoot m n) | i/=m = i `compare` m
+                                                    | otherwise = j `compare` n
+    (Neg root1) `compare` (Neg root2) = root1 `compare` root2
+    root1 `compare` (Neg root2) = GT
+    root1 `compare` root2 = case root2 `compare` root1 of
+                                EQ -> EQ
+                                LT -> GT
+                                GT -> LT
+
 
 newtype SpinSystem = SpinSystem Int deriving(Eq,Ord,Show)
 
@@ -21,9 +42,12 @@ makeSwapRoot pos neg | pos < neg = SwapRoot pos neg
 makeSSwapRoot i j | i < j = SignSwapRoot i j
                   | otherwise = SignSwapRoot j i
 
+makeNeg (Neg root) = root
+makeNeg (root) = Neg root
+
 instance Root SpinRoot where
     reflect (SwapRoot i j) (SwapRoot m n)
-                | i == m && j == n = Neg $ SwapRoot i j
+                | i == m && j == n = makeNeg $ SwapRoot i j
                 | i == m = makeSwapRoot n j
                 | i == n = makeSwapRoot m j
                 | j == m = makeSwapRoot i n
@@ -31,8 +55,8 @@ instance Root SpinRoot where
                 | otherwise  = SwapRoot i j
     reflect (SwapRoot i j) (SignSwapRoot m n)
                 | i == m && j == n = SwapRoot i j
-                | i == m = Neg $ makeSSwapRoot n j
-                | i == n = Neg $ makeSSwapRoot m j
+                | i == m = makeNeg $ makeSSwapRoot n j
+                | i == n = makeNeg $ makeSSwapRoot m j
                 | j == m = makeSSwapRoot i n
                 | j == n = makeSSwapRoot i m
                 | otherwise = SwapRoot i j
@@ -44,13 +68,13 @@ instance Root SpinRoot where
                 | j == n = makeSSwapRoot i m
                 | otherwise = SignSwapRoot i j
     reflect (SignSwapRoot i j) (SignSwapRoot m n)
-                | i == m && j == n = Neg $ SignSwapRoot i j
+                | i == m && j == n = makeNeg $ SignSwapRoot i j
                 | i == m = makeSwapRoot j n
                 | i == n = makeSwapRoot j m
                 | j == m = makeSwapRoot i n
                 | j == n = makeSwapRoot i m
                 | otherwise = SignSwapRoot i j
-    reflect (Neg root1) root2 = Neg $ reflect root1 root2
+    reflect (Neg root1) root2 = makeNeg $ reflect root1 root2
     reflect root1 (Neg root2) = reflect root1 root2
 
     coroot (SwapRoot i j) = M.setElem 1 (1,i) $ M.setElem (-1) (1,j)  $ M.zero 1 j
