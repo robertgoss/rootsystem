@@ -22,27 +22,27 @@ class (Ord r) => Root r where
     add :: r -> r -> Maybe r
     positive :: r -> Bool
 
-class RootSystem r rt | r -> rt where
+class (Root rt) => RootSystem r rt | r -> rt where
     generators :: (Root rt) => r -> [rt]
     rank :: r -> Int
     cartanAlgebra :: r -> CartanAlgebra
 
 
-rootsScan :: (RootSystem r rt, Root rt) => r -> [([rt],[rt])]
+rootsScan :: (RootSystem r rt) => r -> [([rt],[rt])]
 rootsScan = generateScan (flip reflect) . generators
 
-roots :: (RootSystem r rt, Root rt) => r -> [rt]
+roots :: (RootSystem r rt) => r -> [rt]
 roots system = generate (flip reflect) $ generators system
 
-positiveRoots :: (RootSystem r rt, Root rt) => r -> [rt]
+positiveRoots :: (RootSystem r rt) => r -> [rt]
 positiveRoots = filter positive . roots
 
-simpleRoots :: (RootSystem r rt, Root rt) => r -> [rt]
+simpleRoots :: (RootSystem r rt) => r -> [rt]
 simpleRoots r = Set.toList $ Set.difference (Set.fromList positiveR) (Set.fromList sums)
     where positiveR = positiveRoots r
           sums = catMaybes $ [r `add` s | r<-positiveR, s<-positiveR, r > s]
 
-dim :: (RootSystem r rt, Root rt) => r -> Int
+dim :: (RootSystem r rt) => r -> Int
 dim system = rank system + length (roots system)
 
 newtype BasicRoot = BasicRoot (Vector QQ) deriving (Eq,Show)
@@ -67,6 +67,9 @@ instance Root BasicRoot where
     coroot (BasicRoot r) = r
     (BasicRoot r) `add` (BasicRoot s) = Just . BasicRoot $ r + s
     positive r = r > (BasicRoot $ zero 1 (basicDim r))
+
+toBasic :: (Root r) => r-> BasicRoot
+toBasic = BasicRoot . coroot
 
 dot :: BasicRoot -> BasicRoot -> QQ
 dot (BasicRoot v1) (BasicRoot v2) = getElem 1 1 $ v1 * transpose v2

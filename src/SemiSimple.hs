@@ -117,9 +117,9 @@ rootSystem (SemiSimple torusDim simples) = foldl basicSystemProduct torusSystem 
 
 bondNum (a,b) = 4*(dot a b * dot b a) / (dot a a * dot b b)
 
-determine :: (RootSystem r BasicRoot) => r -> SemiSimple
+determine :: (RootSystem r rt) => r -> SemiSimple
 determine system = fromSimples torusPart simpleParts
-    where connectedComps = components connected $ simpleRoots system
+    where connectedComps = components connected $ map toBasic $ simpleRoots system
           connected r1 r2 = dot r1 r2 /= 0
           simpleParts = map determineSimple connectedComps
           simpleRank = sum $ map rankSimple simpleParts
