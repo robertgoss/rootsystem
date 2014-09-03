@@ -19,8 +19,10 @@ testPermUnit = testGroup "Unit tests" [testSwap, testAtOver]
 testIdentityCombine = QC.testProperty "Identity should be unit of combine" $ \perm ->
     (Permutation.identity 1) `combine` perm == perm
 
-testCombineMatrix = QC.testProperty "Combination should be push forward to matrix mulitplication" $ \(p,q) ->
-    toMatrix (pad 10  (p `combine` q)) == (toMatrix (pad 10 p)) * (toMatrix (pad 10 q))
+fcombine = flip combine
+
+testCombineMatrix = QC.testProperty "Flipped Combination should be push forward to matrix mulitplication" $ \(p,q) ->
+    toMatrix (pad 10  (p `fcombine` q)) == (toMatrix (pad 10 p)) * (toMatrix (pad 10 q))
 
 testSwap = testCase "test swap 1" $ at 1 perm @?= 2
     where perm = swap 1 2 $ Permutation.identity 2

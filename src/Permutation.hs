@@ -12,8 +12,8 @@ identity n = Perm $ fromList n 1 [1..n]
 
 combine :: Permutation -> Permutation -> Permutation
 combine p@(Perm v) q@(Perm w) | n==m = Perm $ fromList (length new) 1 new
-                   | n<m = combine (Perm $ v <-> fromList (m-n) 1 [(n+1)..m]) q
-                   | otherwise = combine p (Perm $ w <-> fromList (n-m) 1 [(m+1)..n])
+                   | n<m = combine (pad m p) q
+                   | otherwise = combine p (pad n q)
     where n = nrows v
           m = nrows w
           wList = toList w
