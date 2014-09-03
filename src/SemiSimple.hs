@@ -31,7 +31,7 @@ fromSimples torus simples = SemiSimple (torus+d2Count) (sort reducedSimples)
           exceptional (B 1) = [A 1]
           exceptional (C 2) = [B 2]
           exceptional (D 2) = [A 1,A 1]
-          exceptional (D 3) = [A 6]
+          exceptional (D 3) = [A 3]
           exceptional x = [x]
           reducedSimples = concatMap exceptional nonTrivialSimples
 
