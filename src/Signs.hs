@@ -13,7 +13,7 @@ identity n = Signs $ fromList n 1 $ replicate n 1
 
 pad :: Int -> Signs -> Signs
 pad k s@(Signs v) | k <= n = s
-                  | otherwise = Signs $ v <-> fromList (n-k) 1 (replicate (n-k) 1)
+                  | otherwise = Signs $ v <-> fromList (k-n) 1 (replicate (k-n) 1)
     where n = nrows v
 
 combine :: Signs -> Signs -> Signs
