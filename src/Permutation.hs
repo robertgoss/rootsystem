@@ -43,7 +43,7 @@ pad k p@(Perm v) | n >= k = p
 inverse :: Permutation -> Permutation
 inverse (Perm v) = Perm $ fromList n 1 $ iList
     where assList = zip [1..] $ toList v
-          iAssList = map (\(a,b) -> (b,a)) iAssList
+          iAssList = map (\(a,b) -> (b,a)) assList
           iList = map snd $ sort iAssList
           n = nrows v
 
