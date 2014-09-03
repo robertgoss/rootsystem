@@ -10,11 +10,11 @@ data SpinRoot = SwapRoot Int Int
                 | SignSwapRoot Int Int
                 | Neg SpinRoot deriving(Eq,Ord,Show)
 
-makeSwapRoot i j | i < j = SwapRoot i j
-                 | otherwise = Neg $ SwapRoot j i
+makeSwapRoot pos neg | pos < neg = SwapRoot pos neg
+                     | otherwise = Neg $ SwapRoot neg pos
 
 makeSSwapRoot i j | i < j = SignSwapRoot i j
-                  | otherwise = Neg $ SignSwapRoot j i
+                  | otherwise = SignSwapRoot j i
 
 instance Root SpinRoot where
     reflect (SwapRoot i j) (SwapRoot m n)
@@ -26,8 +26,8 @@ instance Root SpinRoot where
                 | otherwise  = SwapRoot i j
     reflect (SwapRoot i j) (SignSwapRoot m n)
                 | i == m && j == n = SwapRoot i j
-                | i == m = makeSSwapRoot n j
-                | i == n = makeSSwapRoot m j
+                | i == m = Neg $ makeSSwapRoot n j
+                | i == n = Neg $ makeSSwapRoot m j
                 | j == m = makeSSwapRoot i n
                 | j == n = makeSSwapRoot i m
                 | otherwise = SwapRoot i j
