@@ -56,23 +56,23 @@ instance Root SpinRoot where
     positive (SignSwapRoot _ _ ) = True
     positive (Neg root) = not $ positive root
 
-    add (SwapRoot i j) (SwapRoot m n) | j==m = Just $ makeSwapRoot i n
-                                      | i==n = Just $ makeSwapRoot m j
+    add (SwapRoot i j) (SwapRoot m n) | j==m && i/=n = Just $ makeSwapRoot i n
+                                      | i==n && j/=m = Just $ makeSwapRoot m j
                                       | otherwise = Nothing
     add (SwapRoot i j) (Neg (SwapRoot m n))
-                                      | j==n = Just $ makeSwapRoot i m
-                                      | i==m = Just $ makeSwapRoot n j
+                                      | j==n && i/=m = Just $ makeSwapRoot i m
+                                      | i==m && j/=n = Just $ makeSwapRoot n j
                                       | otherwise = Nothing
-    add (SwapRoot i j) (SignSwapRoot m n ) | j==m = Just $ makeSSwapRoot i n
-                                           | j==n = Just $ makeSSwapRoot i m
+    add (SwapRoot i j) (SignSwapRoot m n ) | j==m && i/=n = Just $ makeSSwapRoot i n
+                                           | j==n && i/=m = Just $ makeSSwapRoot i m
                                            | otherwise = Nothing
     add (SwapRoot i j) (Neg (SignSwapRoot m n))
-                                           | i==m = Just $ Neg $ makeSSwapRoot j n
-                                           | i==n = Just $ Neg $ makeSSwapRoot j m
+                                           | i==m && j/=n = Just $ Neg $ makeSSwapRoot j n
+                                           | i==n && j/=m = Just $ Neg $ makeSSwapRoot j m
                                            | otherwise = Nothing
     add (Neg (SwapRoot i j)) (SignSwapRoot m n)
-                                           | i==m = Just $ makeSSwapRoot j n
-                                           | i==n = Just $ makeSSwapRoot j m
+                                           | i==m && j/=n = Just $ makeSSwapRoot j n
+                                           | i==n && j/=m = Just $ makeSSwapRoot j m
                                            | otherwise = Nothing
     add (SignSwapRoot _ _) (SignSwapRoot _ _) = Nothing
     add (SignSwapRoot _ _) (Neg (SignSwapRoot _ _)) = Nothing
