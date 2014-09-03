@@ -1,3 +1,4 @@
+{-# LANGUAGE TypeFamilies #-}
 module Spin where
 
 import Data.Permute
@@ -9,6 +10,8 @@ import RootSystem
 data SpinRoot = SwapRoot Int Int
                 | SignSwapRoot Int Int
                 | Neg SpinRoot deriving(Eq,Ord,Show)
+
+newtype SpinSystem = SpinSystem Int deriving(Eq,Ord)
 
 makeSwapRoot pos neg | pos < neg = SwapRoot pos neg
                      | otherwise = Neg $ SwapRoot neg pos
@@ -79,7 +82,8 @@ instance Root SpinRoot where
     add (Neg root1) (Neg root2) = fmap Neg $ add root1 root2
     add root1 root2 = add root2 root1
 
-
+--instance RootSystem SpinSystem where
+--    type RootType = SpinRoot
 
 
 

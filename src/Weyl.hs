@@ -25,29 +25,14 @@ class WeylGroupElement g where
 
 
 class WeylGroup w where
+    type RootType
     type ElementType
     type RootSystemType
     one :: w -> ElementType
     generators :: (WeylGroupElement ElementType) => w -> [ElementType]
-    weylGroup :: (RootSystem RootSystemType) => RootSystemType -> w
+    weylGroup :: (RootSystem RootSystemType RootType) => RootSystemType -> w
 
-class SubWeylGroup s where
-    type GroupType
-    type SubSystemType
-    superGroup :: (WeylGroup GroupType) => s -> GroupType
-    subGroup :: s -> GroupType
-    generatorImages :: s -> [ElementType]
-    weylSubSystem :: (SubSystem SubSystemType) =>SubSystemType -> s
 
-class SubWeylGroup2 s where
-    type GroupType2
-    type SubSystemType2
-    dualSuperGroup :: (WeylGroup GroupType2) => s -> GroupType2
-    subGroup1 :: s -> GroupType2
-    generatorImages1 :: s -> [ElementType]
-    subGroup2 :: s -> GroupType2
-    generatorImages2 :: s -> [ElementType]
-    weylSubSystem2 :: (SubSystem2 SubSystemType2) => SubSystemType2 -> s
 
 
 
@@ -77,6 +62,7 @@ instance WeylGroupElement BasicWeylGroupElement where
     simpleReflection (BasicRoot v) = BasicElement $ reflectMatrix v
 
 instance WeylGroup BasicWeylGroup where
+    type RootType = BasicRoot
     type ElementType = BasicWeylGroupElement
     type RootSystemType = BasicRootSystem
     one (BasicGroup dim gens) = BasicElement $ identity dim
@@ -94,29 +80,3 @@ elements group = generate multiply (one group:gens)
 
 order :: (WeylGroup w, Ord ElementType) => w -> Integer
 order = toInteger . length . elements
-
-instance SubWeylGroup BasicWeylSubGroup where
-    type GroupType = BasicWeylGroup
-    type SubSystemType = BasicSubSystem
-    superGroup (BasicWeylSub super _ _) = super
-    subGroup (BasicWeylSub _ sub _) = sub
-    generatorImages (BasicWeylSub _ _ gens) = gens
-    weylSubSystem (BasicSubSystem super sub gens) = BasicWeylSub wSuper wSub wGens
-        where wSuper = weylGroup super
-              wSub = weylGroup sub
-              wGens = map simpleReflection gens
-
-instance SubWeylGroup2 BasicWeylSubGroup2 where
-    type GroupType2 = BasicWeylGroup
-    type SubSystemType2 = BasicSubSystem2
-    dualSuperGroup (BasicWeylSub2 super _ _ _ _) = super
-    subGroup1 (BasicWeylSub2 _ sub1 _ _ _) = sub1
-    generatorImages1 (BasicWeylSub2 _ _ _ gens1 _) = gens1
-    subGroup2 (BasicWeylSub2 _ _ sub2 _ _) = sub2
-    generatorImages2 (BasicWeylSub2 _ _ _ _ gens2) = gens2
-    weylSubSystem2 (BasicSubSystem2 super sub1 sub2 gens1 gens2) = BasicWeylSub2 wSuper wSub1 wSub2 wGens1 wGens2
-        where wSuper = weylGroup super
-              wSub1 = weylGroup sub1
-              wSub2 = weylGroup sub2
-              wGens1 = map simpleReflection gens1
-              wGens2 = map simpleReflection gens2

@@ -1,3 +1,4 @@
+{-# LANGUAGE FlexibleContexts #-}
 module SemiSimple where
 
 import Test.QuickCheck.Arbitrary
@@ -116,7 +117,7 @@ rootSystem (SemiSimple torusDim simples) = foldl basicSystemProduct torusSystem 
 
 bondNum (a,b) = 4*(dot a b * dot b a) / (dot a a * dot b b)
 
-determine :: (RootSystem r) => r -> SemiSimple
+determine :: (RootSystem r BasicRoot) => r -> SemiSimple
 determine system = fromSimples torusPart simpleParts
     where connectedComps = components connected $ simpleRoots system
           connected r1 r2 = dot r1 r2 /= 0

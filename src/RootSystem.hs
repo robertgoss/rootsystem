@@ -16,47 +16,33 @@ import           CartanAlgebra
 import           Rational
 import           Generate
 
-class Root r where
+class (Ord r) => Root r where
     reflect :: r -> r -> r
     coroot :: r -> Vector QQ
     add :: r -> r -> Maybe r
     positive :: r -> Bool
 
-class RootSystem r where
-    type RootType
-    generators :: (Root RootType) => r -> [RootType]
+class RootSystem r rt | r -> rt where
+    generators :: (Root rt) => r -> [rt]
     rank :: r -> Int
     cartanAlgebra :: r -> CartanAlgebra
 
-class SubSystem s where
-    type SystemType
-    superSystem :: (RootSystem SystemType) => s -> SystemType
-    generatorImages :: (Root RootType) => s -> [RootType]
-    subSystem :: (RootSystem SystemType) => s -> SystemType
 
-class SubSystem2 s where
-    type SystemType2
-    dualSuperSystem :: (RootSystem SystemType) => s -> SystemType
-    generatorImages1 :: (Root RootType) => s -> [RootType]
-    subSystem1 :: (RootSystem SystemType) => s -> SystemType
-    generatorImages2 :: (Root RootType) => s -> [RootType]
-    subSystem2 :: (RootSystem SystemType) => s -> SystemType
-
-rootsScan :: (RootSystem r) => r -> [([RootType],[RootType])]
+rootsScan :: (RootSystem r rt, Root rt) => r -> [([rt],[rt])]
 rootsScan = generateScan (flip reflect) . generators
 
-roots :: (RootSystem r) => r -> [RootType]
+roots :: (RootSystem r rt, Root rt) => r -> [rt]
 roots system = generate (flip reflect) $ generators system
 
-positiveRoots :: (RootSystem r) => r -> [RootType]
+positiveRoots :: (RootSystem r rt, Root rt) => r -> [rt]
 positiveRoots = filter positive . roots
 
-simpleRoots :: (RootSystem r) => r -> [RootType]
+simpleRoots :: (RootSystem r rt, Root rt) => r -> [rt]
 simpleRoots r = Set.toList $ Set.difference (Set.fromList positiveR) (Set.fromList sums)
     where positiveR = positiveRoots r
           sums = catMaybes $ [r `add` s | r<-positiveR, s<-positiveR, r > s]
 
-dim :: (RootSystem r) => r -> Int
+dim :: (RootSystem r rt, Root rt) => r -> Int
 dim system = rank system + length (roots system)
 
 newtype BasicRoot = BasicRoot (Vector QQ) deriving (Eq,Show)
@@ -88,8 +74,7 @@ dot (BasicRoot v1) (BasicRoot v2) = getElem 1 1 $ v1 * transpose v2
 isNonZero :: BasicRoot -> Bool
 isNonZero root = (dot root root) /= 0
 
-instance RootSystem BasicRootSystem where
-    type RootType = BasicRoot
+instance RootSystem BasicRootSystem BasicRoot where
     generators (BasicRootSystem _ roots) = roots
     rank (BasicRootSystem cartan _) = cartanRank cartan
     cartanAlgebra (BasicRootSystem cartan _) = cartan
@@ -116,35 +101,13 @@ basicSystemProduct system1 system2 = BasicRootSystem cartanProd rootProd
                       leftExtendRoots = map ( BasicRoot . (<|> rightPad) . coroot ) $ generators system1
                       rightExtendRoots = map (BasicRoot . (leftPad <|>) . coroot ) $ generators system2
 
-canonicalRootSystem :: (RootSystem s,Root RootType) => s -> BasicRootSystem
+canonicalRootSystem :: (RootSystem s rt, Root rt) => s -> BasicRootSystem
 canonicalRootSystem rootsystem = BasicRootSystem cartan roots
-    where   gens = generators rootsystem :: [RootType]
+    where   gens = (generators rootsystem)
             roots = map (BasicRoot . coroot) gens
             cartan = cartanAlgebra rootsystem
 
 
-instance SubSystem BasicSubSystem where
-    type SystemType = BasicRootSystem
-    superSystem (BasicSubSystem super _ _) = super
-    generatorImages (BasicSubSystem _ _ gens) = gens
-    subSystem (BasicSubSystem _ sub _) = sub
-
-fullSubSystem :: BasicRootSystem -> [BasicRoot] -> BasicSubSystem
-fullSubSystem super gens = BasicSubSystem super sub gens
-    where sub = fromRoots gens
-
-instance SubSystem2 BasicSubSystem2 where
-    type SystemType2 = BasicRootSystem
-    dualSuperSystem (BasicSubSystem2 super _ _ _ _) = super
-    generatorImages1 (BasicSubSystem2 _ _ _ _ gens2) = gens2
-    subSystem1 (BasicSubSystem2 _ sub1 _ _ _) = sub1
-    generatorImages2(BasicSubSystem2 _ _ _ gens1 _) = gens1
-    subSystem2 (BasicSubSystem2 _ _ sub2 _ _) = sub2
-
-fullSubSystem2 :: BasicRootSystem -> [BasicRoot] -> [BasicRoot] -> BasicSubSystem2
-fullSubSystem2 super gens1 gens2 = BasicSubSystem2 super sub1 sub2 gens1 gens2
-    where sub1 = fromRoots gens1
-          sub2 = fromRoots gens2
 
 
 instance Arbitrary BasicRoot where
