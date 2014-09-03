@@ -21,7 +21,7 @@ combine p@(Perm v) q@(Perm w) | n==m = Perm $ fromList (length new) 1 new
 
 
 at :: Int -> Permutation -> Int
-at n (Perm v) | (nrows v) <= n = getElem n 1 v
+at n (Perm v) | n <= (nrows v) = getElem n 1 v
               | otherwise = n
 
 swap :: Int -> Int -> Permutation -> Permutation
