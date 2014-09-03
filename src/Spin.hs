@@ -25,7 +25,6 @@ instance Ord SpinRoot where
     (SwapRoot i j) `compare` (SwapRoot m n) | i/=m = m `compare` i
                                             | otherwise = j `compare` n
     (SwapRoot i j) `compare` (SignSwapRoot m n) | i/=m = m `compare` i
-                                                | j/=n = j `compare` n
                                                 | otherwise = LT
     (SignSwapRoot i j) `compare` (SignSwapRoot m n) | i/=m = m `compare` i
                                                     | otherwise = n `compare` j
