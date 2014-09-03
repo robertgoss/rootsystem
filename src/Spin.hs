@@ -46,7 +46,7 @@ instance Root SpinRoot where
                 | j == n = makeSwapRoot i m
                 | otherwise = SignSwapRoot i j
     reflect (Neg root1) root2 = Neg $ reflect root1 root2
-    reflect root1 (Neg root2) = Neg $ reflect root1 root2
+    reflect root1 (Neg root2) = reflect root1 root2
 
     coroot (SwapRoot i j) = M.setElem 1 (1,i) $ M.setElem (-1) (1,j)  $ M.zero 1 j
     coroot (SignSwapRoot i j) = M.setElem 1 (1,i) $ M.setElem 1 (1,j)  $ M.zero 1 j
