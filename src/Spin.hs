@@ -56,7 +56,29 @@ instance Root SpinRoot where
     positive (SignSwapRoot _ _ ) = True
     positive (Neg root) = not $ positive root
 
-    add _ _ = undefined
+    add (SwapRoot i j) (SwapRoot m n) | j==m = Just $ makeSwapRoot i n
+                                      | i==n = Just $ makeSwapRoot m j
+                                      | otherwise = Nothing
+    add (SwapRoot i j) (Neg (SwapRoot m n))
+                                      | j==n = Just $ makeSwapRoot i m
+                                      | i==m = Just $ makeSwapRoot n j
+                                      | otherwise = Nothing
+    add (SwapRoot i j) (SignSwapRoot m n ) | j==m = Just $ makeSSwapRoot i n
+                                           | j==n = Just $ makeSSwapRoot i m
+                                           | otherwise = Nothing
+    add (SwapRoot i j) (Neg (SignSwapRoot m n))
+                                           | i==m = Just $ Neg $ makeSSwapRoot j n
+                                           | i==n = Just $ Neg $ makeSSwapRoot j m
+                                           | otherwise = Nothing
+    add (Neg (SwapRoot i j)) (SignSwapRoot m n)
+                                           | i==m = Just $ makeSSwapRoot j n
+                                           | i==n = Just $ makeSSwapRoot j m
+                                           | otherwise = Nothing
+    add (SignSwapRoot _ _) (SignSwapRoot _ _) = Nothing
+    add (SignSwapRoot _ _) (Neg (SignSwapRoot _ _)) = Nothing
+    add (Neg root1) (Neg root2) = fmap Neg $ add root1 root2
+    add root1 root2 = add root2 root1
+
 
 
 
