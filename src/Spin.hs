@@ -2,16 +2,33 @@
 {-# LANGUAGE TypeFamilies #-}
 module Spin where
 
-import Data.Permute
 import Test.QuickCheck.Arbitrary
 import Data.Matrix as M
 
 import RootSystem
 import CartanAlgebra
+import Permutation
 
 data SpinRoot = SwapRoot Int Int
                 | SignSwapRoot Int Int
                 | Neg SpinRoot deriving(Show)
+
+
+
+newtype SpinSystem = SpinSystem Int deriving(Eq,Ord,Show)
+
+data SpinWeylElement = SpinElement [Int] Permutation
+
+
+makeSwapRoot pos neg | pos < neg = SwapRoot pos neg
+                     | otherwise = Neg $ SwapRoot neg pos
+
+makeSSwapRoot i j | i < j = SignSwapRoot i j
+                  | otherwise = SignSwapRoot j i
+
+makeNeg (Neg root) = root
+makeNeg (root) = Neg root
+
 
 instance Eq SpinRoot where
     (SwapRoot i j) == (SwapRoot m n) = i==m && j==n
@@ -37,18 +54,6 @@ instance Ord SpinRoot where
                                 EQ -> EQ
                                 LT -> GT
                                 GT -> LT
-
-
-newtype SpinSystem = SpinSystem Int deriving(Eq,Ord,Show)
-
-makeSwapRoot pos neg | pos < neg = SwapRoot pos neg
-                     | otherwise = Neg $ SwapRoot neg pos
-
-makeSSwapRoot i j | i < j = SignSwapRoot i j
-                  | otherwise = SignSwapRoot j i
-
-makeNeg (Neg root) = root
-makeNeg (root) = Neg root
 
 instance Root SpinRoot where
     reflect (SwapRoot i j) (SwapRoot m n)
