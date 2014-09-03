@@ -16,8 +16,8 @@ combine p@(Perm v) q@(Perm w) | n==m = Perm $ fromList (length new) 1 new
                    | otherwise = combine p (Perm $ w <-> fromList (n-m) 1 [(m+1)..n])
     where n = nrows v
           m = nrows w
-          vList = toList v
-          new = map ((flip at) q) vList
+          wList = toList w
+          new = map ((flip at) p) wList
 
 
 at :: Int -> Permutation -> Int
