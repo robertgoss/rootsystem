@@ -14,7 +14,7 @@ import SemiSimple
 
 testSpin = testGroup "Spin algebras" [testSpinProp, testSpinUnit]
 
-testSpinProp = testGroup "Properties" [testSpinReflectCoroot, testSpinAddCoroot,testDetermineSpin]
+testSpinProp = testGroup "Properties" [testSpinReflectCoroot, testSpinAddCoroot, testSpinEq, testSpinCmp]
 testSpinUnit = testGroup "Unit tests" []
 
 bCoroot = BasicRoot . coroot
@@ -31,6 +31,12 @@ testSpinReflectCoroot = QC.testProperty "Coroot should push forward reflect to t
 testSpinAddCoroot = QC.testProperty "Coroot should push forward add to the add of basic roots" $ \(r1,r2) ->
     isJust ((r1::SpinRoot) `add` r2) QC.==>
     (coroot . fromJust) (r1 `add` r2) `padEqual` coroot ((bCoroot r1) `reflect` (bCoroot r2))
+
+testSpinEq =  QC.testProperty "Coroot should push forward equality to the reflect of basic roots" $ \(r1,r2) ->
+    coroot ((r1::SpinRoot) == r2) `padEqual` coroot ((bCoroot r1) == (bCoroot r2))
+
+testSpinCmp =  QC.testProperty "Coroot should push forward ordering to the reflect of basic roots" $ \(r1,r2) ->
+    coroot ((r1::SpinRoot) `compare` r2) `padEqual` coroot ((bCoroot r1) `compare` (bCoroot r2))
 
 testDetermineSpin = QC.testProperty "Determine should give the correct type for even spin system" $ \s ->
     determine (s::SpinSystem) == fromSimples 0 [D (RootSystem.rank s)]
