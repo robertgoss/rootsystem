@@ -70,9 +70,13 @@ basicDim :: BasicRoot -> Int
 basicDim (BasicRoot r) = ncols r
 
 instance Root BasicRoot where
-    reflect (BasicRoot r) (BasicRoot s) = BasicRoot $ r - scaleMatrix (2*dot/len) s
-        where dot = getElem 1 1 $ r*transpose s
-              len = getElem 1 1 $ s*transpose s
+    reflect (BasicRoot r) (BasicRoot s) = BasicRoot $ r' - scaleMatrix (2*dot/len) s'
+        where dot = getElem 1 1 $ r'*transpose s'
+              len = getElem 1 1 $ s'*transpose s'
+              r' | ncols r >= ncols s = r
+                 | otherwise = r <|> zero 1 (ncols s - ncols r)
+              s' | ncols s >= ncols r = s
+                 | otherwise = s <|> zero 1 (ncols r - ncols s)
     coroot (BasicRoot r) = r
     (BasicRoot r) `add` (BasicRoot s) = BasicRoot $ r + s
     positive r = r > (BasicRoot $ zero 1 (basicDim r))
