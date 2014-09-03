@@ -14,9 +14,9 @@ data SpinRoot = SwapRoot Int Int
                 | Neg SpinRoot deriving(Show)
 
 instance Eq SpinRoot where
-    (SwapRoot i j) (SwapRoot m n) = i==m && j==n
-    (SignSwapRoot i j) (SignSwapRoot m n) = i==m && j==n
-    (Neg root1) (Neg root2) = root1 == root2
+    (SwapRoot i j) == (SwapRoot m n) = i==m && j==n
+    (SignSwapRoot i j) == (SignSwapRoot m n) = i==m && j==n
+    (Neg root1) == (Neg root2) = root1 == root2
 
 instance Ord SpinRoot where
     (SwapRoot i j) `compare` (SwapRoot m n) | i/=m = m `compare` i
