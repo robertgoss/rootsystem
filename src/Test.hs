@@ -14,9 +14,9 @@ import Test.TestPermutation
 main = defaultMain tests
 
 tests :: TestTree
-tests = testGroup "Tests" [--testBasicRoot,
-                           --testOrthogonalBasis,
-                           --testRootSystem,
-                           --testWeylGroup,
-                           --testSpin,
+tests = testGroup "Tests" [testBasicRoot,
+                           testOrthogonalBasis,
+                           testRootSystem,
+                           testWeylGroup,
+                           testSpin,
                            testPerm]
