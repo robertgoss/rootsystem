@@ -39,4 +39,4 @@ testSpinCmp =  QC.testProperty "Coroot should push forward ordering to the refle
     ((r1::SpinRoot) `compare` r2) == ((bCoroot r1) `compare` (bCoroot r2))
 
 testDetermineSpin = QC.testProperty "Determine should give the correct type for even spin system" $ \s ->
-    determine (s::SpinSystem) == fromSimples 0 [D (RootSystem.rank s)]
+    determine (s::SpinSystem) `isomorphic` fromSimples 0 [D (RootSystem.rank s)]

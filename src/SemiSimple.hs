@@ -35,6 +35,9 @@ fromSimples torus simples = SemiSimple (torus+d2Count) (sort reducedSimples)
           exceptional x = [x]
           reducedSimples = concatMap exceptional nonTrivialSimples
 
+isomorphic :: SemiSimple -> SemiSimple -> Bool
+isomorphic (SemiSimple t1 ss1) (SemiSimple t2 ss2) = (fromSimples t1 ss1) == (fromSimples t2 ss2)
+
 isTrivial :: Simple -> Bool
 isTrivial (A 0) = True
 isTrivial (B 0) = True
