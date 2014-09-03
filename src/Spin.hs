@@ -13,7 +13,7 @@ data SpinRoot = SwapRoot Int Int
                 | SignSwapRoot Int Int
                 | Neg SpinRoot deriving(Eq,Ord,Show)
 
-newtype SpinSystem = SpinSystem Int deriving(Eq,Ord)
+newtype SpinSystem = SpinSystem Int deriving(Eq,Ord,Show)
 
 makeSwapRoot pos neg | pos < neg = SwapRoot pos neg
                      | otherwise = Neg $ SwapRoot neg pos
@@ -102,3 +102,7 @@ instance Arbitrary SpinRoot where
                        j' = (j `mod` 5) + 1
                        root = if sign then SwapRoot i' (i'+j') else SignSwapRoot i' (i'+j')
                    return $ if neg then Neg root else root
+
+instance Arbitrary SpinSystem where
+    arbitrary = do i <- arbitrary
+                   return $ SpinSystem (i `mod` 9)
