@@ -66,7 +66,7 @@ instance Arbitrary SpinRoot where
                    j <- arbitrary
                    neg <- arbitrary
                    sign <- arbitrary
-                   let i' = i `mod` 5
-                       j' = j `mod` 5
+                   let i' = (i `mod` 5) + 1
+                       j' = (j `mod` 5) + 1
                        root = if sign then SwapRoot i' (i'+j') else SignSwapRoot i' (i'+j')
                    return $ if neg then Neg root else root
