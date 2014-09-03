@@ -20,7 +20,7 @@ data SpinRoot = SwapRoot Int Int
 
 newtype SpinSystem = SpinSystem Int deriving(Eq,Ord,Show)
 
-data SpinWeylElement = SpinElement Signs Permutation
+data SpinWeylElement = SpinElement Signs Permutation deriving(Eq,Show)
 
 
 makeSwapRoot pos neg | pos < neg = SwapRoot pos neg
@@ -164,3 +164,11 @@ instance Arbitrary SpinRoot where
 instance Arbitrary SpinSystem where
     arbitrary = do i <- arbitrary
                    return $ SpinSystem (i `mod` 5)
+
+instance Arbitrary SpinWeylElement where
+    arbitrary = do roots <- arbitrary
+                   root <- arbitrary
+                   let element = simpleReflection root
+                       elements = map simpleReflection roots
+                   return $ foldl multiply element elements
+

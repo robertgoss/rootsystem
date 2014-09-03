@@ -69,3 +69,7 @@ elements group = generate multiply (one group:gens)
 
 order :: (WeylGroup w e r rt, Ord e) => w -> Integer
 order = toInteger . length . elements
+
+
+basicElement :: (WeylGroupElement e r) => e -> BasicWeylGroupElement
+basicElement = BasicElement . torusRepresentation

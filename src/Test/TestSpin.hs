@@ -8,13 +8,15 @@ import Test.Tasty.HUnit
 import Data.Matrix
 import Data.Maybe
 
+import Weyl
 import RootSystem
 import Spin
 import SemiSimple
 
 testSpin = testGroup "Spin algebras" [testSpinProp, testSpinUnit]
 
-testSpinProp = testGroup "Properties" [testSpinReflectCoroot, testSpinAddCoroot, testSpinEq, testSpinCmp, testDetermineSpin]
+testSpinProp = testGroup "Properties" [testSpinReflectCoroot, testSpinAddCoroot, testSpinEq, testSpinCmp, testDetermineSpin,
+                                       testSpinMultiplyTorus]
 testSpinUnit = testGroup "Unit tests" []
 
 bCoroot = BasicRoot . coroot
@@ -40,3 +42,6 @@ testSpinCmp =  QC.testProperty "Coroot should push forward ordering to the refle
 
 testDetermineSpin = QC.testProperty "Determine should give the correct type for even spin system" $ \s ->
     determine (s::SpinSystem) `isomorphic` fromSimples 0 [D (RootSystem.rank s)]
+
+testSpinMultiplyTorus = QC.testProperty "Torus representation should push forward  multilication to multiplication of basic elements" $ \(w1,w2) ->
+    basicElement ((w1 :: SpinWeylElement) `multiply` w2) == (basicElement w1) `multiply` (basicElement w2)
