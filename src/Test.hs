@@ -15,10 +15,10 @@ import Test.TestSigns
 main = defaultMain tests
 
 tests :: TestTree
-tests = testGroup "Tests" [--testBasicRoot,
-                           --testOrthogonalBasis,
-                           --testRootSystem,
-                           --testWeylGroup,
-                           --testSpin,
-                           --testPerm,
+tests = testGroup "Tests" [testBasicRoot,
+                           testOrthogonalBasis,
+                           testRootSystem,
+                           testWeylGroup,
+                           testSpin,
+                           testPerm,
                            testSigns]
