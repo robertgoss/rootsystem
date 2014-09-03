@@ -13,8 +13,8 @@ import Test.TestSpin
 main = defaultMain tests
 
 tests :: TestTree
-tests = testGroup "Tests" [--testBasicRoot,
-                           --testOrthogonalBasis,
-                           --testRootSystem,
-                           --testWeylGroup,
+tests = testGroup "Tests" [testBasicRoot,
+                           testOrthogonalBasis,
+                           testRootSystem,
+                           testWeylGroup,
                            testSpin]
