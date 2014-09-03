@@ -22,16 +22,10 @@ class (Root r) => WeylGroupElement g r | g -> r where
     torusRepresentation :: g -> Matrix QQ
 
 
-class WeylGroup w where
-    type RootType
-    type ElementType
-    type RootSystemType
-    one :: w -> ElementType
-    generators :: (WeylGroupElement ElementType RootType) => w -> [ElementType]
-    weylGroup :: (RootSystem RootSystemType RootType) => RootSystemType -> w
-
-
-
+class (RootSystem r rt, WeylGroupElement e rt) => WeylGroup w e r rt | w -> r, w -> e where
+    one :: w -> e
+    generators :: w -> [e]
+    weylGroup :: r -> w
 
 
 newtype BasicWeylGroupElement = BasicElement (Matrix QQ) deriving(Eq)
@@ -58,10 +52,8 @@ instance WeylGroupElement BasicWeylGroupElement BasicRoot where
 
     simpleReflection (BasicRoot v) = BasicElement $ reflectMatrix v
 
-instance WeylGroup BasicWeylGroup where
-    type RootType = BasicRoot
-    type ElementType = BasicWeylGroupElement
-    type RootSystemType = BasicRootSystem
+instance WeylGroup BasicWeylGroup BasicWeylGroupElement BasicRootSystem BasicRoot where
+
     one (BasicGroup dim gens) = BasicElement $ identity dim
 
     generators (BasicGroup _ gens) = gens
@@ -71,9 +63,9 @@ instance WeylGroup BasicWeylGroup where
                   | otherwise = ncols . coroot . head . RootSystem.generators $ rootsystem
 
 
-elements :: (WeylGroup w,Ord ElementType) => w -> [ElementType]
+elements :: (WeylGroup w e r rt,Ord e) => w -> [e]
 elements group = generate multiply (one group:gens)
     where gens = Weyl.generators group
 
-order :: (WeylGroup w, Ord ElementType) => w -> Integer
+order :: (WeylGroup w e r rt, Ord e) => w -> Integer
 order = toInteger . length . elements
