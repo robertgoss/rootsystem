@@ -71,6 +71,12 @@ instance Root BasicRoot where
 toBasic :: (Root r) => r-> BasicRoot
 toBasic = BasicRoot . coroot
 
+toBasics :: (Root r) => [r]-> [BasicRoot]
+toBasics roots = map BasicRoot paddedCoroots
+    where coroots = map coroot roots
+          dim = maximum $ map ncols coroots
+          paddedCoroots = map (\v->v <|> zero 1 (dim - ncols v)) coroots
+
 dot :: BasicRoot -> BasicRoot -> QQ
 dot (BasicRoot v1) (BasicRoot v2) = getElem 1 1 $ v1 * transpose v2
 
