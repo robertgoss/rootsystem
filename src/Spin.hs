@@ -1,3 +1,4 @@
+{-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE TypeFamilies #-}
 module Spin where
 
@@ -6,6 +7,7 @@ import Test.QuickCheck.Arbitrary
 import Data.Matrix as M
 
 import RootSystem
+import CartanAlgebra
 
 data SpinRoot = SwapRoot Int Int
                 | SignSwapRoot Int Int
@@ -82,8 +84,12 @@ instance Root SpinRoot where
     add (Neg root1) (Neg root2) = fmap Neg $ add root1 root2
     add root1 root2 = add root2 root1
 
---instance RootSystem SpinSystem where
---    type RootType = SpinRoot
+instance RootSystem SpinSystem SpinRoot where
+    generators (SpinSystem 0) = []
+    generators (SpinSystem 1) = []
+    generators (SpinSystem n) = SignSwapRoot 1 2 : [SwapRoot i (i+1) | i<-[1..(n-1)]]
+    rank (SpinSystem n) = n
+    cartanAlgebra (SpinSystem n) = fullSubAlgebra n
 
 
 
