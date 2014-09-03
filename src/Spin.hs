@@ -27,8 +27,8 @@ instance Ord SpinRoot where
     (SwapRoot i j) `compare` (SignSwapRoot m n) | i/=m = m `compare` i
                                                 | j/=n = j `compare` n
                                                 | otherwise = LT
-    (SignSwapRoot i j) `compare` (SignSwapRoot m n) | i/=m = i `compare` m
-                                                    | otherwise = j `compare` n
+    (SignSwapRoot i j) `compare` (SignSwapRoot m n) | i/=m = m `compare` i
+                                                    | otherwise = n `compare` j
     (Neg root1) `compare` (Neg root2) = case root1 `compare` root2 of
 			                  EQ -> EQ
 					  LT -> GT
