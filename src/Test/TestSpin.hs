@@ -14,7 +14,7 @@ import SemiSimple
 
 testSpin = testGroup "Spin algebras" [testSpinProp, testSpinUnit]
 
-testSpinProp = testGroup "Properties" [testSpinReflectCoroot, testSpinAddCoroot, testSpinEq, testSpinCmp]
+testSpinProp = testGroup "Properties" [testSpinReflectCoroot, testSpinAddCoroot, testSpinEq, testSpinCmp, testDetermineSpin]
 testSpinUnit = testGroup "Unit tests" []
 
 bCoroot = BasicRoot . coroot
