@@ -5,6 +5,7 @@ module Spin where
 import Test.QuickCheck.Arbitrary
 import Data.Matrix as M
 
+import Rational
 import RootSystem
 import CartanAlgebra
 import Permutation
@@ -17,7 +18,7 @@ data SpinRoot = SwapRoot Int Int
 
 newtype SpinSystem = SpinSystem Int deriving(Eq,Ord,Show)
 
-data SpinWeylElement = SpinElement [Int] Permutation
+data SpinWeylElement = SpinElement (Vector QQ) Permutation
 
 
 makeSwapRoot pos neg | pos < neg = SwapRoot pos neg

@@ -10,13 +10,15 @@ import Test.TestCartanAlgebra
 import Test.TestSemiSimple
 import Test.TestSpin
 import Test.TestPermutation
+import Test.TestSigns
 
 main = defaultMain tests
 
 tests :: TestTree
-tests = testGroup "Tests" [testBasicRoot,
-                           testOrthogonalBasis,
-                           testRootSystem,
-                           testWeylGroup,
-                           testSpin,
-                           testPerm]
+tests = testGroup "Tests" [--testBasicRoot,
+                           --testOrthogonalBasis,
+                           --testRootSystem,
+                           --testWeylGroup,
+                           --testSpin,
+                           --testPerm,
+                           testSigns]
