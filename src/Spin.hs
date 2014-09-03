@@ -105,4 +105,4 @@ instance Arbitrary SpinRoot where
 
 instance Arbitrary SpinSystem where
     arbitrary = do i <- arbitrary
-                   return $ SpinSystem (i `mod` 9)
+                   return $ SpinSystem (i `mod` 5)
