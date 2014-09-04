@@ -100,7 +100,8 @@ instance Root SpinRoot where
 
     add root1 root2 | reflected == root1 = Nothing
                     | reflected == RootSystem.negate root1 = Nothing
-                    | reflected < root1 = Nothing
+                    | positive root2 && reflected < root1 = Nothing
+                    | (not $ positive root2) && reflected > root1 = Nothing
                     | otherwise = Just reflected
         where reflected = root1 `reflect` (root2)
 
