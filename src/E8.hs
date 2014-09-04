@@ -89,7 +89,7 @@ instance Root E8Root where
     s@(E8SRoot sign1) `reflect` (E8SRoot sign2) | null disagree = E8SRoot $ neg $ pad 8 sign1
                                                 | length disagree == 2 = E8SpinRoot $ root2 disagree
                                                 | length disagree == 4 = s
-                                                | length disagree == 6 = s `reflect` (E8SRoot (neg $ pad 8 sign1))
+                                                | length disagree == 6 = s `reflect` (E8SRoot (neg $ pad 8 sign2))
                                                 | otherwise =  E8SRoot $ neg $ pad 8 sign1
         where disagree = disagreement sign1 sign2
               root2 disagree2 = if negative then (Neg root) else root
