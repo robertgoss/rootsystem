@@ -23,7 +23,7 @@ neg :: Signs -> Signs
 neg (Signs v) = Signs $ scaleMatrix (-1) v
 
 data E8Root = E8SpinRoot SpinRoot
-              | E8SRoot Signs deriving(Eq,Ord,Show)
+              | E8SRoot Signs deriving(Show)
 
 
 data E8System = E8System
@@ -35,6 +35,27 @@ data E8WeylElement = E8Type1 SpinWeylElement
                      | E8Type3' Signs SpinWeylElement
 
 data E8Weyl = E8Weyl
+
+instance Eq E8Root where
+    (E8SpinRoot root1) == (E8SpinRoot root2) = root1 == root2
+    (E8SRoot sign1) == (E8SRoot sign2) = (pad 8 sign1) == (pad 8 sign2)
+    (E8SRoot _) == (E8SpinRoot _) = False
+    (E8SpinRoot _) == (E8SRoot _) = False
+
+instance Ord E8Root where
+    (E8SpinRoot root1) `compare` (E8SpinRoot root2) = root1 `compare` root2
+    (E8SpinRoot (SwapRoot i j)) `compare` (E8SRoot sign) | i==1 = GT
+                                                         | at 1 sign == (-1) = GT
+                                                         | otherwise = LT
+    (E8SpinRoot (SignSwapRoot i j)) `compare` (E8SRoot sign) | i==1 = GT
+                                                             | at 1 sign == (-1) = GT
+                                                             | otherwise = LT
+    (E8SpinRoot (Neg root)) `compare` s = case s `compare` (E8SpinRoot root) of
+                                                    EQ -> EQ
+                                                    LT -> GT
+                                                    GT -> LT
+    (E8SRoot sign1) `compare` (E8SRoot sign2) = sign1 `compare` sign2
+    s1 `compare` s2 = s2 `compare` s1
 
 instance Root E8Root where
     coroot (E8SpinRoot root) = extendTo 0 1 8 $ coroot root
