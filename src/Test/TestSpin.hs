@@ -16,7 +16,7 @@ import SemiSimple
 testSpin = testGroup "Spin algebras" [testSpinProp, testSpinUnit]
 
 testSpinProp = testGroup "Properties" [testSpinReflectCoroot, testSpinAddCoroot, testSpinEq, testSpinCmp, testDetermineSpin,
-                                       testSpinMultiplyTorus]
+                                       testSpinMultiplyTorus, testSpinInverse]
 testSpinUnit = testGroup "Unit tests" []
 
 bCoroot = BasicRoot . coroot
@@ -45,3 +45,6 @@ testDetermineSpin = QC.testProperty "Determine should give the correct type for 
 
 testSpinMultiplyTorus = QC.testProperty "Torus representation should push forward  multilication to multiplication of basic elements" $ \(w1,w2) ->
     basicElement ((w1 :: SpinWeylElement) `multiply` w2) == (basicElement w1) `multiply` (basicElement w2)
+
+testSpinInverse = QC.testProperty "Inverse pushes forward to basic root inverse" $ \w ->
+    basicElement (inverse (w::SpinWeylElement)) == inverse (basicElement w) 
