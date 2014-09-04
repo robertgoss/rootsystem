@@ -50,6 +50,6 @@ inverse (Perm v) = Perm $ fromList n 1 $ iList
 
 instance Arbitrary Permutation where
     arbitrary = do swaps' <- arbitrary
-                   let swaps = map (\(i,j) -> ((i `mod` 9)+ 1, (j `mod` 9) + 1)) swaps'
+                   let swaps = map (\(i,j) -> ((i `mod` 8)+ 1, (j `mod` 8) + 1)) swaps'
                    return $ foldl swapTup (Permutation.identity 1) swaps
          where swapTup perm (i,j) = swap i j perm
