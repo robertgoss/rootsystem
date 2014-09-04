@@ -50,10 +50,7 @@ instance Ord E8Root where
     (E8SpinRoot (SignSwapRoot i j)) `compare` (E8SRoot sign) | i==1 = GT
                                                              | at 1 sign == (-1) = GT
                                                              | otherwise = LT
-    (E8SpinRoot (Neg root)) `compare` s = case s `compare` (E8SpinRoot root) of
-                                                    EQ -> EQ
-                                                    LT -> GT
-                                                    GT -> LT
+    (E8SpinRoot (Neg root)) `compare` s = s `compare` (E8SpinRoot root)
     (E8SRoot sign1) `compare` (E8SRoot sign2) = sign1 `compare` sign2
     s1 `compare` s2 = case s2 `compare` s1 of
                             EQ -> EQ
