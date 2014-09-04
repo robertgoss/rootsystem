@@ -84,11 +84,11 @@ instance Root E8Root where
                                                                | otherwise                   = E8SRoot $ dSwap i j $ neg $ pad 8 $ sign
     (E8SpinRoot (Neg root)) `reflect` s@(E8SRoot sign) = RootSystem.negate $ (E8SpinRoot root) `reflect` s
 
-    s@(E8SRoot sign1) `reflect` (E8SRoot sign2) | null disagree = E8SRoot $ neg sign1
+    s@(E8SRoot sign1) `reflect` (E8SRoot sign2) | null disagree = E8SRoot $ neg $ pad 8 sign1
                                                 | length disagree == 2 = E8SpinRoot $ root2 disagree
                                                 | length disagree == 4 = s
-                                                | length disagree == 6 = s `reflect` (E8SRoot (neg sign1))
-                                                | otherwise =  E8SRoot $ neg sign1
+                                                | length disagree == 6 = s `reflect` (E8SRoot (neg $ pad 8 sign1))
+                                                | otherwise =  E8SRoot $ neg $ pad 8 sign1
         where disagree = disagreement sign1 sign2
               root2 disagree2 = if negative then (Neg root) else root
                       where [i,j] = disagree
