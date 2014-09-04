@@ -70,7 +70,7 @@ instance Root BasicRoot where
         where r' | ncols r >= ncols s = r
                  | otherwise = r <|> zero 1 (ncols s - ncols r)
               s' | ncols s >= ncols r = s
-                 | otherwise = r <|> zero 1 (ncols r - ncols s)
+                 | otherwise = s <|> zero 1 (ncols r - ncols s)
     positive r = r > (BasicRoot $ zero 1 (basicDim r))
     negate (BasicRoot v) = BasicRoot $ scaleMatrix (-1) v
 
