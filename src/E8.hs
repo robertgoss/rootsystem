@@ -42,6 +42,9 @@ instance Eq E8Root where
     (E8SRoot _) == (E8SpinRoot _) = False
     (E8SpinRoot _) == (E8SRoot _) = False
 
+negSign (Neg root) = negSign root
+negSign root = False
+
 instance Ord E8Root where
     (E8SpinRoot root1) `compare` (E8SpinRoot root2) = root1 `compare` root2
     (E8SpinRoot (SwapRoot i j)) `compare` (E8SRoot sign) | i==1 = GT
@@ -50,7 +53,12 @@ instance Ord E8Root where
     (E8SpinRoot (SignSwapRoot i j)) `compare` (E8SRoot sign) | i==1 = GT
                                                              | at 1 sign == (-1) = GT
                                                              | otherwise = LT
-    (E8SpinRoot (Neg root)) `compare` s = s `compare` (E8SpinRoot root)
+    (E8SpinRoot (Neg (SwapRoot i j))) `compare` (E8SRoot sign) | i==1 = LT
+                                                               | at 1 sign == (-1) = LT
+                                                               | otherwise = GT
+    (E8SpinRoot (Neg (SignSwapRoot i j))) `compare` (E8SRoot sign) | i==1 = LT
+                                                                   | at 1 sign == (-1) = LT
+                                                                   | otherwise = GT
     (E8SRoot sign1) `compare` (E8SRoot sign2) = sign1 `compare` sign2
     s1 `compare` s2 = case s2 `compare` s1 of
                             EQ -> EQ
