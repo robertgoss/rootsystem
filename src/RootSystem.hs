@@ -66,7 +66,11 @@ instance Root BasicRoot where
               s' | ncols s >= ncols r = s
                  | otherwise = s <|> zero 1 (ncols r - ncols s)
     coroot (BasicRoot r) = r
-    (BasicRoot r) `add` (BasicRoot s) = Just . BasicRoot $ r + s
+    (BasicRoot r) `add` (BasicRoot s) = Just . BasicRoot $ r' + s'
+        where r' | ncols r >= ncols s = r
+                 | otherwise = r <|> zero 1 (ncols s - ncols r)
+              s' | ncols s >= ncols r = s
+                 | otherwise = r <|> zero 1 (ncols r - ncols s)
     positive r = r > (BasicRoot $ zero 1 (basicDim r))
     negate (BasicRoot v) = BasicRoot $ scaleMatrix (-1) v
 
