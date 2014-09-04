@@ -51,7 +51,7 @@ instance WeylGroupElement BasicWeylGroupElement BasicRoot where
                                                  | otherwise = BasicElement $ m1 * (mpad (d1-d2) m2)
         where d1 = nrows m1
               d2 = nrows m2
-              mpad delta matrix = joinBlocks (matrix, zero delta size, zero size delta, identity delta)
+              mpad delta matrix = joinBlocks (matrix, zero size delta, zero delta size, identity delta)
                 where size = nrows matrix
 
     torusRepresentation (BasicElement m) = m
