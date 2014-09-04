@@ -39,3 +39,4 @@ testE8Eq =  QC.testProperty "Coroot should push forward equality to the eq of ba
 testE8Cmp =  QC.testProperty "Coroot should push forward ordering to the order of basic roots" $ \(r1,r2) ->
     ((r1::E8Root) `compare` r2) == ((bCoroot r1) `compare` (bCoroot r2))
 
+testDetermineE8 = testCase "Determine should give the correct type for e8 system" $ determine (E8System) @?= fromSimples 0 [E8]

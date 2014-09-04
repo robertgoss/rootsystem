@@ -1,3 +1,4 @@
+{-# LANGUAGE MultiParamTypeClasses #-}
 module E8 where
 
 import Data.Matrix
@@ -108,7 +109,10 @@ instance Root E8Root where
                     | otherwise = Just reflected
         where reflected = root1 `reflect` root2
 
-
+instance RootSystem E8System E8Root where
+    rank _ = 8
+    cartanAlgebra _ = fullSubAlgebra 8
+    generators _ = E8SRoot (Signs.identity 8) : (map E8SpinRoot $ RootSystem.generators $ SpinSystem 7)
 
 instance Arbitrary E8Root where
     arbitrary = do rootType <- arbitrary
