@@ -60,7 +60,7 @@ permute p@(P.Perm v) s@(Signs w) | n == m = Signs $ fromList m 1 $ map ((flip at
           n = nrows w
 
 disagreement :: Signs -> Signs -> [Int]
-disagreement s@(Signs v) t@(Signs w) | m==n = map snd $ filter (\((a,b),i)->a==b) $ zip signs [1..]
+disagreement s@(Signs v) t@(Signs w) | m==n = map snd $ filter (\((a,b),i)->a/=b) $ zip signs [1..]
                                      | m < n = disagreement (pad n s) t
                                      | otherwise = disagreement s (pad m t)
     where signs = zip (toList v) (toList w)
