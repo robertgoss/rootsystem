@@ -54,11 +54,11 @@ instance Ord E8Root where
                                                              | at 1 sign == (-1) = GT
                                                              | otherwise = LT
     (E8SpinRoot (Neg (SwapRoot i j))) `compare` (E8SRoot sign) | i==1 = LT
-                                                               | at 1 sign == (-1) = LT
-                                                               | otherwise = GT
+                                                               | at 1 sign == (-1) = GT
+                                                               | otherwise = LT
     (E8SpinRoot (Neg (SignSwapRoot i j))) `compare` (E8SRoot sign) | i==1 = LT
-                                                                   | at 1 sign == (-1) = LT
-                                                                   | otherwise = GT
+                                                                   | at 1 sign == (-1) = GT
+                                                                   | otherwise = LT
     (E8SRoot sign1) `compare` (E8SRoot sign2) = sign1 `compare` sign2
     s1 `compare` s2 = case s2 `compare` s1 of
                             EQ -> EQ
