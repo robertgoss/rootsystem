@@ -79,8 +79,10 @@ instance Root E8Root where
     root1 `reflect` (E8SpinRoot (Neg root2)) = root1 `reflect` (E8SpinRoot root2)
 
     r@(E8SpinRoot (SwapRoot i j)) `reflect` (E8SRoot sign) | (at i sign) == (at j sign) = r
+                                                           | (at i sign) == -1          = E8SRoot $ dSwap i j sign
                                                            | otherwise                  = E8SRoot $ dSwap i j $ neg $ pad 8 sign
     r@(E8SpinRoot (SignSwapRoot i j)) `reflect` (E8SRoot sign) | (at i sign) == -(at j sign) = r
+                                                               | (at i sign) == -1           = E8SRoot $ dSwap i j sign
                                                                | otherwise                   = E8SRoot $ dSwap i j $ neg $ pad 8 $ sign
     (E8SpinRoot (Neg root)) `reflect` s@(E8SRoot sign) = RootSystem.negate $ (E8SpinRoot root) `reflect` s
 
