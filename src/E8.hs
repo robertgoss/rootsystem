@@ -71,5 +71,6 @@ instance Root E8Root where
 
     add root1 root2 | reflected == root2 = Nothing
                     | reflected == RootSystem.negate root2 = Nothing
+                    | reflected < root2 = Nothing
                     | otherwise = Just reflected
-        where reflected = root1 `reflect` (RootSystem.negate root2)
+        where reflected = root1 `reflect` root2
