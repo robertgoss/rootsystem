@@ -37,8 +37,8 @@ at i (Signs v) | nrows v >= i = getElem i 1 v
 
 permute :: P.Permutation -> Signs -> Signs
 permute p@(P.Perm v) s@(Signs w) | n == m = Signs $ fromList m 1 $ map ((flip at) s) vList
-                               | n < m = permute (P.pad m p) s
-                               | otherwise = permute p (pad n s)
+                                 | n > m = permute (P.pad m p) s
+                                 | otherwise = permute p (pad n s)
     where vList = toList v
           m = nrows v
           n = nrows w
