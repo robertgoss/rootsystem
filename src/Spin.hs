@@ -98,28 +98,13 @@ instance Root SpinRoot where
     positive (SignSwapRoot _ _ ) = True
     positive (Neg root) = not $ positive root
 
-    add (SwapRoot i j) (SwapRoot m n) | j==m && i/=n = Just $ makeSwapRoot i n
-                                      | i==n && j/=m = Just $ makeSwapRoot m j
-                                      | otherwise = Nothing
-    add (SwapRoot i j) (Neg (SwapRoot m n))
-                                      | j==n && i/=m = Just $ makeSwapRoot i m
-                                      | i==m && j/=n = Just $ makeSwapRoot n j
-                                      | otherwise = Nothing
-    add (SwapRoot i j) (SignSwapRoot m n ) | j==m && i/=n = Just $ makeSSwapRoot i n
-                                           | j==n && i/=m = Just $ makeSSwapRoot i m
-                                           | otherwise = Nothing
-    add (SwapRoot i j) (Neg (SignSwapRoot m n))
-                                           | i==m && j/=n = Just $ Neg $ makeSSwapRoot j n
-                                           | i==n && j/=m = Just $ Neg $ makeSSwapRoot j m
-                                           | otherwise = Nothing
-    add (Neg (SwapRoot i j)) (SignSwapRoot m n)
-                                           | i==m && j/=n = Just $ makeSSwapRoot j n
-                                           | i==n && j/=m = Just $ makeSSwapRoot j m
-                                           | otherwise = Nothing
-    add (SignSwapRoot _ _) (SignSwapRoot _ _) = Nothing
-    add (SignSwapRoot _ _) (Neg (SignSwapRoot _ _)) = Nothing
-    add (Neg root1) (Neg root2) = fmap Neg $ add root1 root2
-    add root1 root2 = add root2 root1
+    add root1 root2 | reflected == root2 = Nothing
+                    | reflected == RootSystem.negate root2 = Nothing
+                    | otherwise = Just reflected
+        where reflected = root1 `reflect` (RootSystem.negate root2)
+
+    negate (Neg root) = root
+    negate root = Neg root
 
 instance RootSystem SpinSystem SpinRoot where
     generators (SpinSystem 0) = []
@@ -150,6 +135,7 @@ instance WeylGroupElement SpinWeylElement SpinRoot where
         where perm = swap i j $ Permutation.identity 1
               sign = dSwap i j $ Signs.identity (max i j)
     simpleReflection (Neg root) = simpleReflection root
+
 
 instance Arbitrary SpinRoot where
     arbitrary = do i <- arbitrary

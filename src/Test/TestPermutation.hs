@@ -9,8 +9,6 @@ import Data.Matrix
 
 import Permutation
 
-
-
 testPerm = testGroup "Permutations" [testPermProp, testPermUnit]
 
 testPermProp = testGroup "Properties" [testIdentityCombine, testCombineMatrix, testInverseR, testInverseL]

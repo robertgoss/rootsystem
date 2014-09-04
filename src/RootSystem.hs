@@ -21,6 +21,7 @@ class (Ord r) => Root r where
     coroot :: r -> Vector QQ
     add :: r -> r -> Maybe r
     positive :: r -> Bool
+    negate :: r -> r
 
 class (Root rt) => RootSystem r rt | r -> rt where
     generators :: (Root rt) => r -> [rt]
@@ -67,6 +68,7 @@ instance Root BasicRoot where
     coroot (BasicRoot r) = r
     (BasicRoot r) `add` (BasicRoot s) = Just . BasicRoot $ r + s
     positive r = r > (BasicRoot $ zero 1 (basicDim r))
+    negate (BasicRoot v) = BasicRoot $ scaleMatrix (-1) v
 
 toBasic :: (Root r) => r-> BasicRoot
 toBasic = BasicRoot . coroot
