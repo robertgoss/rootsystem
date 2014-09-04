@@ -99,7 +99,7 @@ instance Root E8Root where
                             root = if sameSign then SignSwapRoot i j else SwapRoot i j
 
     negate (E8SpinRoot root) = E8SpinRoot $ RootSystem.negate root
-    negate (E8SRoot sign) = E8SRoot $ neg sign
+    negate (E8SRoot sign) = E8SRoot $ neg $ pad 8 sign
 
     add root1 root2 | reflected == root1 = Nothing
                     | reflected == RootSystem.negate root1 = Nothing
