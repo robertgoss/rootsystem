@@ -95,7 +95,7 @@ instance Root E8Root where
               root2 disagree2 = if negative then (Neg root) else root
                       where [i,j] = disagree
                             sameSign = at i sign2 == at j sign2
-                            negative = at i sign2 == -1
+                            negative = at i sign1 == -1
                             root = if sameSign then SignSwapRoot i j else SwapRoot i j
 
     negate (E8SpinRoot root) = E8SpinRoot $ RootSystem.negate root
