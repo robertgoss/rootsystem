@@ -98,9 +98,9 @@ instance Root SpinRoot where
     positive (SignSwapRoot _ _ ) = True
     positive (Neg root) = not $ positive root
 
-    add root1 root2 | reflected == root2 = Nothing
-                    | reflected == RootSystem.negate root2 = Nothing
-                    | reflected < root2 = Nothing
+    add root1 root2 | reflected == root1 = Nothing
+                    | reflected == RootSystem.negate root1 = Nothing
+                    | reflected < root1 = Nothing
                     | otherwise = Just reflected
         where reflected = root1 `reflect` (root2)
 

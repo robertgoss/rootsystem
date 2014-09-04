@@ -69,8 +69,8 @@ instance Root E8Root where
     negate (E8SpinRoot root) = E8SpinRoot $ RootSystem.negate root
     negate (E8SRoot sign) = E8SRoot $ neg sign
 
-    add root1 root2 | reflected == root2 = Nothing
-                    | reflected == RootSystem.negate root2 = Nothing
-                    | reflected < root2 = Nothing
+    add root1 root2 | reflected == root1 = Nothing
+                    | reflected == RootSystem.negate root1 = Nothing
+                    | reflected < root1 = Nothing
                     | otherwise = Just reflected
         where reflected = root1 `reflect` root2
