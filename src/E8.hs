@@ -74,20 +74,20 @@ instance Root E8Root where
 
     (E8SpinRoot root1) `reflect` (E8SpinRoot root2) = E8SpinRoot $ root1 `reflect` root2
 
-    (E8SpinRoot (SwapRoot i j)) `reflect` (E8SRoot sign) = E8SRoot $ exchange i j $ sign
-    (E8SpinRoot (SignSwapRoot i j)) `reflect` (E8SRoot sign) = E8SRoot $ dSwap i j $ exchange i j $ sign
-    (E8SpinRoot (Neg root1)) `reflect` root2 = (E8SpinRoot root1) `reflect` root2
+    (E8SRoot sign) `reflect` (E8SpinRoot (SwapRoot i j)) = E8SRoot $ exchange i j $ sign
+    (E8SRoot sign) `reflect` (E8SpinRoot (SignSwapRoot i j)) = E8SRoot $ dSwap i j $ exchange i j $ sign
+    root1 `reflect` (E8SpinRoot (Neg root2)) = root1 `reflect` (E8SpinRoot root2)
 
-    (E8SRoot sign) `reflect` r@(E8SpinRoot (SwapRoot i j)) | (at i sign) == (at j sign) = r
+    r@(E8SpinRoot (SwapRoot i j)) `reflect` (E8SRoot sign) | (at i sign) == (at j sign) = r
                                                            | otherwise                  = E8SRoot $ dSwap i j $ neg sign
-    (E8SRoot sign) `reflect` r@(E8SpinRoot (SignSwapRoot i j)) | (at i sign) == -(at j sign) = r
+    r@(E8SpinRoot (SignSwapRoot i j)) `reflect` (E8SRoot sign) | (at i sign) == -(at j sign) = r
                                                                | otherwise                   = E8SRoot $ dSwap i j $ neg sign
-    s@(E8SRoot sign) `reflect` (E8SpinRoot (Neg root)) = RootSystem.negate $ s `reflect` (E8SpinRoot root)
+    (E8SpinRoot (Neg root)) `reflect` s@(E8SRoot sign) = RootSystem.negate $ (E8SpinRoot root) `reflect` s
 
-    (E8SRoot sign1) `reflect` s@(E8SRoot sign2) | null disagree = E8SRoot $ neg sign1
+    s@(E8SRoot sign1) `reflect` (E8SRoot sign2) | null disagree = E8SRoot $ neg sign1
                                                 | length disagree == 2 = E8SpinRoot $ root2 disagree
                                                 | length disagree == 4 = s
-                                                | length disagree == 6 = (E8SRoot (neg sign1)) `reflect` s
+                                                | length disagree == 6 = s `reflect` (E8SRoot (neg sign1))
                                                 | otherwise =  E8SRoot $ neg sign1
         where disagree = disagreement sign1 sign2
               root2 disagree2 = if negative then (Neg root) else root
