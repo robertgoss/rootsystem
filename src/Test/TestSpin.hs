@@ -34,10 +34,10 @@ testSpinAddCoroot = QC.testProperty "Coroot should push forward add to the add o
     isJust ((r1::SpinRoot) `add` r2) QC.==>
     (coroot . fromJust) (r1 `add` r2) `padEqual` (coroot .fromJust) ((bCoroot r1) `add` (bCoroot r2))
 
-testSpinEq =  QC.testProperty "Coroot should push forward equality to the reflect of basic roots" $ \(r1,r2) ->
+testSpinEq =  QC.testProperty "Coroot should push forward equality to the eq of basic roots" $ \(r1,r2) ->
     ((r1::SpinRoot) == r2) == ((bCoroot r1) == (bCoroot r2))
 
-testSpinCmp =  QC.testProperty "Coroot should push forward ordering to the reflect of basic roots" $ \(r1,r2) ->
+testSpinCmp =  QC.testProperty "Coroot should push forward ordering to the order of basic roots" $ \(r1,r2) ->
     ((r1::SpinRoot) `compare` r2) == ((bCoroot r1) `compare` (bCoroot r2))
 
 testDetermineSpin = QC.testProperty "Determine should give the correct type for even spin system" $ \s ->

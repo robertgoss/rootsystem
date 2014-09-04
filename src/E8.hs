@@ -1,6 +1,7 @@
 module E8 where
 
 import Data.Matrix
+import Test.QuickCheck.Arbitrary
 
 import RootSystem
 import Weyl
@@ -22,7 +23,7 @@ neg :: Signs -> Signs
 neg (Signs v) = Signs $ scaleMatrix (-1) v
 
 data E8Root = E8SpinRoot SpinRoot
-              | E8SRoot Signs deriving(Eq,Ord)
+              | E8SRoot Signs deriving(Eq,Ord,Show)
 
 
 data E8System = E8System
@@ -75,3 +76,11 @@ instance Root E8Root where
                     | (not $ positive root2) && reflected > root1 = Nothing
                     | otherwise = Just reflected
         where reflected = root1 `reflect` root2
+
+
+
+instance Arbitrary E8Root where
+    arbitrary = do rootType <- arbitrary
+                   spin <- arbitrary
+                   sign <- arbitrary
+                   return $ if rootType then E8SpinRoot spin else E8SRoot sign

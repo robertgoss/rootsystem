@@ -73,6 +73,6 @@ toMatrix s@(Signs v) = fromLists [[if i==j then fromIntegral (at i s) else 0 | i
 
 instance Arbitrary Signs where
     arbitrary = do swaps' <- arbitrary
-                   let swaps = map (\(i,j) -> ((i `mod` 9)+ 1, (j `mod` 9) + 1)) swaps'
+                   let swaps = map (\(i,j) -> ((i `mod` 8)+ 1, (j `mod` 8) + 1)) swaps'
                    return $ foldl swapTup (Signs.identity 1) swaps
          where swapTup perm (i,j) = dSwap i j perm
