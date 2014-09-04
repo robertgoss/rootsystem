@@ -32,7 +32,7 @@ testSpinReflectCoroot = QC.testProperty "Coroot should push forward reflect to t
 
 testSpinAddCoroot = QC.testProperty "Coroot should push forward add to the add of basic roots" $ \(r1,r2) ->
     isJust ((r1::SpinRoot) `add` r2) QC.==>
-    (coroot . fromJust) (r1 `add` r2) `padEqual` coroot ((bCoroot r1) `reflect` (bCoroot r2))
+    (coroot . fromJust) (r1 `add` r2) `padEqual` (coroot .fromJust) ((bCoroot r1) `add` (bCoroot r2))
 
 testSpinEq =  QC.testProperty "Coroot should push forward equality to the reflect of basic roots" $ \(r1,r2) ->
     ((r1::SpinRoot) == r2) == ((bCoroot r1) == (bCoroot r2))
