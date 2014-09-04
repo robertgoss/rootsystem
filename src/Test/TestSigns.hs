@@ -7,7 +7,7 @@ import Test.Tasty.HUnit
 
 import Signs
 
-testSigns = testGroup "Spin algebras" [testSignsProp, testSignsUnit]
+testSigns = testGroup "Signs" [testSignsProp, testSignsUnit]
 
 testSignsProp = testGroup "Properties" [testCombineToMatrix, testIdentityUnit]
 testSignsUnit = testGroup "Unit tests" [testSwap1, testSwap2, testSwap3, testAtOver]
