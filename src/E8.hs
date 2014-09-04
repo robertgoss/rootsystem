@@ -55,7 +55,10 @@ instance Ord E8Root where
                                                     LT -> GT
                                                     GT -> LT
     (E8SRoot sign1) `compare` (E8SRoot sign2) = sign1 `compare` sign2
-    s1 `compare` s2 = s2 `compare` s1
+    s1 `compare` s2 = case s2 `compare` s1 of
+                            EQ -> EQ
+                            GT -> LT
+                            LT -> GT
 
 instance Root E8Root where
     coroot (E8SpinRoot root) = extendTo 0 1 8 $ coroot root
