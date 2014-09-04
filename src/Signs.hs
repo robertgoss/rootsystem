@@ -9,7 +9,11 @@ import qualified Permutation as P
 newtype Signs = Signs (Matrix Int) deriving (Eq,Show)
 
 instance Ord Signs where
-    (Signs v) `compare` (Signs w) = (toList v) `compare` (toList w)
+    (Signs v) `compare` (Signs w) = v' `compare` w'
+        where v' = toList v ++ replicate (n-m) 1
+              w' = toList w ++ replicate (m-n) 1
+              m = nrows v
+              n = nrows w
 
 identity :: Int -> Signs
 identity n = Signs $ fromList n 1 $ replicate n 1
