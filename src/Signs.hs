@@ -75,6 +75,8 @@ toMatrix :: Signs -> Matrix QQ
 toMatrix s@(Signs v) = fromLists [[if i==j then fromIntegral (at i s) else 0 | i<-[1..n] ] | j<-[1..n]]
     where n= nrows v
 
+signType (Signs v) = length $ filter (==(-1)) $ toList v
+
 instance Arbitrary Signs where
     arbitrary = do swaps' <- arbitrary
                    let swaps = map (\(i,j) -> ((i `mod` 8)+ 1, (j `mod` 8) + 1)) swaps'
