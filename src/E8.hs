@@ -10,6 +10,7 @@ import Signs
 import Spin
 import Rational
 import CartanAlgebra
+import qualified Permutation as Perm
 
 type Signs0 = Signs
 type Signs2 = Signs
@@ -113,6 +114,39 @@ instance RootSystem E8System E8Root where
     rank _ = 8
     cartanAlgebra _ = fullSubAlgebra 8
     generators _ = E8SRoot (Signs.identity 8) : (map E8SpinRoot $ RootSystem.generators $ SpinSystem 7)
+
+sMatrix = (Data.Matrix.identity 8) - fromList 8 8 (replicate 64 (1/4)) 
+
+twist :: Signs4 -> Signs2
+twist sign = dSwap firstPos firstNeg $ Signs.identity n
+    where (Signs v) = sign
+          n = nrows v
+          firstPos = head $ filter (\i->at i sign==1) [1..]
+          firstNeg = head $ filter (\i->at i sign==1) [1..]
+
+
+instance WeylGroupElement E8WeylElement E8Root where
+
+    simpleReflection (E8SpinRoot root) = E8Type1 $ simpleReflection root
+    simpleReflection (E8SRoot sign) = E8Type2 plusSign $ if posSign then one else negOne
+        where posSign = at 1 sign == 1
+              plusSign = if posSign then sign else neg $ pad 8 sign
+              one = SpinElement (Signs.identity 8) (Perm.identity 8)
+              negOne = SpinElement (neg $ Signs.identity 8) (Perm.identity 8)
+
+    torusRepresentation (E8Type1 wspin) = torusRepresentation (spad 8 wspin)
+    torusRepresentation (E8Type2 sign wspin) = signMatrix * sMatrix * spinMatrix
+        where spinMatrix = torusRepresentation (spad 8 wspin)
+              signMatrix = toMatrix (pad 8 sign)
+    torusRepresentation (E8Type3 sign wspin) = sMatrix * signMatrix * sMatrix * spinMatrix
+        where spinMatrix = torusRepresentation (spad 8 wspin)
+              signMatrix = toMatrix (pad 8 sign)
+    torusRepresentation (E8Type3' sign wspin) = twSignMatrix * sMatrix * signMatrix * sMatrix * spinMatrix
+        where spinMatrix = torusRepresentation (spad 8 wspin)
+              signMatrix = toMatrix (pad 8 sign)
+              twSignMatrix = toMatrix (twist $ pad 8 sign)
+
+
 
 instance Arbitrary E8Root where
     arbitrary = do rootType <- arbitrary

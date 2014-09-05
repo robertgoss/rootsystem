@@ -32,6 +32,8 @@ makeSSwapRoot i j | i < j = SignSwapRoot i j
 makeNeg (Neg root) = root
 makeNeg (root) = Neg root
 
+spad n (SpinElement sign perm) = SpinElement (Signs.pad n sign) (Permutation.pad n perm)
+
 
 instance Eq SpinRoot where
     (SwapRoot i j) == (SwapRoot m n) = i==m && j==n
