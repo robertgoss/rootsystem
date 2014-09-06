@@ -12,6 +12,7 @@ import Weyl
 import RootSystem
 import E8
 import SemiSimple
+import Permutation
 
 testE8 = testGroup "E8 algebra" [testE8Prop, testE8Unit]
 
@@ -38,5 +39,8 @@ testE8Eq =  QC.testProperty "Coroot should push forward equality to the eq of ba
 
 testE8Cmp =  QC.testProperty "Coroot should push forward ordering to the order of basic roots" $ \(r1,r2) ->
     ((r1::E8Root) `compare` r2) == ((bCoroot r1) `compare` (bCoroot r2))
+ 
+testPermMult = QC.testProperty "Should pushforward (permutation) multiplication to matrices" $ \(p,w) ->
+    torusRepresentation (permMult p w) == toMatrix (Permutation.pad 8 p) * torusRepresentation w
 
 testDetermineE8 = testCase "Determine should give the correct type for e8 system" $ determine (E8System) @?= fromSimples 0 [E8]

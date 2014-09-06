@@ -33,7 +33,7 @@ data E8System = E8System
 data E8WeylElement = E8Type1 SpinWeylElement
                      | E8Type2 Signs SpinWeylElement
                      | E8Type3 Signs SpinWeylElement
-                     | E8Type3' Signs SpinWeylElement
+                     | E8Type3' Signs SpinWeylElement deriving (Eq,Show)
 
 data E8Weyl = E8Weyl
 
@@ -168,3 +168,15 @@ instance Arbitrary E8Root where
                    spin <- arbitrary
                    sign <- arbitrary
                    return $ if rootType then E8SpinRoot spin else E8SRoot sign
+
+instance Arbitrary E8WeylElement where
+    arbitrary = do spin <- arbitrary
+                   perm <- arbitrary
+                   i <- arbitrary
+                   let sign2 = dSwap 1 2 $ Signs.identity 8
+                       sign4 = dSwap 1 2 $ dSwap 3 4 $ Signs.identity 8
+                       types = [E8Type1 spin,
+                                makeType2 (permute perm sign2)  spin,
+                                makeType3 False (permute perm sign4) spin,
+                                makeType3 True (permute perm sign4) spin]
+                   return $ types !! (i `mod` 4)
