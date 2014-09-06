@@ -136,7 +136,7 @@ makeType3 tw sign4 (SpinElement spinSign perm) = if tw then E8Type3 plusSign $ S
           plusSign = if posSign then sign4 else neg $ pad 8 sign4
           spinSign' = if posSign then spinSign else neg $ pad 8 spinSign
 
-permSpin perm1 (SpinElement sign perm2) = SpinElement (permute perm1 sign) (perm1 `Perm.combine` perm2)
+permSpin perm1 (SpinElement sign perm2) = SpinElement (permute perm1 sign) (perm2 `Perm.combine` perm1)
 
 permMult :: Perm.Permutation -> E8WeylElement -> E8WeylElement
 permMult perm (E8Type1 spin) = E8Type1 $ permSpin perm spin
