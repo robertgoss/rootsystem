@@ -54,6 +54,7 @@ eType (E8Type3 _ _ ) = 3
 eType (E8Type3' _ _) = 4
 
 testSign2Mult = QC.testProperty "Should pushforward (sign 2) multiplication to matrices" $ \(s,w) ->
+    eType w /= 4 QC.==>
     signType s == 2 QC.==>
     torusRepresentation (sign2Mult s w) == Signs.toMatrix (Signs.pad 8 s) * torusRepresentation w
 
