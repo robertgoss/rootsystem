@@ -136,50 +136,13 @@ makeType3 tw sign4 (SpinElement spinSign perm) = if tw then E8Type3 plusSign $ S
           plusSign = if posSign then sign4 else neg $ pad 8 sign4
           spinSign' = if posSign then spinSign else neg $ pad 8 spinSign
 
+permSpin perm1 (SpinElement sign perm2) = SpinElement (permute perm1 sign) (perm1 `Perm.combine` perm2)
 
-
-makeType3_s :: Signs -> Signs4 -> SpinWeylElement -> E8WeylElement
-makeType3_s sign sign4 wspin@(SpinElement spinSign perm) | sType > 4 = makeType3_s (neg $ pad 8 sign) sign4 negWspin
-                                                         | sType == 0 = makeType3 False sign4 wspin
-                                                         | sType == 2 = makeType3_2 sign sign4 wspin
-                                                         | sType == 4 = makeType3_4 sign sign4 wspin
-    where sType = signType sign
-          negWspin = SpinElement (neg $ pad 8 spinSign) perm
-
-splitSign :: Signs4 -> (Signs2,Signs2)
-splitSign sign4@(Signs v) = (sign2, sign4 `combine` sign2)
-    where negpos = take 2 $ filter (\i->at i sign4==(-1)) [1..]
-          sign2 = dSwap (negpos !! 1) (negpos !! 2) $ Signs.identity 8
-
-
-makeType3_2 sign2 sign4 (SpinElement spinSign perm) | twisted = makeType3 True sign4 (SpinElement (spinSign `combine` shiftSign) perm)
-                                                    | otherwise = makeType3 True sign4 (SpinElement (spinSign `combine` shiftSign) perm)
-    where (twisted,shiftSign) = shiftType3 sign2 sign4
-
-
-makeType3_4 sign4' sign4 (SpinElement spinSign perm) | twisted = makeType3 True sign4 (SpinElement (spinSign `combine` shiftSign) perm)
-                                                     | otherwise = makeType3 True sign4 (SpinElement (spinSign `combine` shiftSign) perm)
-    where (twisted1,shiftSign1) = shiftType3 sign2_1 sign4
-          (twisted2,shiftSign2) = shiftType3 sign2_2 sign4
-          twisted = twisted1 /= twisted2
-          shiftSign = shiftSign1 `combine` shiftSign2
-          (sign2_1,sign2_2) = splitSign sign4'
-
-
-shiftType3 :: Signs2 -> Signs4 -> (Bool, Signs)
-shiftType3 sign2 sign4 | contains = (False, sign2 `combine` sign4)
-                       | excludes = (False, neg $ pad 8 $ sign2 `combine` sign4)
-                       | isTwist = (True, Signs.identity 8)
-                       | shiftedPlus = (True, sign2 `combine` tw `combine` sign4)
-                       | shiftedNeg = (True, neg $ pad 8 $ sign2 `combine` tw `combine` sign4)
-                       | otherwise = (True, neg $ pad 8 $ sign2 `combine` sign4)
-    where contains = signType (sign2 `combine` sign4) == 2
-          excludes = signType (sign2 `combine` sign4) == 6
-          tw = twist sign4
-          isTwist = signType (sign2 `combine` tw) == 0
-          shifted = signType (sign2 `combine` tw) == 2
-          shiftedPlus = shifted && signType (sign2 `combine` tw `combine` sign4) == 2
-          shiftedNeg = shifted && signType (sign2 `combine` tw `combine` sign4) == 6
+permMult :: Perm.Permutation -> E8WeylElement -> E8WeylElement
+permMult perm (E8Type1 spin) = E8Type1 $ permSpin perm spin
+permMult perm (E8Type2 sign spin) = makeType2 (permute perm sign) (permSpin perm spin)
+permMult perm (E8Type3 sign4 spin) = makeType3 False (permute perm sign4) (permSpin perm spin)
+permMult perm (E8Type3' sign4 spin) = makeType3 True (permute perm sign4) (permSpin perm spin)
 
 
 instance WeylGroupElement E8WeylElement E8Root where
@@ -199,16 +162,7 @@ instance WeylGroupElement E8WeylElement E8Root where
               signMatrix = toMatrix (pad 8 sign)
               twSignMatrix = toMatrix (twist $ pad 8 sign)
 
-    inverse (E8Type1 wspin) = E8Type1 $ inverse wspin
-    inverse (E8Type2 sign wspin) = makeType2 ispinSign $ SpinElement (permute iperm sign) iperm
-        where (SpinElement ispinSign iperm) = inverse wspin
-    inverse (E8Type3 sign4 wspin) = makeType3_s ispinSign (permute iperm sign4) $ SpinElement (Signs.identity 8) iperm
-        where (SpinElement ispinSign iperm) = inverse wspin
-    inverse (E8Type3' sign4 wspin) = makeType3_s ispinSign (permute iperm sign4) $ SpinElement (permute iperm tw) iperm
-        where (SpinElement ispinSign iperm) = inverse wspin
-              tw = twist sign4
-
-
+    
 instance Arbitrary E8Root where
     arbitrary = do rootType <- arbitrary
                    spin <- arbitrary
