@@ -152,11 +152,16 @@ sMult :: E8WeylElement -> E8WeylElement
 sMult (E8Type1 spin) = makeType2 (Signs.identity 8) spin
 sMult (E8Type2 sign spin@(SpinElement sign1 perm))
                           | sType == 0 = E8Type1 spin
-                          | sType == 2 = makeType2 sign (SpinElement (sign `combine` sign1) perm)
+                          | sType == 2 = makeType2 sign (SpinElement (sign `combine` signSwap1) signSwapP)
                           | sType == 4 = makeType3 False sign spin
-                          | sType == 6 = makeType2 sign (SpinElement (neg $ pad 8 $ sign `combine` sign1) perm)
+                          | sType == 6 = sign8Mult $ makeType2 sign' (SpinElement (sign' `combine` signSwap1') signSwapP')
                           | sType == 8 = E8Type1 (SpinElement (neg $ pad 8 sign) perm)
     where sType = signType sign
+          signSwap1 = permute (sign2perm sign) sign1
+          signSwapP = perm `Perm.combine` (sign2perm sign) 
+          sign' = neg $ pad 8 sign
+          signSwap1' = permute (sign2perm sign') sign1
+          signSwapP' = perm `Perm.combine` (sign2perm sign') 
 sMult (E8Type3 sign spin) = makeType2 sign spin
 sMult (E8Type3' sign spin) = sign2Mult tw $ makeType3 False (tw `combine` sign) spin
     where tw = twist sign
