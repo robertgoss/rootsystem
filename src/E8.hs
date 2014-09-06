@@ -158,13 +158,14 @@ sMult (E8Type2 sign spin@(SpinElement sign1 perm))
                           | sType == 8 = E8Type1 (SpinElement (neg $ pad 8 sign) perm)
     where sType = signType sign
           signSwap1 = permute (sign2perm sign) sign1
-          signSwapP = perm `Perm.combine` (sign2perm sign) 
+          signSwapP = perm `Perm.combine` (sign2perm sign)
           sign' = neg $ pad 8 sign
           signSwap1' = permute (sign2perm sign') sign1
-          signSwapP' = perm `Perm.combine` (sign2perm sign') 
+          signSwapP' = perm `Perm.combine` (sign2perm sign')
 sMult (E8Type3 sign spin) = makeType2 sign spin
-sMult (E8Type3' sign spin) = sign2Mult tw $ makeType3 False (tw `combine` sign) spin
+sMult (E8Type3' sign spin) = signMult tw $ sMult $ signMult tw $ permMult spinSwap $ makeType2 sign spin
     where tw = twist sign
+          spinSwap = sign2perm tw
 
 sign2perm :: Signs2 -> Perm.Permutation
 sign2perm (Signs v) = Perm.swap i j $ Perm.identity 8

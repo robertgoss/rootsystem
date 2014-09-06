@@ -48,7 +48,6 @@ testPermMult = QC.testProperty "Should pushforward (permutation) multiplication 
     torusRepresentation (permMult p w) == Permutation.toMatrix (Permutation.pad 8 p) * torusRepresentation w
 
 testSMult = QC.testProperty "Should pushforward (s-element) multiplication to matrices" $ \w ->
-    eType w == 2 QC.==>
     torusRepresentation (sMult w) == sMatrix * torusRepresentation w
 
 eType (E8Type1 _) = 1
