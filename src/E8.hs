@@ -184,7 +184,7 @@ sign2Mult_2 sign2 sign4 sign perm = makeType3 False sign4' $ SpinElement (mid `c
           perm' = (perm `Perm.combine` sign2swap) `Perm.combine` midSwap
 
 sign2Mult_4 sign2 sign4 sign perm | signType twsign2 == 0 = makeType3 True sign4 $ SpinElement sign perm
-                                  | signType twsign2 == 2 = sign2Mult tw $ (sign2Mult_2 twsign2 sign4 sign perm)
+                                  | signType twsign2 == 2 = sign2Mult tw $ (sign2Mult twsign2 $ E8Type3 sign4 $ SpinElement sign perm)
                                   | signType twsign2 == 4 = undefined
     where tw = twist sign4
           twsign2 = tw `combine` sign2
