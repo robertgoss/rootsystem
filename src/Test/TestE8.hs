@@ -18,7 +18,9 @@ import Permutation
 testE8 = testGroup "E8 algebra" [testE8Prop, testE8Unit]
 
 testE8Prop = testGroup "Properties" [testE8ReflectCoroot, testE8AddCoroot, testE8Eq, testE8Cmp,
-                                    testSign2Mult, testSign4Mult, testSignMult]
+                                    testSign2Mult, testSign4Mult, testSignMult,
+                                    testPermMult, testSMult,
+                                    testMultiply, testInverseL, testInverseR]
 testE8Unit = testGroup "Unit tests" [testDetermineE8]
 
 bCoroot = BasicRoot . coroot
@@ -65,3 +67,12 @@ testSignMult = QC.testProperty "Should pushforward (sign) multiplication to matr
     torusRepresentation (signMult s w) == Signs.toMatrix (Signs.pad 8 s) * torusRepresentation w
 
 testDetermineE8 = testCase "Determine should give the correct type for e8 system" $ determine (E8System) @?= fromSimples 0 [E8]
+
+testMultiply = QC.testProperty "Should pushforward multiplication to matrices" $ \(g,w) ->
+    torusRepresentation (g `multiply` (w::E8WeylElement)) == torusRepresentation g * torusRepresentation w
+
+testInverseR = QC.testProperty "Should inverse should be right inverse to multiply" $ \(g) ->
+    torusRepresentation g * torusRepresentation (Weyl.inverse g::E8WeylElement) == Data.Matrix.identity 8
+
+testInverseL = QC.testProperty "Should inverse should be right inverse to multiply" $ \(g) ->
+    torusRepresentation (Weyl.inverse g::E8WeylElement) * torusRepresentation g == Data.Matrix.identity 8

@@ -223,6 +223,9 @@ signMult sign w | signType sign == 0 = w
                 | signType sign == 6 = sign6Mult sign w
                 | signType sign == 8 = sign8Mult w
 
+e8Unit :: E8WeylElement
+e8Unit = E8Type1 $ SpinElement (Signs.identity 8) (Perm.identity 8)
+
 instance WeylGroupElement E8WeylElement E8Root where
 
     simpleReflection (E8SpinRoot root) = E8Type1 $ simpleReflection root
@@ -240,6 +243,20 @@ instance WeylGroupElement E8WeylElement E8Root where
               signMatrix = toMatrix (pad 8 sign)
               twSignMatrix = toMatrix (twist $ pad 8 sign)
 
+    inverse (E8Type1 wspin) = E8Type1 $ inverse wspin
+    inverse (E8Type2 sign (SpinElement sSign perm)) = permMult iperm $ signMult sSign $ sMult $ signMult sign e8Unit
+        where iperm = Perm.inverse perm
+    inverse (E8Type3 sign (SpinElement sSign perm)) = permMult iperm $ signMult sSign $ sMult $ signMult sign $ sMult e8Unit
+        where iperm = Perm.inverse perm
+    inverse (E8Type3' sign (SpinElement sSign perm)) = permMult iperm $ signMult sSign $ sMult $ signMult sign $ sMult $ signMult tw e8Unit
+        where iperm = Perm.inverse perm
+              tw = twist sign
+
+    multiply (E8Type1 (SpinElement sSign perm)) g = signMult sSign $ permMult perm g
+    multiply (E8Type2 sign (SpinElement sSign perm)) g = sMult $ signMult sSign $ permMult perm g
+    multiply (E8Type3 sign (SpinElement sSign perm)) g = sMult $ signMult sign $ signMult sSign $ permMult perm g
+    multiply (E8Type3' sign (SpinElement sSign perm)) g = signMult tw $ sMult $ signMult sign $ sMult $ signMult sSign $ permMult perm g
+        where tw = twist sign
     
 instance Arbitrary E8Root where
     arbitrary = do rootType <- arbitrary
