@@ -161,6 +161,24 @@ sMult (E8Type3 sign spin) = makeType2 sign spin
 sMult (E8Type3' sign spin) = sign2Mult tw $ makeType3 False (tw `combine` sign) spin
     where tw = twist sign
 
+sign2Mult :: Signs2 -> E8WeylElement -> E8WeylElement
+sign2Mult sign2 (E8Type1 (SpinElement sign perm)) = E8Type1 $ SpinElement (sign2 `combine` sign) perm
+sign2Mult sign2 (E8Type2 sign spin) = makeType2 (sign2 `combine` sign) spin
+sign2Mult sign2 (E8Type3 sign4 (SpinElement sign perm))
+                | sType == 2 = makeType3 False sign4 $ SpinElement (sign2 `combine` sign4 `combine` sign) perm
+                | sType == 6 = makeType3 False sign4 $ SpinElement (neg $ pad 8 $ sign2 `combine` sign4 `combine` sign) perm
+                | sType == 4 && twType == 0 = makeType3 True sign4 $ SpinElement sign perm
+                | sType == 4 && twType == 2 && combType == 2
+                            = makeType3 True sign4 $ SpinElement (comb `combine` sign) perm
+                | sType == 4 && twType == 2 && combType == 6
+                            = makeType3 True sign4 $ SpinElement (neg $ pad 8 $ comb `combine` sign) perm
+                | sType == 4 && twType == 4
+                            = makeType3 True sign4 $ SpinElement (neg $ pad 8 $ comb `combine` sign) perm
+    where sType = signType (sign2 `combine` sign4)
+          tw = twist sign4
+          twType = signType (sign2 `combine` tw)
+          comb = sign2 `combine` tw `combine` sign4
+          combType = signType comb
 
 instance WeylGroupElement E8WeylElement E8Root where
 

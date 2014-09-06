@@ -8,6 +8,7 @@ import Test.Tasty.HUnit
 import Data.Matrix
 import Data.Maybe
 
+import Signs
 import Weyl
 import RootSystem
 import E8
@@ -42,9 +43,13 @@ testE8Cmp =  QC.testProperty "Coroot should push forward ordering to the order o
     ((r1::E8Root) `compare` r2) == ((bCoroot r1) `compare` (bCoroot r2))
  
 testPermMult = QC.testProperty "Should pushforward (permutation) multiplication to matrices" $ \(p,w) ->
-    torusRepresentation (permMult p w) == toMatrix (Permutation.pad 8 p) * torusRepresentation w
+    torusRepresentation (permMult p w) == Permutation.toMatrix (Permutation.pad 8 p) * torusRepresentation w
 
 testSMult = QC.testProperty "Should pushforward (s-element) multiplication to matrices" $ \w ->
     torusRepresentation (sMult w) == sMatrix * torusRepresentation w
+
+testSign2Mult = QC.testProperty "Should pushforward (sign 2) multiplication to matrices" $ \(s,w) ->
+    signType s == 2 QC.==>
+    torusRepresentation (sign2Mult s w) == Signs.toMatrix (Signs.pad 8 s) * torusRepresentation w
 
 testDetermineE8 = testCase "Determine should give the correct type for e8 system" $ determine (E8System) @?= fromSimples 0 [E8]
