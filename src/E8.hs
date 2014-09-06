@@ -181,7 +181,7 @@ sign2Mult_2 sign2 sign4 sign perm = makeType3 False sign4' $ SpinElement (mid `c
           sign2swap =  (sign2perm sign2)
           midSwap = sign2perm mid
           sign' = permute midSwap $ permute sign2swap sign
-          perm' = midSwap `Perm.combine` sign2swap `Perm.combine` perm
+          perm' = (perm `Perm.combine` sign2swap) `Perm.combine` midSwap
 
 instance WeylGroupElement E8WeylElement E8Root where
 
