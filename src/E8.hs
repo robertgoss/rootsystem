@@ -173,7 +173,15 @@ sign2Mult sign2 (E8Type3 sign4 (SpinElement sign perm))
                 | signType mid == 6 = sign2Mult_2 sign2 (neg $ pad 8 sign4) (neg $ pad 8 sign) perm
                 | signType mid == 4 = sign2Mult_4 sign2 sign4 sign perm
     where mid = sign2 `combine` (permute (sign2perm sign2) sign4)
---sign2Mult sign2 (E8Type3' sign4 spin) = sign2Mult (twist sign4) $ sign2Mult sign2 (E8Type3 sign4 spin)
+sign2Mult sign2 (E8Type3' sign4 spin)
+                | signType twSign == 0 = makeType3 False sign4 spin
+                | signType twSign == 2 = sign2Mult twSign (E8Type3 sign4 spin)
+                | signType twSign == 4 = sign2Mult sign2pos $ (sign2Mult sign2neg $ E8Type3 sign4 spin)
+    where twSign = sign2 `combine` (twist sign4)
+          (Signs v2) = sign2
+          [i,j] = take 2 $ map snd $ filter (\(a,b)-> a==(-1) ) $ zip (toList v2) [1..]
+          sign2pos = dSwap 1 i $ Signs.identity 8
+          sign2neg = dSwap 1 j $ Signs.identity 8
 
 sign2Mult_2 sign2 sign4 sign perm = makeType3 False sign4' $ SpinElement (mid `combine` sign') perm'
     where mid = sign2 `combine` sign4'
