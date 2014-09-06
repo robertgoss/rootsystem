@@ -185,10 +185,13 @@ sign2Mult_2 sign2 sign4 sign perm = makeType3 False sign4' $ SpinElement (mid `c
 
 sign2Mult_4 sign2 sign4 sign perm | signType twsign2 == 0 = makeType3 True sign4 $ SpinElement sign perm
                                   | signType twsign2 == 2 = sign2Mult tw $ (sign2Mult twsign2 $ E8Type3 sign4 $ SpinElement sign perm)
-                                  | signType twsign2 == 4 = undefined
+                                  | signType twsign2 == 4 = sign2Mult sign2pos $ (sign2Mult sign2neg $ E8Type3 sign4 $ SpinElement sign perm)
     where tw = twist sign4
           twsign2 = tw `combine` sign2
-          spin4_2 = combine
+          (Signs v2) = sign2
+          [i,j] = take 2 $ map snd $ filter (\(a,b)-> a==(-1) ) $ zip (toList v2) [1..]
+          sign2pos = dSwap 1 i $ Signs.identity 8
+          sign2neg = dSwap 1 j $ Signs.identity 8
 
 instance WeylGroupElement E8WeylElement E8Root where
 
