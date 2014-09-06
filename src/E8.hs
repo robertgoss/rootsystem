@@ -161,27 +161,25 @@ sMult (E8Type3 sign spin) = makeType2 sign spin
 sMult (E8Type3' sign spin) = sign2Mult tw $ makeType3 False (tw `combine` sign) spin
     where tw = twist sign
 
+sign2perm :: Signs2 -> Perm.Permutation
+sign2perm (Signs v) = Perm.swap i j $ Perm.identity 8
+    where [i,j] = take 2 $ map snd $ filter (\(a,b)->a==(-1)) $ zip (toList v) [1..]
+
 sign2Mult :: Signs2 -> E8WeylElement -> E8WeylElement
 sign2Mult sign2 (E8Type1 (SpinElement sign perm)) = E8Type1 $ SpinElement (sign2 `combine` sign) perm
 sign2Mult sign2 (E8Type2 sign spin) = makeType2 (sign2 `combine` sign) spin
 sign2Mult sign2 (E8Type3 sign4 (SpinElement sign perm))
-                | sType == 2 = makeType3 False sign4 $ SpinElement (sign2 `combine` sign4 `combine` sign) perm
-                | sType == 6 = makeType3 False sign4 $ SpinElement (neg $ pad 8 $ sign2 `combine` sign4 `combine` sign) perm
-                | sType == 4 && twType == 0 = makeType3 True sign4 $ SpinElement sign perm
-                | sType == 4 && twType == 2 && combType == 2
-                            = makeType3 True sign4 $ SpinElement (comb `combine` sign) perm
-                | sType == 4 && twType == 2 && combType == 6
-                            = makeType3 True sign4 $ SpinElement (neg $ pad 8 $ comb `combine` sign) perm
-                | sType == 4 && twType == 4
-                            = makeType3 True sign4 $ SpinElement (neg $ pad 8 $ comb `combine` sign) perm
-    where sType = signType (sign2 `combine` sign4)
-          tw = twist sign4
-          twType = signType (sign2 `combine` tw)
-          comb = sign2 `combine` tw `combine` sign4
-          combType = signType comb
-sign2Mult sign2 (E8Type3' sign4 spin) = sign2Mult tw $ sign2Mult sign2 $ E8Type3 sign4 spin
-    where tw = twist sign4
+                | signType mid == 2 = sign2Mult_2 sign2 sign4 sign perm
+    where mid = sign2 `combine` (permute (sign2perm sign2) sign4)
 
+
+sign2Mult_2 sign2 sign4 sign perm = makeType3 False sign4' $ SpinElement (mid `combine` sign') perm'
+    where mid = sign2 `combine` sign4'
+          sign4' = permute sign2swap sign4
+          sign2swap =  (sign2perm sign2)
+          midSwap = sign2perm mid
+          sign' = permute midSwap $ permute sign2swap sign
+          perm' = midSwap `Perm.combine` sign2swap `Perm.combine` perm
 
 instance WeylGroupElement E8WeylElement E8Root where
 
