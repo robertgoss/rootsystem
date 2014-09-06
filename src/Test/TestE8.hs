@@ -18,7 +18,7 @@ import Permutation
 testE8 = testGroup "E8 algebra" [testE8Prop, testE8Unit]
 
 testE8Prop = testGroup "Properties" [testE8ReflectCoroot, testE8AddCoroot, testE8Eq, testE8Cmp,
-                                    testSign2Mult]
+                                    testSign2Mult, testSign4Mult, testSignMult]
 testE8Unit = testGroup "Unit tests" [testDetermineE8]
 
 bCoroot = BasicRoot . coroot
@@ -54,8 +54,14 @@ eType (E8Type3 _ _ ) = 3
 eType (E8Type3' _ _) = 4
 
 testSign2Mult = QC.testProperty "Should pushforward (sign 2) multiplication to matrices" $ \(s,w) ->
-    eType w /= 4 QC.==>
     signType s == 2 QC.==>
+    torusRepresentation (sign2Mult s w) == Signs.toMatrix (Signs.pad 8 s) * torusRepresentation w
+
+testSign4Mult = QC.testProperty "Should pushforward (sign 4) multiplication to matrices" $ \(s,w) ->
+    signType s == 4 QC.==>
+    torusRepresentation (sign2Mult s w) == Signs.toMatrix (Signs.pad 8 s) * torusRepresentation w
+
+testSignMult = QC.testProperty "Should pushforward (sign) multiplication to matrices" $ \(s,w) ->
     torusRepresentation (sign2Mult s w) == Signs.toMatrix (Signs.pad 8 s) * torusRepresentation w
 
 testDetermineE8 = testCase "Determine should give the correct type for e8 system" $ determine (E8System) @?= fromSimples 0 [E8]

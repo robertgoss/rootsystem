@@ -201,6 +201,31 @@ sign2Mult_4 sign2 sign4 sign perm | signType twsign2 == 0 = makeType3 True sign4
           sign2pos = dSwap 1 i $ Signs.identity 8
           sign2neg = dSwap 1 j $ Signs.identity 8
 
+
+splitSign4 sign4@(Signs v4) = (sign2, sign4 `combine` sign2)
+    where [i,j] = take 2 $ map snd $ filter (\(a,b)-> a==(-1) ) $ zip (toList v4) [1..]
+          sign2 = dSwap i j $ Signs.identity 8
+
+sign4Mult :: Signs4 -> E8WeylElement -> E8WeylElement
+sign4Mult sign4 w = sign2Mult sign2p $ sign2Mult sign2m w
+    where (sign2p,sign2m) = splitSign4 sign4
+
+sign6Mult :: Signs6 -> E8WeylElement -> E8WeylElement
+sign6Mult sign6 w = sign8Mult $ sign2Mult (neg $ pad 8 sign6) w
+
+sign8Mult :: E8WeylElement -> E8WeylElement
+sign8Mult (E8Type1 (SpinElement sign perm)) = E8Type1$ SpinElement (neg $ pad 8 sign) perm
+sign8Mult (E8Type2 sign spin) = makeType2 (neg $ pad 8 sign) spin
+sign8Mult (E8Type3 sign4 spin) = makeType3 False (neg $ pad 8 sign4) spin
+sign8Mult (E8Type3' sign4 spin) = makeType3 True (neg $ pad 8 sign4) spin
+
+signMult :: Signs -> E8WeylElement -> E8WeylElement
+signMult sign w | signType sign == 0 = w
+                | signType sign == 2 = sign2Mult sign w
+                | signType sign == 4 = sign4Mult sign w
+                | signType sign == 6 = sign6Mult sign w
+                | signType sign == 8 = sign8Mult w
+
 instance WeylGroupElement E8WeylElement E8Root where
 
     simpleReflection (E8SpinRoot root) = E8Type1 $ simpleReflection root
