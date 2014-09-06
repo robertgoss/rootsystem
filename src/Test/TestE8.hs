@@ -16,7 +16,8 @@ import Permutation
 
 testE8 = testGroup "E8 algebra" [testE8Prop, testE8Unit]
 
-testE8Prop = testGroup "Properties" [testE8ReflectCoroot, testE8AddCoroot, testE8Eq, testE8Cmp, testPermMult]
+testE8Prop = testGroup "Properties" [testE8ReflectCoroot, testE8AddCoroot, testE8Eq, testE8Cmp,
+                                    testPermMult, testSMult]
 testE8Unit = testGroup "Unit tests" [testDetermineE8]
 
 bCoroot = BasicRoot . coroot
@@ -42,5 +43,8 @@ testE8Cmp =  QC.testProperty "Coroot should push forward ordering to the order o
  
 testPermMult = QC.testProperty "Should pushforward (permutation) multiplication to matrices" $ \(p,w) ->
     torusRepresentation (permMult p w) == toMatrix (Permutation.pad 8 p) * torusRepresentation w
+
+testSMult = QC.testProperty "Should pushforward (s-element) multiplication to matrices" $ \w ->
+    torusRepresentation (sMult w) == sMatrix * torusRepresentation w
 
 testDetermineE8 = testCase "Determine should give the correct type for e8 system" $ determine (E8System) @?= fromSimples 0 [E8]

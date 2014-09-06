@@ -145,6 +145,20 @@ permMult perm (E8Type3 sign4 spin) = makeType3 False (permute perm sign4) (permS
 permMult perm (E8Type3' sign4 spin) = makeType3 True (permute perm sign4) (permSpin perm spin)
 
 
+sMult :: E8WeylElement -> E8WeylElement
+sMult (E8Type1 spin) = makeType2 (Signs.identity 8) spin
+sMult (E8Type2 sign spin@(SpinElement sign1 perm))
+                          | sType == 0 = E8Type1 spin
+                          | sType == 2 = makeType2 sign (SpinElement (sign `combine` sign1) perm)
+                          | sType == 4 = makeType3 False sign spin
+                          | sType == 6 = makeType2 (neg $ pad 8 sign) (SpinElement (sign `combine` sign1) perm)
+                          | sType == 8 = E8Type1 (SpinElement (neg $ pad 8 sign) perm)
+    where sType = signType sign
+sMult (E8Type3 sign spin) = makeType2 sign spin
+sMult (E8Type3' sign (SpinElement sign1 perm)) = makeType3 True sign $ SpinElement (tw `combine` sign1) perm
+    where tw = twist sign
+
+
 instance WeylGroupElement E8WeylElement E8Root where
 
     simpleReflection (E8SpinRoot root) = E8Type1 $ simpleReflection root
