@@ -130,7 +130,7 @@ makeType2 sign (SpinElement spinSign perm) = E8Type2 plusSign $ SpinElement spin
 
 
 makeType3 :: Bool -> Signs4 -> SpinWeylElement -> E8WeylElement
-makeType3 tw sign4 (SpinElement spinSign perm) = if tw then E8Type3 plusSign $ SpinElement spinSign' perm
+makeType3 tw sign4 (SpinElement spinSign perm) = if tw then E8Type3' plusSign $ SpinElement spinSign' perm
                                                        else E8Type3 plusSign $ SpinElement spinSign' perm
     where posSign = at 1 sign4 == 1
           plusSign = if posSign then sign4 else neg $ pad 8 sign4
@@ -151,7 +151,7 @@ sMult (E8Type2 sign spin@(SpinElement sign1 perm))
                           | sType == 0 = E8Type1 spin
                           | sType == 2 = makeType2 sign (SpinElement (sign `combine` sign1) perm)
                           | sType == 4 = makeType3 False sign spin
-                          | sType == 6 = makeType2 (neg $ pad 8 sign) (SpinElement (sign `combine` sign1) perm)
+                          | sType == 6 = makeType2 sign (SpinElement (neg $ pad 8 $ sign `combine` sign1) perm)
                           | sType == 8 = E8Type1 (SpinElement (neg $ pad 8 sign) perm)
     where sType = signType sign
 sMult (E8Type3 sign spin) = makeType2 sign spin
