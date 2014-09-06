@@ -16,7 +16,7 @@ import Permutation
 
 testE8 = testGroup "E8 algebra" [testE8Prop, testE8Unit]
 
-testE8Prop = testGroup "Properties" [testE8ReflectCoroot, testE8AddCoroot, testE8Eq, testE8Cmp]
+testE8Prop = testGroup "Properties" [testE8ReflectCoroot, testE8AddCoroot, testE8Eq, testE8Cmp, testPermMult]
 testE8Unit = testGroup "Unit tests" [testDetermineE8]
 
 bCoroot = BasicRoot . coroot
