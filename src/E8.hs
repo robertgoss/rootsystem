@@ -171,7 +171,7 @@ sign2Mult sign2 (E8Type2 sign spin) = makeType2 (sign2 `combine` sign) spin
 sign2Mult sign2 (E8Type3 sign4 (SpinElement sign perm))
                 | signType mid == 2 = sign2Mult_2 sign2 sign4 sign perm
                 | signType mid == 6 = sign2Mult_2 sign2 (neg $ pad 8 sign4) (neg $ pad 8 sign) perm
-                | signType mid == 4 = undefined
+                | signType mid == 4 = sign2Mult_4 sign2 sign4 sign perm
     where mid = sign2 `combine` (permute (sign2perm sign2) sign4)
 
 
@@ -182,6 +182,12 @@ sign2Mult_2 sign2 sign4 sign perm = makeType3 False sign4' $ SpinElement (mid `c
           midSwap = sign2perm mid
           sign' = permute midSwap $ permute sign2swap sign
           perm' = (perm `Perm.combine` sign2swap) `Perm.combine` midSwap
+
+sign2Mult_4 sign2 sign4 sign perm | signType twsign2 == 0 = makeType3 True sign4 $ SpinElement sign perm
+                                  | at 1 sign2 == -1 = sign2Mult tw $ (sign2Mult_2 twsign2 sign4 sign perm)
+                                  | otherwise = undefined
+    where tw = twist sign4
+          twsign2 = tw `combine` sign2
 
 instance WeylGroupElement E8WeylElement E8Root where
 
