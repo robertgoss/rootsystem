@@ -142,7 +142,9 @@ permMult :: Perm.Permutation -> E8WeylElement -> E8WeylElement
 permMult perm (E8Type1 spin) = E8Type1 $ permSpin perm spin
 permMult perm (E8Type2 sign spin) = makeType2 (permute perm sign) (permSpin perm spin)
 permMult perm (E8Type3 sign4 spin) = makeType3 False (permute perm sign4) (permSpin perm spin)
-permMult perm (E8Type3' sign4 spin) = makeType3 True (permute perm sign4) (permSpin perm spin)
+permMult perm (E8Type3' sign4 spin) = sign2Mult (permute perm tw) $ makeType3 False (permute perm sign4) (permSpin perm spin)
+
+
 
 
 sMult :: E8WeylElement -> E8WeylElement
