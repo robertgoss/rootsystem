@@ -259,8 +259,8 @@ instance WeylGroupElement E8WeylElement E8Root where
               tw = twist sign
 
     multiply (E8Type1 (SpinElement sSign perm)) g = signMult sSign $ permMult perm g
-    multiply (E8Type2 sign (SpinElement sSign perm)) g = sMult $ signMult sSign $ permMult perm g
-    multiply (E8Type3 sign (SpinElement sSign perm)) g = sMult $ signMult sign $ signMult sSign $ permMult perm g
+    multiply (E8Type2 sign (SpinElement sSign perm)) g = signMult sign $ sMult $ signMult sSign $ permMult perm g
+    multiply (E8Type3 sign (SpinElement sSign perm)) g = sMult $ signMult sign $ sMult $ signMult sSign $ permMult perm g
     multiply (E8Type3' sign (SpinElement sSign perm)) g = signMult tw $ sMult $ signMult sign $ sMult $ signMult sSign $ permMult perm g
         where tw = twist sign
     
