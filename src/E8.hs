@@ -170,6 +170,8 @@ sign2Mult sign2 (E8Type1 (SpinElement sign perm)) = E8Type1 $ SpinElement (sign2
 sign2Mult sign2 (E8Type2 sign spin) = makeType2 (sign2 `combine` sign) spin
 sign2Mult sign2 (E8Type3 sign4 (SpinElement sign perm))
                 | signType mid == 2 = sign2Mult_2 sign2 sign4 sign perm
+                | signType mid == 6 = sign2Mult_2 sign2 (neg $ pad 8 sign4) (neg $ pad 8 sign) perm
+                | signType mid == 4 = undefined
     where mid = sign2 `combine` (permute (sign2perm sign2) sign4)
 
 
