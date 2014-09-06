@@ -59,9 +59,9 @@ testSign2Mult = QC.testProperty "Should pushforward (sign 2) multiplication to m
 
 testSign4Mult = QC.testProperty "Should pushforward (sign 4) multiplication to matrices" $ \(s,w) ->
     signType s == 4 QC.==>
-    torusRepresentation (sign2Mult s w) == Signs.toMatrix (Signs.pad 8 s) * torusRepresentation w
+    torusRepresentation (sign4Mult s w) == Signs.toMatrix (Signs.pad 8 s) * torusRepresentation w
 
 testSignMult = QC.testProperty "Should pushforward (sign) multiplication to matrices" $ \(s,w) ->
-    torusRepresentation (sign2Mult s w) == Signs.toMatrix (Signs.pad 8 s) * torusRepresentation w
+    torusRepresentation (signMult s w) == Signs.toMatrix (Signs.pad 8 s) * torusRepresentation w
 
 testDetermineE8 = testCase "Determine should give the correct type for e8 system" $ determine (E8System) @?= fromSimples 0 [E8]
