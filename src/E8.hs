@@ -179,6 +179,9 @@ sign2Mult sign2 (E8Type3 sign4 (SpinElement sign perm))
           twType = signType (sign2 `combine` tw)
           comb = sign2 `combine` tw `combine` sign4
           combType = signType comb
+sign2Mult sign2 (E8Type3' sign4 spin) = sign2Mult tw $ sign2Mult sign2 $ E8Type3 sign4 spin
+    where tw = twist sign4
+
 
 instance WeylGroupElement E8WeylElement E8Root where
 

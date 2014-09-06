@@ -16,11 +16,11 @@ import Test.TestE8
 main = defaultMain tests
 
 tests :: TestTree
-tests = testGroup "Tests" [testBasicRoot,
-                           testOrthogonalBasis,
-                           testRootSystem,
-                           testWeylGroup,
-                           testSpin,
-                           testPerm,
-                           testSigns,
+tests = testGroup "Tests" [--testBasicRoot,
+                           --testOrthogonalBasis,
+                           --testRootSystem,
+                           --testWeylGroup,
+                           --testSpin,
+                           --testPerm,
+                           --testSigns,
                            testE8]
