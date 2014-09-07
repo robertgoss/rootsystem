@@ -16,8 +16,9 @@ pushforward2 :: (a -> a -> a) -> DQuo a -> DQuo a -> DQuo a
 pushforward2 f (DQuo a eqFun) (DQuo b _)= DQuo (f a b) eqFun 
 
 doubleQuotient :: (SubWeylGroup sub w e r rt, QuotientWeylGroup quo w e r rt) => sub -> quo -> [e]
-doubleQuotient subGroup quotientGroup = map preimage $ generateUnOrd quoMultiply genImages
+doubleQuotient subGroup quotientGroup = map DoubleQuotient.preimage $ generateUnOrd quoMultiply genImages
     where image elem = DQuo elem quoEq
           quoEq = quoWeylEq quotientGroup
           genImages = map image $ subGenerators subGroup
-          quoMultiply = pushforward2 multiply
+          quoMultiply = DoubleQuotient.pushforward2 multiply
+
