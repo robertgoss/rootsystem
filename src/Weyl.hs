@@ -12,7 +12,7 @@ import RootSystem
 import CartanAlgebra
 import Generate
 
-class (Root r) => WeylGroupElement g r | g -> r where
+class (Eq g,Root r) => WeylGroupElement g r | g -> r where
 
     inverse :: g -> g
     multiply :: g -> g -> g
