@@ -39,8 +39,8 @@ data E8WeylElement = E8Type1 SpinWeylElement
 
 data E8Weyl = E8Weyl
 
-data E8SubE7
-data E8Spin16Quotient
+data E8SubE7 = E8SubE7
+data E8Spin16Quotient = E8Spin16Quotient
 
 instance Eq E8Root where
     (E8SpinRoot root1) == (E8SpinRoot root2) = root1 == root2
