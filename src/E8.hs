@@ -10,6 +10,8 @@ import Signs
 import Spin
 import Rational
 import CartanAlgebra
+import SubGroup
+import Quotient
 import qualified Permutation as Perm
 
 type Signs0 = Signs
@@ -36,6 +38,9 @@ data E8WeylElement = E8Type1 SpinWeylElement
                      | E8Type3' Signs SpinWeylElement deriving (Eq,Show)
 
 data E8Weyl = E8Weyl
+
+data E8SubE7
+data E8Spin16Quotient
 
 instance Eq E8Root where
     (E8SpinRoot root1) == (E8SpinRoot root2) = root1 == root2
@@ -263,7 +268,27 @@ instance WeylGroupElement E8WeylElement E8Root where
     multiply (E8Type3 sign (SpinElement sSign perm)) g = sMult $ signMult sign $ sMult $ signMult sSign $ permMult perm g
     multiply (E8Type3' sign (SpinElement sSign perm)) g = signMult tw $ sMult $ signMult sign $ sMult $ signMult sSign $ permMult perm g
         where tw = twist sign
-    
+
+instance WeylGroup E8Weyl E8WeylElement E8System E8Root where
+    one _ = e8Unit
+    generators _ = map simpleReflection $ RootSystem.generators E8System
+    weylGroup _ = E8Weyl
+
+instance QuotientWeylGroup E8Spin16Quotient E8Weyl E8WeylElement E8System E8Root where
+    superGroup _ = E8Weyl
+    quoWeylEq _ (E8Type1 _) (E8Type1 _) = True
+    quoWeylEq _ (E8Type1 _) _ = False
+    quoWeylEq _ (E8Type2 sign1 _) (E8Type2 sign2 _) = sign1 == sign2
+    quoWeylEq _ (E8Type2 _ _) _ = False
+    quoWeylEq _ (E8Type3 sign1 _) (E8Type3 sign2 _) = sign1 == sign2
+    quoWeylEq _ (E8Type3 _ _) _ = False
+    quoWeylEq _ (E8Type3' sign1 _) (E8Type3' sign2 _) = sign1 == sign2
+    quoWeylEq _ (E8Type3' _ _) _ = False
+
+instance SubWeylGroup E8SubE7 E8Weyl E8WeylElement E8System E8Root where
+    ambientGroup _ = E8Weyl
+    subGenerators _ = init $ Weyl.generators E8Weyl
+
 instance Arbitrary E8Root where
     arbitrary = do rootType <- arbitrary
                    spin <- arbitrary
