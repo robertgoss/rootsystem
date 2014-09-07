@@ -12,6 +12,7 @@ import Test.TestSpin
 import Test.TestPermutation
 import Test.TestSigns
 import Test.TestE8
+import Test.TestE7
 
 main = defaultMain tests
 
@@ -23,4 +24,5 @@ tests = testGroup "Tests" [testBasicRoot,
                            testSpin,
                            testPerm,
                            testSigns,
-                           testE8]
+                           testE8,
+                           testE7]
