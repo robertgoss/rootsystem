@@ -8,6 +8,9 @@ import Rational
 
 newtype Permutation = Perm (Matrix Int) deriving(Eq,Show)
 
+instance Ord Permutation where
+    (Perm v) `compare` (Perm w) = toList v `compare` toList w
+
 identity :: Int -> Permutation
 identity n = Perm $ fromList n 1 [1..n]
 

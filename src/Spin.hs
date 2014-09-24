@@ -20,7 +20,9 @@ data SpinRoot = SwapRoot Int Int
 
 newtype SpinSystem = SpinSystem Int deriving(Eq,Ord,Show)
 
-data SpinWeylElement = SpinElement Signs Permutation deriving(Eq,Show)
+data SpinWeylElement = SpinElement Signs Permutation deriving(Eq,Show,Ord)
+
+data SpinWeyl = SpinWeyl Int deriving(Eq,Ord,Show)
 
 
 makeSwapRoot pos neg | pos < neg = SwapRoot pos neg
@@ -139,6 +141,14 @@ instance WeylGroupElement SpinWeylElement SpinRoot where
         where perm = swap i j $ Permutation.identity 1
               sign = dSwap i j $ Signs.identity (max i j)
     simpleReflection (Neg root) = simpleReflection root
+
+
+instance WeylGroup SpinWeyl SpinWeylElement SpinSystem SpinRoot where
+   weylGroup (SpinSystem n) = SpinWeyl n
+
+   one (SpinWeyl n) = SpinElement (Signs.identity n) (Permutation.identity n)
+
+   generators (SpinWeyl n) = map simpleReflection $ RootSystem.generators $ SpinSystem n
 
 
 instance Arbitrary SpinRoot where
