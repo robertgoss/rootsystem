@@ -23,26 +23,19 @@ testE8Prop = testGroup "Properties" [testE8ReflectCoroot, testE8AddCoroot, testE
                                     testMultiply, testInverseL, testInverseR]
 testE8Unit = testGroup "Unit tests" [testDetermineE8]
 
-bCoroot = BasicRoot . coroot
-
-padEqual v w = v' == w'
-    where v' | ncols v >= ncols w = v
-             | otherwise = v <|> zero 1 (ncols w - ncols v)
-          w' | ncols w >= ncols v = w
-             | otherwise = w <|> zero 1 (ncols v - ncols w)
 
 testE8ReflectCoroot = QC.testProperty "Coroot should push forward reflect to the reflect of basic roots" $ \(r1,r2) ->
-    coroot ((r1::E8Root) `reflect` r2) `padEqual` coroot ((bCoroot r1) `reflect` (bCoroot r2))
+    coroot ((r1::E8Root) `reflect` r2) == coroot ((coroot r1) `reflect` (coroot r2))
 
 testE8AddCoroot = QC.testProperty "Coroot should push forward add to the add of basic roots" $ \(r1,r2) ->
     isJust ((r1::E8Root) `add` r2) QC.==>
-    (coroot . fromJust) (r1 `add` r2) `padEqual` (coroot .fromJust) ((bCoroot r1) `add` (bCoroot r2))
+    coroot (fromJust (r1 `add` r2)) == fromJust (coroot r1 `add` coroot r2)
 
 testE8Eq =  QC.testProperty "Coroot should push forward equality to the eq of basic roots" $ \(r1,r2) ->
-    ((r1::E8Root) == r2) == ((bCoroot r1) == (bCoroot r2))
+    ((r1::E8Root) == r2) == (coroot r1 == coroot r2)
 
 testE8Cmp =  QC.testProperty "Coroot should push forward ordering to the order of basic roots" $ \(r1,r2) ->
-    ((r1::E8Root) `compare` r2) == ((bCoroot r1) `compare` (bCoroot r2))
+    ((r1::E8Root) `compare` r2) == (coroot r1 `compare` coroot r2)
  
 testPermMult = QC.testProperty "Should pushforward (permutation) multiplication to matrices" $ \(p,w) ->
     torusRepresentation (permMult p w) == Permutation.toMatrix (Permutation.pad 8 p) * torusRepresentation w

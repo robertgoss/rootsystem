@@ -65,8 +65,7 @@ instance WeylGroup BasicWeylGroup BasicWeylGroupElement BasicRootSystem BasicRoo
     generators (BasicGroup _ gens) = gens
     weylGroup rootsystem = BasicGroup dim gens
         where gens = map simpleReflection $ RootSystem.generators rootsystem
-              dim | null (RootSystem.generators rootsystem) = 1
-                  | otherwise = ncols . coroot . head . RootSystem.generators $ rootsystem
+              dim = ambientDim rootsystem
 
 
 elements :: (WeylGroup w e r rt,Ord e) => w -> [e]

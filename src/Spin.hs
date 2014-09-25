@@ -94,9 +94,9 @@ instance Root SpinRoot where
     reflect (Neg root1) root2 = makeNeg $ reflect root1 root2
     reflect root1 (Neg root2) = reflect root1 root2
 
-    coroot (SwapRoot i j) = M.setElem 1 (1,i) $ M.setElem (-1) (1,j)  $ M.zero 1 j
-    coroot (SignSwapRoot i j) = M.setElem 1 (1,i) $ M.setElem 1 (1,j)  $ M.zero 1 j
-    coroot (Neg root) = scaleMatrix (-1) $ coroot root
+    coroot (SwapRoot i j) = BasicRoot $ M.setElem 1 (1,i) $ M.setElem (-1) (1,j)  $ M.zero 1 j
+    coroot (SignSwapRoot i j) = BasicRoot $ M.setElem 1 (1,i) $ M.setElem 1 (1,j)  $ M.zero 1 j
+    coroot (Neg root) = RootSystem.negate $ coroot root
 
     positive (SwapRoot _ _) = True
     positive (SignSwapRoot _ _ ) = True
@@ -107,7 +107,7 @@ instance Root SpinRoot where
                     | positive root2 && reflected < root1 = Nothing
                     | (not $ positive root2) && reflected > root1 = Nothing
                     | otherwise = Just reflected
-        where reflected = root1 `reflect` (root2)
+        where reflected = root1 `reflect` root2
 
     negate (Neg root) = root
     negate root = Neg root

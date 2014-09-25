@@ -72,8 +72,8 @@ instance Ord E8Root where
                             LT -> GT
 
 instance Root E8Root where
-    coroot (E8SpinRoot root) = extendTo 0 1 8 $ coroot root
-    coroot (E8SRoot signs) = scaleMatrix (1/2) $ toVector $ pad 8 signs
+    coroot (E8SpinRoot root) = coroot root
+    coroot (E8SRoot signs) = BasicRoot $ scaleMatrix (1/2) $ toVector $ pad 8 signs
 
     positive (E8SpinRoot root) = positive root
     positive (E8SRoot signs) = at 1 signs == 1
@@ -117,7 +117,7 @@ instance Root E8Root where
 instance RootSystem E8System E8Root where
     rank _ = 8
     cartanAlgebra _ = fullSubAlgebra 8
-    generators _ = E8SRoot (Signs.identity 8) : map E8SpinRoot $ RootSystem.generators $ SpinSystem 7
+    generators _ = E8SRoot (Signs.identity 8) : map E8SpinRoot (RootSystem.generators $ SpinSystem 7)
 
 sMatrix = Data.Matrix.identity 8 - fromList 8 8 (replicate 64 (1/4)) 
 
