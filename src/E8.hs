@@ -187,7 +187,7 @@ sign2Mult sign2 (E8Type3 sign4 (SpinElement sign perm))
 sign2Mult sign2 (E8Type3' sign4 spin)
                 | signType twSign == 0 = makeType3 False sign4 spin
                 | signType twSign == 2 = sign2Mult twSign (E8Type3 sign4 spin)
-                | signType twSign == 4 = sign2Mult sign2pos $ sign2Mult sign2neg $ E8Type3 sign4 spins
+                | signType twSign == 4 = sign2Mult sign2pos $ sign2Mult sign2neg $ E8Type3 sign4 spin
     where twSign = sign2 `combine` twist sign4
           (sign2pos, sign2neg) = splitSign4 twSign
 
