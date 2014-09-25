@@ -18,6 +18,7 @@ class (Eq g,Root r) => WeylGroupElement g r | g -> r where
     multiply :: g -> g -> g
 
     simpleReflection :: r -> g
+    weylAction :: g -> r -> r
 
     torusRepresentation :: g -> BasicWeylGroupElement
 
@@ -28,7 +29,7 @@ class (RootSystem r rt, WeylGroupElement e rt) => WeylGroup w e r rt | w -> r, w
     weylGroup :: r -> w
 
 
-newtype BasicWeylGroupElement = BasicElement (Matrix QQ) deriving(Eq)
+newtype BasicWeylGroupElement = BasicElement (Matrix QQ) deriving(Eq,Show)
 data BasicWeylGroup = BasicGroup Int [BasicWeylGroupElement]
 data BasicWeylSubGroup = BasicWeylSub BasicWeylGroup BasicWeylGroup [BasicWeylGroupElement]
 data BasicWeylSubGroup2 = BasicWeylSub2 BasicWeylGroup BasicWeylGroup BasicWeylGroup [BasicWeylGroupElement] [BasicWeylGroupElement]
@@ -57,6 +58,15 @@ instance WeylGroupElement BasicWeylGroupElement BasicRoot where
     torusRepresentation = id
 
     simpleReflection (BasicRoot v) = BasicElement $ reflectMatrix v
+
+    weylAction (BasicElement m) (BasicRoot r) = BasicRoot $ transpose $ mpad * (transpose rpad) 
+        where mDim = nrows m
+              rDim = ncols r
+              mpad = if mDim < rDim then
+                        joinBlocks (m, zero mDim (rDim-mDim), zero (rDim-mDim) mDim, identity (rDim-mDim))
+                     else
+                        m
+              rpad = r <|> zero 1 (mDim - rDim)
 
 instance WeylGroup BasicWeylGroup BasicWeylGroupElement BasicRootSystem BasicRoot where
 

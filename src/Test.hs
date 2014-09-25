@@ -13,6 +13,7 @@ import Test.TestPermutation
 import Test.TestSigns
 import Test.TestE8
 import Test.TestE7
+import Test.TestWeyl
 
 main = defaultMain tests
 
@@ -21,6 +22,7 @@ tests = testGroup "Tests" [testBasicRoot,
                            testOrthogonalBasis,
                            testRootSystem,
                            testWeylGroup,
+                           testWeyl,
                            testSpin,
                            testPerm,
                            testSigns,
