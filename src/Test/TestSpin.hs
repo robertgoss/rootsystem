@@ -16,7 +16,7 @@ import SemiSimple
 testSpin = testGroup "Spin algebras" [testSpinProp, testSpinUnit]
 
 testSpinProp = testGroup "Properties" [testSpinReflectCoroot, testSpinAddCoroot, testSpinEq, testSpinCmp, testDetermineSpin,
-                                       testSpinMultiplyTorus, testSpinInverse]
+                                       testSpinMultiplyTorus, testSpinInverse, testSpinOrder]
 testSpinUnit = testGroup "Unit tests" []
 
 bCoroot = BasicRoot . coroot
@@ -48,3 +48,7 @@ testSpinMultiplyTorus = QC.testProperty "Torus representation should push forwar
 
 testSpinInverse = QC.testProperty "Inverse pushes forward to basic root inverse" $ \w ->
     basicElement (inverse (w::SpinWeylElement)) == inverse (basicElement w) 
+
+testSpinOrder = QC.testProperty "Test the order of spin weyl group" $ \n ->
+    (order . SpinWeyl . small) n == weylOrder (fromSimples 0 [D (small n)])
+    where small m = abs $ m `mod` 6
