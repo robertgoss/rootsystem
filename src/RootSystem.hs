@@ -46,13 +46,26 @@ simpleRoots r = Set.toList $ Set.difference (Set.fromList positiveR) (Set.fromLi
 dim :: (RootSystem r rt) => r -> Int
 dim system = rank system + length (roots system)
 
-newtype BasicRoot = BasicRoot (Vector QQ) deriving (Eq,Show)
+newtype BasicRoot = BasicRoot (Vector QQ) deriving (Show)
 data BasicRootSystem = BasicRootSystem CartanAlgebra [BasicRoot]
 data BasicSubSystem = BasicSubSystem BasicRootSystem BasicRootSystem [BasicRoot]
 data BasicSubSystem2 = BasicSubSystem2 BasicRootSystem BasicRootSystem BasicRootSystem [BasicRoot] [BasicRoot]
 
+instance Eq BasicRoot where
+    (BasicRoot v1) == (BasicRoot v2) = v1padded == v2padded
+      where n1 = ncols v1
+            n2 = ncols v2
+            k = max n1 n2
+            v1padded = v1 <|> zero 1 (k - n1)
+            v2padded = v2 <|> zero 1 (k - n2)
+
 instance Ord BasicRoot where
-    (BasicRoot v1) `compare` (BasicRoot v2) = (getRow 1 v1) `compare` (getRow 1 v2)
+    (BasicRoot v1) `compare` (BasicRoot v2) = getRow 1 v1padded `compare` getRow 1 v2padded
+      where n1 = ncols v1
+            n2 = ncols v2
+            k = max n1 n2
+            v1padded = v1 <|> zero 1 (k - n1)
+            v2padded = v2 <|> zero 1 (k - n2)
 
 basicDim :: BasicRoot -> Int
 basicDim (BasicRoot r) = ncols r
