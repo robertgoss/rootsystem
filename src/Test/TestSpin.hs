@@ -38,10 +38,10 @@ testDetermineSpin = QC.testProperty "Determine should give the correct type for 
     determine (s::SpinSystem) `isomorphic` fromSimples 0 [D (RootSystem.rank s)]
 
 testSpinMultiplyTorus = QC.testProperty "Torus representation should push forward  multilication to multiplication of basic elements" $ \(w1,w2) ->
-    basicElement ((w1 :: SpinWeylElement) `multiply` w2) == (basicElement w1) `multiply` (basicElement w2)
+    torusRepresentation ((w1 :: SpinWeylElement) `multiply` w2) == torusRepresentation w1 `multiply` torusRepresentation w2
 
 testSpinInverse = QC.testProperty "Inverse pushes forward to basic root inverse" $ \w ->
-    basicElement (inverse (w::SpinWeylElement)) == inverse (basicElement w) 
+    torusRepresentation (inverse (w::SpinWeylElement)) == inverse (torusRepresentation w) 
 
 testSpinOrder = QC.testProperty "Test the order of spin weyl group" $ \n ->
     (order . SpinWeyl . small) n == weylOrder (fromSimples 0 [D (small n)])

@@ -129,10 +129,12 @@ instance WeylGroupElement SpinWeylElement SpinRoot where
         where iperm = Permutation.inverse perm
               isign = permute iperm sign
 
-    torusRepresentation (SpinElement sign perm) = (Signs.toMatrix (Signs.pad m sign)) * (Permutation.toMatrix (Permutation.pad m perm))
+    torusRepresentation (SpinElement sign perm) = BasicElement $ signMatrix * permMatrix
         where (Signs v) = sign
               (Perm w) = perm
               m = max (nrows v) (nrows w)
+              signMatrix = Signs.toMatrix (Signs.pad m sign)
+              permMatrix = Permutation.toMatrix (Permutation.pad m perm)
 
     simpleReflection (SwapRoot i j) = SpinElement sign perm
         where perm = swap i j $ Permutation.identity 1

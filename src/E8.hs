@@ -237,22 +237,26 @@ signMult sign w | signType sign == 0 = w
 e8Unit :: E8WeylElement
 e8Unit = E8Type1 $ SpinElement (Signs.identity 8) (Perm.identity 8)
 
+
 instance WeylGroupElement E8WeylElement E8Root where
 
     simpleReflection (E8SpinRoot root) = E8Type1 $ simpleReflection root
     simpleReflection (E8SRoot sign) = makeType2 sign $ SpinElement (Signs.identity 8) (Perm.identity 8)
 
     torusRepresentation (E8Type1 wspin) = torusRepresentation (spad 8 wspin)
-    torusRepresentation (E8Type2 sign wspin) = signMatrix * sMatrix * spinMatrix
-        where spinMatrix = torusRepresentation (spad 8 wspin)
+    torusRepresentation (E8Type2 sign wspin) = BasicElement $ signMatrix * sMatrix * spinMatrix
+        where spinMatrix = toMat $ torusRepresentation (spad 8 wspin)
               signMatrix = toMatrix (pad 8 sign)
-    torusRepresentation (E8Type3 sign wspin) = sMatrix * signMatrix * sMatrix * spinMatrix
-        where spinMatrix = torusRepresentation (spad 8 wspin)
+              toMat (BasicElement m) = m
+    torusRepresentation (E8Type3 sign wspin) = BasicElement $ sMatrix * signMatrix * sMatrix * spinMatrix
+        where spinMatrix = toMat $ torusRepresentation (spad 8 wspin)
               signMatrix = toMatrix (pad 8 sign)
-    torusRepresentation (E8Type3' sign wspin) = twSignMatrix * sMatrix * signMatrix * sMatrix * spinMatrix
-        where spinMatrix = torusRepresentation (spad 8 wspin)
+              toMat (BasicElement m) = m
+    torusRepresentation (E8Type3' sign wspin) = BasicElement $ twSignMatrix * sMatrix * signMatrix * sMatrix * spinMatrix
+        where spinMatrix = toMat $ torusRepresentation (spad 8 wspin)
               signMatrix = toMatrix (pad 8 sign)
               twSignMatrix = toMatrix (twist $ pad 8 sign)
+              toMat (BasicElement m) = m
 
     inverse (E8Type1 wspin) = E8Type1 $ inverse wspin
     inverse (E8Type2 sign (SpinElement sSign perm)) = permMult iperm $ signMult sSign $ sMult $ signMult sign e8Unit

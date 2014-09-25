@@ -37,36 +37,39 @@ testE8Eq =  QC.testProperty "Coroot should push forward equality to the eq of ba
 testE8Cmp =  QC.testProperty "Coroot should push forward ordering to the order of basic roots" $ \(r1,r2) ->
     ((r1::E8Root) `compare` r2) == (coroot r1 `compare` coroot r2)
  
+torusMat = toMat . torusRepresentation
+    where toMat (BasicElement m) = m
+
 testPermMult = QC.testProperty "Should pushforward (permutation) multiplication to matrices" $ \(p,w) ->
-    torusRepresentation (permMult p w) == Permutation.toMatrix (Permutation.pad 8 p) * torusRepresentation w
+    torusMat (permMult p w) == Permutation.toMatrix (Permutation.pad 8 p) * torusMat w
+
+eType (E8Type1 _) = 1
+eType (E8Type2 _ _) = 2
+eType (E8Type3 _ _) = 3
+eType (E8Type3' _ _) = 4
 
 testSMult = QC.testProperty "Should pushforward (s-element) multiplication to matrices" $ \w ->
     eType w == 2 QC.==>
-    torusRepresentation (sMult w) == sMatrix * torusRepresentation w
-
-eType (E8Type1 _) = 1
-eType (E8Type2 _ _ ) = 2
-eType (E8Type3 _ _ ) = 3
-eType (E8Type3' _ _) = 4
+    torusMat (sMult w) == sMatrix * torusMat w
 
 testSign2Mult = QC.testProperty "Should pushforward (sign 2) multiplication to matrices" $ \(s,w) ->
     signType s == 2 QC.==>
-    torusRepresentation (sign2Mult s w) == Signs.toMatrix (Signs.pad 8 s) * torusRepresentation w
+    torusMat (sign2Mult s w) == Signs.toMatrix (Signs.pad 8 s) * torusMat w
 
 testSign4Mult = QC.testProperty "Should pushforward (sign 4) multiplication to matrices" $ \(s,w) ->
     signType s == 4 QC.==>
-    torusRepresentation (sign4Mult s w) == Signs.toMatrix (Signs.pad 8 s) * torusRepresentation w
+    torusMat (sign4Mult s w) == Signs.toMatrix (Signs.pad 8 s) * torusMat w
 
 testSignMult = QC.testProperty "Should pushforward (sign) multiplication to matrices" $ \(s,w) ->
-    torusRepresentation (signMult s w) == Signs.toMatrix (Signs.pad 8 s) * torusRepresentation w
+    torusMat (signMult s w) == Signs.toMatrix (Signs.pad 8 s) * torusMat w
 
 testDetermineE8 = testCase "Determine should give the correct type for e8 system" $ determine (E8System) @?= fromSimples 0 [E8]
 
 testMultiply = QC.testProperty "Should pushforward multiplication to matrices" $ \(g,w) ->
-    torusRepresentation (g `multiply` (w::E8WeylElement)) == torusRepresentation g * torusRepresentation w
+    torusRepresentation (g `multiply` (w::E8WeylElement)) == torusRepresentation g `multiply` torusRepresentation w
 
 testInverseR = QC.testProperty "Should inverse should be right inverse to multiply" $ \(g) ->
-    torusRepresentation g * torusRepresentation (Weyl.inverse g::E8WeylElement) == Data.Matrix.identity 8
+    torusRepresentation g `multiply` torusRepresentation (Weyl.inverse g::E8WeylElement) == BasicElement (Data.Matrix.identity 8)
 
 testInverseL = QC.testProperty "Should inverse should be right inverse to multiply" $ \(g) ->
-    torusRepresentation (Weyl.inverse g::E8WeylElement) * torusRepresentation g == Data.Matrix.identity 8
+    torusRepresentation (Weyl.inverse g::E8WeylElement) `multiply` torusRepresentation g == BasicElement (Data.Matrix.identity 8)

@@ -19,7 +19,7 @@ class (Eq g,Root r) => WeylGroupElement g r | g -> r where
 
     simpleReflection :: r -> g
 
-    torusRepresentation :: g -> Matrix QQ
+    torusRepresentation :: g -> BasicWeylGroupElement
 
 
 class (RootSystem r rt, WeylGroupElement e rt) => WeylGroup w e r rt | w -> r, w -> e where
@@ -54,7 +54,7 @@ instance WeylGroupElement BasicWeylGroupElement BasicRoot where
               mpad delta matrix = joinBlocks (matrix, zero size delta, zero delta size, identity delta)
                 where size = nrows matrix
 
-    torusRepresentation (BasicElement m) = m
+    torusRepresentation = id
 
     simpleReflection (BasicRoot v) = BasicElement $ reflectMatrix v
 
@@ -74,7 +74,3 @@ elements group = generate multiply (one group:gens)
 
 order :: (WeylGroup w e r rt, Ord e) => w -> Integer
 order = toInteger . length . elements
-
-
-basicElement :: (WeylGroupElement e r) => e -> BasicWeylGroupElement
-basicElement = BasicElement . torusRepresentation
