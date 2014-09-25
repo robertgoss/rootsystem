@@ -15,4 +15,4 @@ testWeylProp = testGroup "Properties" [testWeylSimpleAction]
 testWeylUnit = testGroup "Unit tests" []
 
 testWeylSimpleAction = QC.testProperty "The weyl action of simple root is reflection" $ \(r1,r2) ->
-    weylAction ((simpleReflection r2) :: BasicWeylGroupElement) r1 == r1 `reflect` r2
+    weylAction (simpleReflection r2 :: BasicWeylGroupElement) r1 == r1 `reflect` r2
