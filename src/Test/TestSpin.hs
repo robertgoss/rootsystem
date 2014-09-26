@@ -16,7 +16,8 @@ import SemiSimple
 testSpin = testGroup "Spin algebras" [testSpinProp, testSpinUnit]
 
 testSpinProp = testGroup "Properties" [testSpinReflectCoroot, testSpinAddCoroot, testSpinEq, testSpinCmp, testDetermineSpin,
-                                       testSpinMultiplyTorus, testSpinInverse, testSpinOrder, testSpinSimpleAction]
+                                       testSpinMultiplyTorus, testSpinInverse, testSpinOrder, testSpinSimpleAction,
+                                       testSpinSimpleReflection]
 testSpinUnit = testGroup "Unit tests" []
 
 
@@ -49,3 +50,6 @@ testSpinOrder = QC.testProperty "Test the order of spin weyl group" $ \n ->
 
 testSpinSimpleAction = QC.testProperty "The weyl action of simple root is reflection" $ \(r1,r2) ->
     weylAction (simpleReflection r2 :: SpinWeylElement) r1 == r1 `reflect` r2
+
+testSpinSimpleReflection = QC.testProperty "Simple reflection should push forward to basic simple reflection" $ \r ->
+    torusRepresentation ((simpleReflection r) :: SpinWeylElement) == simpleReflection (coroot r)
