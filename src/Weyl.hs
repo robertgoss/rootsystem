@@ -29,13 +29,28 @@ class (RootSystem r rt, WeylGroupElement e rt) => WeylGroup w e r rt | w -> r, w
     weylGroup :: r -> w
 
 
-newtype BasicWeylGroupElement = BasicElement (Matrix QQ) deriving(Eq,Show)
+newtype BasicWeylGroupElement = BasicElement (Matrix QQ) deriving(Show)
 data BasicWeylGroup = BasicGroup Int [BasicWeylGroupElement]
 data BasicWeylSubGroup = BasicWeylSub BasicWeylGroup BasicWeylGroup [BasicWeylGroupElement]
 data BasicWeylSubGroup2 = BasicWeylSub2 BasicWeylGroup BasicWeylGroup BasicWeylGroup [BasicWeylGroupElement] [BasicWeylGroupElement]
 
+instance Eq BasicWeylGroupElement where
+    (BasicElement m1) == (BasicElement m2) | d1 == d2 = m1 == m2
+                                           | d1 < d2 = mpad (d2-d1) m1 == m2
+                                           | otherwise = m1 == mpad (d1-d2) m2
+        where d1 = nrows m1
+              d2 = nrows m2
+              mpad delta matrix = joinBlocks (matrix, zero size delta, zero delta size, identity delta)
+                where size = nrows matrix
+
 instance Ord BasicWeylGroupElement where
-    (BasicElement m1) `compare` (BasicElement m2) = (toList m1) `compare` (toList m2)
+    (BasicElement m1) `compare` (BasicElement m2) | d1 == d2 = toList m1 `compare` toList m2
+                                                  | d1 < d2 = toList (mpad (d2-d1) m1) `compare` toList m2
+                                                  | otherwise = toList m1 `compare` toList (mpad (d1-d2) m2)
+        where d1 = nrows m1
+              d2 = nrows m2
+              mpad delta matrix = joinBlocks (matrix, zero size delta, zero delta size, identity delta)
+                where size = nrows matrix
 
 reflectMatrix :: Vector QQ -> Matrix QQ
 reflectMatrix vec = identity (ncols vec) - inv
