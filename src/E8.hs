@@ -253,7 +253,7 @@ e8Unit = E8Type1 $ SpinElement (Signs.identity 8) (Perm.identity 8)
 instance WeylGroupElement E8WeylElement E8Root where
 
     simpleReflection (E8SpinRoot root) = E8Type1 $ simpleReflection root
-    simpleReflection (E8SRoot sign) = makeType2 (Signs.identity 8) $ SpinElement sign (Perm.identity 8)
+    simpleReflection (E8SRoot sign) = makeType2 sign $ SpinElement sign (Perm.identity 8)
 
     torusRepresentation (E8Type1 wspin) = torusRepresentation (spad 8 wspin)
     torusRepresentation (E8Type2 sign wspin) = BasicElement $ signMatrix * sMatrix * spinMatrix
