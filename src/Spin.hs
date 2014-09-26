@@ -144,6 +144,30 @@ instance WeylGroupElement SpinWeylElement SpinRoot where
               sign = dSwap i j $ Signs.identity (max i j)
     simpleReflection (Neg root) = simpleReflection root
 
+    weylAction (SpinElement sign perm) = spinSignAct sign . spinPermAct perm
+
+
+spinSignAct :: Signs -> SpinRoot -> SpinRoot
+spinSignAct sign (SwapRoot i j) | signI == 1 && signJ == 1 = SwapRoot i j
+                                | signI == 1 && signJ == -1 = SignSwapRoot i j
+                                | signI == -1 && signJ == 1 = Neg $ SignSwapRoot i j
+                                | signI == -1 && signJ == -1 = Neg $ SwapRoot i j
+     where signI = Signs.at i sign
+           signJ = Signs.at j sign
+spinSignAct sign (SignSwapRoot i j) | signI == 1 && signJ == 1 = SignSwapRoot i j
+                                    | signI == 1 && signJ == -1 = SwapRoot i j
+                                    | signI == -1 && signJ == 1 = Neg $ SwapRoot i j
+                                    | signI == -1 && signJ == -1 = Neg $ SignSwapRoot i j
+     where signI = Signs.at i sign
+           signJ = Signs.at j sign
+spinSignAct sign (Neg root) = RootSystem.negate $ spinSignAct sign root
+
+
+spinPermAct :: Permutation -> SpinRoot -> SpinRoot
+spinPermAct perm (SwapRoot i j) = makeSwapRoot (Permutation.at i perm) (Permutation.at j perm)
+spinPermAct perm (SignSwapRoot i j) = makeSSwapRoot (Permutation.at i perm) (Permutation.at j perm)
+spinPermAct perm (Neg root) = RootSystem.negate $ spinPermAct perm root
+
 
 instance WeylGroup SpinWeyl SpinWeylElement SpinSystem SpinRoot where
    weylGroup (SpinSystem n) = SpinWeyl n

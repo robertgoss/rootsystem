@@ -20,7 +20,8 @@ testE8 = testGroup "E8 algebra" [testE8Prop, testE8Unit]
 testE8Prop = testGroup "Properties" [testE8ReflectCoroot, testE8AddCoroot, testE8Eq, testE8Cmp,
                                     testSign2Mult, testSign4Mult, testSignMult,
                                     testPermMult, testSMult,
-                                    testMultiply, testInverseL, testInverseR]
+                                    testMultiply, testInverseL, testInverseR,
+                                    testE8SimpleAction]
 testE8Unit = testGroup "Unit tests" [testDetermineE8]
 
 
@@ -73,3 +74,6 @@ testInverseR = QC.testProperty "Should inverse should be right inverse to multip
 
 testInverseL = QC.testProperty "Should inverse should be right inverse to multiply" $ \(g) ->
     torusRepresentation (Weyl.inverse g::E8WeylElement) `multiply` torusRepresentation g == BasicElement (Data.Matrix.identity 8)
+
+testE8SimpleAction = QC.testProperty "The weyl action of simple root is reflection" $ \(r1,r2) ->
+    weylAction (simpleReflection r2 :: E8WeylElement) r1 == r1 `reflect` r2

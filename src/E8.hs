@@ -114,6 +114,17 @@ instance Root E8Root where
                     | otherwise = Just reflected
         where reflected = root1 `reflect` root2
 
+sAct :: E8Root -> E8Root
+sAct r = r `reflect` (E8SRoot $ Signs.identity 8)
+
+signAct :: Signs -> E8Root -> E8Root
+signAct sign (E8SpinRoot root) = E8SpinRoot $ weylAction (SpinElement sign (Perm.identity 8)) root
+signAct sign (E8SRoot ssign) = E8SRoot $ sign `combine` ssign
+
+spinAct :: SpinWeylElement -> E8Root -> E8Root
+spinAct spin (E8SpinRoot root) = E8SpinRoot $ weylAction spin root
+spinAct (SpinElement sign perm) (E8SRoot ssign) = E8SRoot $ sign `combine` permute perm ssign 
+
 instance RootSystem E8System E8Root where
     rank _ = 8
     cartanAlgebra _ = fullSubAlgebra 8
@@ -238,6 +249,7 @@ e8Unit :: E8WeylElement
 e8Unit = E8Type1 $ SpinElement (Signs.identity 8) (Perm.identity 8)
 
 
+
 instance WeylGroupElement E8WeylElement E8Root where
 
     simpleReflection (E8SpinRoot root) = E8Type1 $ simpleReflection root
@@ -272,6 +284,13 @@ instance WeylGroupElement E8WeylElement E8Root where
     multiply (E8Type3 sign (SpinElement sSign perm)) g = sMult $ signMult sign $ sMult $ signMult sSign $ permMult perm g
     multiply (E8Type3' sign (SpinElement sSign perm)) g = signMult tw $ sMult $ signMult sign $ sMult $ signMult sSign $ permMult perm g
         where tw = twist sign
+
+    weylAction (E8Type1 spin) root = spinAct spin root
+    weylAction (E8Type2 sign spin) root = signAct sign $ sAct $ spinAct spin root
+    weylAction (E8Type3 sign spin) root = sAct $ signAct sign $ sAct $ spinAct spin root
+    weylAction (E8Type3' sign spin) root = signAct tw $ sAct $ signAct sign $ sAct $ spinAct spin root
+        where tw = twist sign
+ 
 
 instance WeylGroup E8Weyl E8WeylElement E8System E8Root where
     one _ = e8Unit
