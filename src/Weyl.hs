@@ -63,8 +63,8 @@ instance WeylGroupElement BasicWeylGroupElement BasicRoot where
 
     inverse (BasicElement m) = BasicElement $ transpose m
     multiply (BasicElement m1) (BasicElement m2) | d1 == d2 = BasicElement $ m1*m2
-                                                 | d1 < d2 = BasicElement $ (mpad (d2-d1) m1) * m2
-                                                 | otherwise = BasicElement $ m1 * (mpad (d1-d2) m2)
+                                                 | d1 < d2 = BasicElement $ mpad (d2-d1) m1 * m2
+                                                 | otherwise = BasicElement $ m1 * mpad (d1-d2) m2
         where d1 = nrows m1
               d2 = nrows m2
               mpad delta matrix = joinBlocks (matrix, zero size delta, zero delta size, identity delta)
@@ -74,7 +74,7 @@ instance WeylGroupElement BasicWeylGroupElement BasicRoot where
 
     simpleReflection (BasicRoot v) = BasicElement $ reflectMatrix v
 
-    weylAction (BasicElement m) (BasicRoot r) = BasicRoot $ transpose $ mpad * (transpose rpad) 
+    weylAction (BasicElement m) (BasicRoot r) = BasicRoot $ transpose $ mpad * transpose rpad
         where mDim = nrows m
               rDim = ncols r
               mpad = if mDim < rDim then
