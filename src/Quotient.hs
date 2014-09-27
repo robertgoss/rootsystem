@@ -31,10 +31,10 @@ instance (QuotientWeylGroup qw w e r rt) => Eq (QuotientElement qw e) where
 
 
 preimage :: QuotientElement qw e -> e
-preimage (QuoE a _) = a
+preimage (QuoE _ a) = a
 
 pushforward :: (a -> a) -> QuotientElement qw a -> QuotientElement qw a
-pushforward f (QuoE a quo) = QuoE quo (f a)
+pushforward f (QuoE quo a) = QuoE quo (f a)
 
 pushforward2 :: (a -> a -> a) -> QuotientElement qw a -> QuotientElement qw a -> QuotientElement qw a
 pushforward2 f (QuoE quo a) (QuoE _ b)= QuoE quo (f a b)
