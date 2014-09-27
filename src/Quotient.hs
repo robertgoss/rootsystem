@@ -25,8 +25,8 @@ instance (WeylGroup w e r rt, SubWeylGroup s w e r rt)
 
 data QuotientElement qw a = QuoE qw a
 
-instance Eq (QuotientElement a) where
-    (QuoE quo x) == (QuoE _ y) = (quoWeylEq qw) x y
+instance Eq (QuotientElement qw a) where
+    (QuoE quo x) == (QuoE _ y) = (quoWeylEq quo) x y
 
 
 preimage :: QuotientElement qw e -> e
@@ -38,17 +38,17 @@ pushforward f (QuoE a quo) = QuoE quo (f a)
 pushforward2 :: (a -> a -> a) -> QuotientElement qw a -> QuotientElement qw a -> QuotientElement qw a
 pushforward2 f (QuoE quo a) (QuoE _ b)= QuoE quo (f a b)
 
-instance (QuotientWeylGroup qw w e r rt) => QuotientWeylGroupElement (QuotientElement qw e) r rt where
+instance (QuotientWeylGroup qw w e r rt) => WeylGroupElement (QuotientElement qw e) r rt where
     inverse = pushforward inverse
     multiply = pushforward2 multiply
     simpleReflection = undefined
     weylAction = weylAction . preimage
 
-    torusRepresentaton = torusRepresentaton . preimage
+    torusRepresentation = torusRepresentation . preimage
 
 data QuotientGroup a = Quo a
 
 instance (QuotientWeylGroup qw w e r rt) => WeylGroup (QuotientGroup qw) (QuotientElement qw e) r rt where
   one (Quo qw) = QuoE (one $ superGroup qw) qw
-  genrators (Quo qw) = map (QuoE qw) $ generators $ superGroup qw
+  generators (Quo qw) = map (QuoE qw) $ Weyl.generators $ superGroup qw
   weylGroup = undefined
