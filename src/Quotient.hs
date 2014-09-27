@@ -50,6 +50,6 @@ instance (QuotientWeylGroup qw w e r rt) => WeylGroupElement (QuotientElement qw
 data QuotientGroup a = Quo a
 
 instance (QuotientWeylGroup qw w e r rt) => WeylGroup (QuotientGroup qw) (QuotientElement qw e) r rt where
-  one (Quo qw) = QuoE (one $ superGroup qw) qw
+  one (Quo qw) = QuoE qw (one $ superGroup qw)
   generators (Quo qw) = map (QuoE qw) $ Weyl.generators $ superGroup qw
   weylGroup = undefined
