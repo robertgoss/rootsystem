@@ -7,6 +7,8 @@ import Weyl
 import SubGroup
 import Generate
 
+
+
 class (WeylGroup w e r rt) => QuotientWeylGroup qw w e r rt | qw -> w where
     superGroup :: qw -> w
     quoWeylEq :: qw -> e -> e -> Bool
@@ -20,6 +22,7 @@ instance (WeylGroup w e r rt, SubWeylGroup s w e r rt)
 
     quoWeylEq (SubQuo sub subElems) g1 g2 = difference `elem` subElems
                 where difference = g1 `multiply` (inverse g2)
+
 data Quo a = Quo a (a->a->Bool)
 
 instance Eq (Quo a) where
