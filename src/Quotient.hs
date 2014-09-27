@@ -1,6 +1,7 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE FunctionalDependencies #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE UndecidableInstances #-}
 module Quotient where
 
 import Weyl
@@ -8,7 +9,7 @@ import SubGroup
 import Generate
 import RootSystem
 
-class (WeylGroup w e r rt) => QuotientWeylGroup qw w e r rt | qw -> w where
+class (WeylGroup w e r rt) => QuotientWeylGroup qw w e r rt | qw -> w, qw -> e, qw -> r, qw -> rt where
     superGroup :: qw -> w
     quoWeylEq :: qw -> e -> e -> Bool
 
@@ -25,7 +26,7 @@ instance (WeylGroup w e r rt, SubWeylGroup s w e r rt)
 
 data QuotientElement qw a = QuoE qw a
 
-instance Eq (QuotientElement qw a) where
+instance (QuotientWeylGroup qw w e r rt) => Eq (QuotientElement qw e) where
     (QuoE quo x) == (QuoE _ y) = (quoWeylEq quo) x y
 
 
@@ -38,7 +39,7 @@ pushforward f (QuoE a quo) = QuoE quo (f a)
 pushforward2 :: (a -> a -> a) -> QuotientElement qw a -> QuotientElement qw a -> QuotientElement qw a
 pushforward2 f (QuoE quo a) (QuoE _ b)= QuoE quo (f a b)
 
-instance (QuotientWeylGroup qw w e r rt) => WeylGroupElement (QuotientElement qw e) r rt where
+instance (QuotientWeylGroup qw w e r rt) => WeylGroupElement (QuotientElement qw e) rt where
     inverse = pushforward inverse
     multiply = pushforward2 multiply
     simpleReflection = undefined
