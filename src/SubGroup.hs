@@ -4,8 +4,8 @@
 {-# LANGUAGE UndecidableInstances #-}
 module SubGroup where
 
-import RootSystem
 import Weyl
+import qualified SubSystem as SubSystem
 
 
 class (WeylGroup w e r rt) => SubWeylGroup sw w e r rt | sw -> w, sw -> e, sw -> r, sw -> rt where
