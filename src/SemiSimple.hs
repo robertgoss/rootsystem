@@ -79,7 +79,7 @@ rank :: SemiSimple -> Int
 rank (SemiSimple torus simples) = torus + sum (map rankSimple simples)
 
 
-rootSystemSimple :: Simple -> BasicRootSystem
+rootSystemSimple :: Simple -> BasicRootSystem BasicRoot
 rootSystemSimple (A 0) = trivialSystem
 rootSystemSimple (B 0) = trivialSystem
 rootSystemSimple (C 0) = trivialSystem
@@ -112,7 +112,7 @@ rootSystemSimple E6 = fromRoots $ take 6 e8roots
 
 
 
-rootSystem :: SemiSimple -> BasicRootSystem
+rootSystem :: SemiSimple -> BasicRootSystem BasicRoot
 rootSystem (SemiSimple torusDim simples) = foldl basicSystemProduct torusSystem simpleSystems
     where torusSystem = torus $ fullSubAlgebra torusDim
           simpleSystems = map rootSystemSimple simples

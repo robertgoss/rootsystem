@@ -3,6 +3,7 @@
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE FunctionalDependencies #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE FlexibleInstances #-}
 module Weyl where
 
 import Data.Matrix
@@ -31,8 +32,6 @@ class (RootSystem r rt, WeylGroupElement e rt) => WeylGroup w e r rt | w -> r, w
 
 newtype BasicWeylGroupElement = BasicElement (Matrix QQ) deriving(Show)
 data BasicWeylGroup = BasicGroup Int [BasicWeylGroupElement]
-data BasicWeylSubGroup = BasicWeylSub BasicWeylGroup BasicWeylGroup [BasicWeylGroupElement]
-data BasicWeylSubGroup2 = BasicWeylSub2 BasicWeylGroup BasicWeylGroup BasicWeylGroup [BasicWeylGroupElement] [BasicWeylGroupElement]
 
 instance Eq BasicWeylGroupElement where
     (BasicElement m1) == (BasicElement m2) | d1 == d2 = m1 == m2
@@ -83,7 +82,7 @@ instance WeylGroupElement BasicWeylGroupElement BasicRoot where
                         m
               rpad = r <|> zero 1 (mDim - rDim)
 
-instance WeylGroup BasicWeylGroup BasicWeylGroupElement BasicRootSystem BasicRoot where
+instance WeylGroup BasicWeylGroup BasicWeylGroupElement (BasicRootSystem BasicRoot) BasicRoot where
 
     one (BasicGroup dim gens) = BasicElement $ identity dim
 

@@ -47,9 +47,7 @@ dim :: (RootSystem r rt) => r -> Int
 dim system = rank system + length (roots system)
 
 newtype BasicRoot = BasicRoot (Vector QQ) deriving (Show)
-data BasicRootSystem = BasicRootSystem CartanAlgebra [BasicRoot]
-data BasicSubSystem = BasicSubSystem BasicRootSystem BasicRootSystem [BasicRoot]
-data BasicSubSystem2 = BasicSubSystem2 BasicRootSystem BasicRootSystem BasicRootSystem [BasicRoot] [BasicRoot]
+data BasicRootSystem r = BasicRootSystem CartanAlgebra [r]
 
 instance Eq BasicRoot where
     (BasicRoot v1) == (BasicRoot v2) = v1padded == v2padded
@@ -94,27 +92,27 @@ dot (BasicRoot v1) (BasicRoot v2) = sum $ zipWith (*) (toList v1) (toList v2)
 isNonZero :: BasicRoot -> Bool
 isNonZero root = dot root root /= 0
 
-instance RootSystem BasicRootSystem BasicRoot where
+instance (Root r) => RootSystem (BasicRootSystem r) r where
     generators (BasicRootSystem _ roots) = roots
     rank (BasicRootSystem cartan _) = cartanRank cartan
     cartanAlgebra (BasicRootSystem cartan _) = cartan
 
-fromRoots :: [BasicRoot] -> BasicRootSystem
+fromRoots :: (Root rt)  => [rt] -> BasicRootSystem rt
 fromRoots roots = BasicRootSystem cartan roots
   where vec (BasicRoot v) = v
         cartan = CartanAlgebra.span $ map (vec . coroot) roots
 
-torus :: CartanAlgebra -> BasicRootSystem
+torus :: CartanAlgebra -> BasicRootSystem r
 torus cartan = BasicRootSystem cartan []
 
-trivialSystem :: BasicRootSystem
+trivialSystem :: BasicRootSystem r
 trivialSystem = torus $ trivialAlgebra
 
 ambientDim (BasicRootSystem cartan _) | null basis = 0
                                       | otherwise = ncols $ head basis
                                       where basis = orthogonalBasis cartan
 
-basicSystemProduct :: BasicRootSystem -> BasicRootSystem -> BasicRootSystem
+basicSystemProduct :: BasicRootSystem BasicRoot -> BasicRootSystem BasicRoot -> BasicRootSystem BasicRoot
 basicSystemProduct system1 system2 = BasicRootSystem cartanProd rootProd
                 where cartanProd = cartanProduct (cartanAlgebra system1) (cartanAlgebra system2)
                       rootProd = leftExtendRoots ++ rightExtendRoots
@@ -125,7 +123,7 @@ basicSystemProduct system1 system2 = BasicRootSystem cartanProd rootProd
                       leftExtend (BasicRoot v) = BasicRoot $ zero 1 dim1 <|> v <|> zero 1 (dim2 - ncols v) 
                       rightExtend (BasicRoot v) = BasicRoot $ v <|> zero 1 (dim1 + dim2 - ncols v) 
 
-canonicalRootSystem :: (RootSystem s rt, Root rt) => s -> BasicRootSystem
+canonicalRootSystem :: (RootSystem s rt, Root rt) => s -> BasicRootSystem BasicRoot
 canonicalRootSystem rootsystem = BasicRootSystem cartan roots
     where   gens = generators rootsystem
             roots = map coroot gens
