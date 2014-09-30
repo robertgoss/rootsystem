@@ -14,6 +14,8 @@ class (WeylGroup w e r rt) => SubWeylGroup sw w e r rt | sw -> w, sw -> e, sw ->
 
 data Subgroup a = Sub a deriving(Eq,Ord)
 
+subGroup = Sub
+
 instance (SubWeylGroup sw w e r rt) => WeylGroup (Subgroup sw) e r rt where
 	one (Sub sw) = one $ ambientGroup $ sw
 	generators (Sub sw) = subGenerators sw
