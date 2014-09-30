@@ -18,7 +18,7 @@ data S3E7Spin4Spin12Quotient = S3E7Spin4Spin12Quotient
 
 instance RootSystem S3E7System E8Root where
     generators _ = s3Root : init (RootSystem.generators E8System)
-        where s3root = E8SpinRoot $ SwapRoot 7 8 
+        where s3Root = E8SpinRoot $ SwapRoot 7 8 
     rank _ = 8
     cartanAlgebra _ = fullSubAlgebra 8
 
