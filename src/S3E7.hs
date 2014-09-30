@@ -7,6 +7,7 @@ import Weyl
 import CartanAlgebra
 import SubGroup
 import Quotient
+import Spin
 
 data S3E7System = S3E7System
 data S3E7Weyl = S3E7Weyl
