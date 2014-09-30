@@ -92,7 +92,7 @@ instance WeylGroup BasicWeylGroup BasicWeylGroupElement (BasicRootSystem BasicRo
               dim = ambientDim rootsystem
 
 
-elements :: (WeylGroup w e r rt,Ord e) => w -> [e]
+elements :: (WeylGroup w e r rt, Ord e) => w -> [e]
 elements group = generate multiply (one group:gens)
     where gens = Weyl.generators group
 
