@@ -44,6 +44,9 @@ data E8SubS3E7 = E8SubS3E7
 data E8SubS3S1E6 = E8SubS3S1E6
 data E8Spin16Quotient = E8Spin16Quotient
 
+data E8SubS3E7System = E8SubS3E7System
+data E8SubSpin16System = E8SubSpin16System
+
 instance Eq E8Root where
     (E8SpinRoot root1) == (E8SpinRoot root2) = root1 == root2
     (E8SRoot sign1) == (E8SRoot sign2) = pad 8 sign1 == pad 8 sign2
@@ -131,6 +134,14 @@ instance RootSystem E8System E8Root where
     rank _ = 8
     cartanAlgebra _ = fullSubAlgebra 8
     generators _ = E8SRoot (Signs.identity 8) : map E8SpinRoot (RootSystem.generators $ SpinSystem 7)
+
+instance SubRootSystem E8SubSpin16System E8System E8Root where
+    ambientSystem _ = E8System
+    subGenerators = E8SpinRoot (SwapRoot 7 8) : tail (RootSystem.generators E8System)
+
+instance SubRootSystem E8SubS3E7System E8System E8Root where
+    ambientSystem _ = E8System
+    subGenerators = E8SpinRoot (SignSwapRoot 7 8) : init (RootSystem.generators E8System)
 
 sMatrix = Data.Matrix.identity 8 - fromList 8 8 (replicate 64 (1/4)) 
 
