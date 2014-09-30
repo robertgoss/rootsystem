@@ -73,3 +73,8 @@ s3E7System = S3E7System
 s3E7SubS3S1E6System = S3E7SubS3S1E6System
 s3E7SubSpin4Spin12System = S3E7SubSpin4Spin12System
 
+e8DoubleQuoAtOne = intersection $ combineSubSystems e8SubS3E7System e8SubSpin16System
+e8DoubleQuoAtX8S = intersection $ combineSubSystems e8SubS3E7System (actOnSubSystem e8SubSpin16System x8s)
+
+s3E7DoubleQuoAtOne = intersection $ combineSubSystems s3E7SubS3S1E6System s3E7SubSpin4Spin12System
+s3E7DoubleQuoAtX7S = intersection $ combineSubSystems s3E7SubS3S1E6System (actOnSubSystem s3E7SubSpin4Spin12System x7s)
