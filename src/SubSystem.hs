@@ -11,17 +11,17 @@ import RootSystem
 class (RootSystem r rt) => SubRootSystem sr r rt | sr -> r, sr -> rt where
     ambientSystem :: sr -> r
     subGenerators :: sr -> [rt] 
+    subCartan :: sr -> CartanAlgebra
+    subCartan sr = cartanAlgebra $ fromRoots (subGenerators sr) 
 
 class (RootSystem r rt) => SubRootSystems sr r rt | sr -> r, sr -> rt where
     commonAmbientSystem :: sr -> r
     subSystemsGenerators :: sr -> [[rt]]
 
-data SubSystem a = SubS a CartanAlgebra
+data SubSystem a = SubS a
 
 subSystem :: (SubRootSystem sr r rt) => sr -> SubSystem sr
-subSystem sr = SubS sr alg 
-    where alg = cartanAlgebra basicSys
-          basicSys = fromRoots $ map coroot $ subGenerators sr
+subSystem = SubS
 
 data BasicSubSystem sr r rt = SubsS sr r [rt]
 data BasicSubSystems r rt = BasicSubs r [[rt]]
@@ -49,9 +49,9 @@ instance (SubRootSystem sr r rt) => SubRootSystems (CombinedSubs sr) r rt where
     subSystemsGenerators (ComSub srs) = map subGenerators srs
 
 instance (SubRootSystem sr r rt) => RootSystem (SubSystem sr) rt where
-    cartanAlgebra (SubS _ alg) = alg 
-    rank (SubS _ alg) = cartanRank alg
-    generators (SubS sr _) = subGenerators sr
+    cartanAlgebra (SubS sr) = subCartan sr
+    rank (SubS sr) = cartanRank $ subCartan sr
+    generators (SubS sr) = subGenerators sr
 
 data Intersection sr rt = Inter sr [rt] CartanAlgebra
 
