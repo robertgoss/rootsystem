@@ -43,15 +43,15 @@ subSystems sr = zipWith (SubsS sr amb) genslist algs
         genslist = subSystemsGenerators sr
         algs = subSystemsCartan sr
 
-data CombinedSubs sr = ComSub [sr]
+data CombinedSubs sr sr' = ComSub sr sr'
 
-combineSubSystems :: (SubRootSystem sr r rt) => [sr] -> (CombinedSubs sr)
+combineSubSystems :: (SubRootSystem sr r rt,SubRootSystem sr' r rt) => sr -> sr' -> (CombinedSubs sr sr')
 combineSubSystems = ComSub 
 
-instance (SubRootSystem sr r rt) => SubRootSystems (CombinedSubs sr) r rt where
-    commonAmbientSystem (ComSub srs) = ambientSystem $ head srs
-    subSystemsGenerators (ComSub srs) = map subGenerators srs
-    subSystemsCartan (ComSub srs) = map subCartan srs
+instance (SubRootSystem sr r rt,SubRootSystem sr' r rt) => SubRootSystems (CombinedSubs sr sr') r rt where
+    commonAmbientSystem (ComSub sr _) = ambientSystem sr
+    subSystemsGenerators (ComSub sr sr') = [subGenerators sr, subGenerators sr']
+    subSystemsCartan (ComSub sr sr') = [subCartan sr, subCartan sr']
 
 instance (SubRootSystem sr r rt) => RootSystem (SubSystem sr) rt where
     cartanAlgebra (SubS sr) = subCartan sr
