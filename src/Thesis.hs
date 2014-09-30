@@ -11,7 +11,7 @@ import Spin
 import Signs
 
 import E8
-import E7
+import S3E7
 
 import SemiSimple
 
@@ -23,10 +23,12 @@ remDup (x:xs) | x `elem` xs = remDup xs
 
 e8Group = E8Weyl
 
-s3e7Group = subGroup E8SubS3E7
-s3s1e6Group = subGroup E8SubS3S1E6
+s3e7Group = S3E7Weyl
+s3s1e6Group = subGroup S3E7SubS3S1E6
 
 spin16QuotientGroup = Quo E8Spin16Quotient
+
+spin4spin12QuotientGroup = Quo S3E7Spin4Spin12Quotient
 
 spin16OneS3E7 = generatePointed multiply quoS3E7Gens one'
 	where quoS3E7Gens = map (image E8Spin16Quotient) $ Weyl.generators s3e7Group
