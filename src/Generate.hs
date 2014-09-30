@@ -12,7 +12,7 @@ generate comb gens = toList $ generateStep genSet genSet
           genSet = fromList gens
 
 generatePointed :: (Ord a) => (a -> a -> a) -> [a] -> a -> [a]
-generatePointed comb gens basePoint = toList $ generateStep baseSet genSet
+generatePointed comb gens basePoint = toList $ generateStep Set.empty baseSet
     where generateStep old current | Set.null current = old
                                    | otherwise = generateStep (union old new) (difference new old)
             where new = Set.unions $ Prelude.map (act current) gens
