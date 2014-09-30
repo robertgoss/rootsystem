@@ -24,16 +24,29 @@ subSystem sr = SubS sr alg
           basicSys = fromRoots $ map coroot $ subGenerators sr
 
 data BasicSubSystem sr r rt = SubsS sr r [rt]
+data BasicSubSystems r rt = BasicSubs r [[rt]]
 
 instance (RootSystem r rt) => SubRootSystem (BasicSubSystem sr r rt) r rt where
     ambientSystem (SubsS _ system _) = system
     subGenerators (SubsS _ _ gens) = gens
+
+instance (RootSystem r rt) => SubRootSystems (BasicSubSystems r rt) r rt where
+    commonAmbientSystem (BasicSubs r _) = r
+    subSystemsGenerators (BasicSubs _ gens) = gens
 
 subSystems :: (SubRootSystems sr r rt) => sr -> [BasicSubSystem sr r rt]
 subSystems sr = map (SubsS sr amb) genslist
   where amb = commonAmbientSystem sr
         genslist = subSystemsGenerators sr
 
+data CombinedSubs sr = ComSub [sr]
+
+combineSubSystems :: (SubRootSystem sr r rt) => [sr] -> (CombinedSubs sr)
+combineSubSystems = ComSub 
+
+instance (SubRootSystem sr r rt) => SubRootSystems (CombinedSubs sr) r rt where
+    commonAmbientSystem (ComSub srs) = ambientSystem $ head srs
+    subSystemsGenerators (ComSub srs) = map subGenerators srs
 
 instance (SubRootSystem sr r rt) => RootSystem (SubSystem sr) rt where
     cartanAlgebra (SubS _ alg) = alg 
