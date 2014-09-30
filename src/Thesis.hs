@@ -23,7 +23,7 @@ remDup (x:xs) | x `elem` xs = remDup xs
 
 e8Group = E8Weyl
 
-s3e7Group = subGroup E8SubE7
+s3e7Group = subGroup E8SubS3E7
 
 spin16QuotientGroup = Quo E8Spin16Quotient
 
@@ -43,3 +43,7 @@ x8s = x8 `multiply` s
 spin16X8SS3E7 = generatePointed multiply quoS3E7Gens x8s'
 	where quoS3E7Gens = map (image E8Spin16Quotient) $ Weyl.generators s3e7Group
 	      x8s' = image E8Spin16Quotient x8s
+
+commute a b = a `multiply` b == b `multiply` a
+
+commute2 a b = (a `multiply` b) `multiply` (a `multiply` b) == b `multiply` a
