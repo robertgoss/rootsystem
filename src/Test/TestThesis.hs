@@ -11,7 +11,7 @@ import Weyl
 
 import Data.Set (fromList)
 
-testThesis = testGroup "E8 algebra" [testThesisProp, testThesisUnit]
+testThesis = testGroup "Thesis" [testThesisProp, testThesisUnit]
 
 testThesisProp = testGroup "Properties" []
 testThesisUnit = testGroup "Unit tests" [testSpin16QuotientElementNumber,
@@ -22,7 +22,7 @@ testThesisUnit = testGroup "Unit tests" [testSpin16QuotientElementNumber,
 										testS3E7Independence
 										]
 
-testSpin16QuotientElementNumber = testCase "The quotients of the weyl groups of E8 and Spin16 has order ?" $ 
+testSpin16QuotientElementNumber = testCase "The quotients of the weyl groups of E8 and Spin16 has order 135" $ 
                                     order spin16QuotientGroup @?= 135
 
 testDoubleQuoE8Distinct = testCase "The S3E7 Spin16 double quotient at one and xs are distinct" $
