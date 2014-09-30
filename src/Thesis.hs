@@ -34,9 +34,9 @@ spin16OneS3E7 = generatePointed multiply quoS3E7Gens one'
 s :: E8WeylElement
 s = simpleReflection $ E8SRoot $ Signs.identity 8
 
-x8 = swap23 `multiply` signSwap23
-	where swap23 = simpleReflection . E8SpinRoot $ SwapRoot 2 3
-	      signSwap23 = simpleReflection . E8SpinRoot $ SignSwapRoot 2 3
+x8 = swap67 `multiply` signSwap67
+	where swap67 = simpleReflection . E8SpinRoot $ SwapRoot 6 7
+	      signSwap67 = simpleReflection . E8SpinRoot $ SignSwapRoot 6 7
 
 x8s = x8 `multiply` s 
 
