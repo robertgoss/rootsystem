@@ -41,6 +41,7 @@ data E8Weyl = E8Weyl
 
 data E8SubE7 = E8SubE7
 data E8SubS3E7 = E8SubS3E7
+data E8SubS3S1E6 = E8SubS3S1E6
 data E8Spin16Quotient = E8Spin16Quotient
 
 instance Eq E8Root where
@@ -333,6 +334,11 @@ instance SubWeylGroup E8SubE7 E8Weyl E8WeylElement E8System E8Root where
 instance SubWeylGroup E8SubS3E7 E8Weyl E8WeylElement E8System E8Root where
     ambientGroup _ = E8Weyl
     subGenerators _ = s3gen : init (Weyl.generators E8Weyl)
+      where s3gen = E8Type1 $ SpinElement (Signs.identity 8) (Perm.swap 7 8 $ Perm.identity 8)
+
+instance SubWeylGroup E8SubS3S1E6 E8Weyl E8WeylElement E8System E8Root where
+    ambientGroup _ = E8Weyl
+    subGenerators _ = s3gen : take 6 (Weyl.generators E8Weyl)
       where s3gen = E8Type1 $ SpinElement (Signs.identity 8) (Perm.swap 7 8 $ Perm.identity 8)
 
 instance Arbitrary E8Root where

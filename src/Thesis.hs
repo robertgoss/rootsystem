@@ -24,6 +24,7 @@ remDup (x:xs) | x `elem` xs = remDup xs
 e8Group = E8Weyl
 
 s3e7Group = subGroup E8SubS3E7
+s3s1e6Group = subGroup E8SubS3S1E6
 
 spin16QuotientGroup = Quo E8Spin16Quotient
 

@@ -19,7 +19,9 @@ testThesisUnit = testGroup "Unit tests" [testSpin16QuotientElementNumber,
 										testDoubleQuoE8Distinct,
 										testE8Bonds,
 										testS3E7Gens,
-										testS3E7Independence
+										testS3E7Independence,
+										testS3S1E6Gens,
+										testS3S1E6Independence
 										]
 
 testSpin16QuotientElementNumber = testCase "The quotients of the weyl groups of E8 and Spin16 has order 135" $ 
@@ -44,3 +46,9 @@ elementCommute gens i j = commute (gens!!i) (gens!!j)
 
 testS3E7Independence = testCase "The S3 generator should commute with other generators" $ 
                                  all (elementCommute (Weyl.generators s3e7Group) 0) [1..7] @? "S3 generator should be independent from others"
+
+testS3S1E6Gens = testCase "There should be 7 generators of S3S1E6" $ length (Weyl.generators s3s1e6Group) @?= 7
+
+
+testS3S1E6Independence = testCase "The S3 generator should commute with other generators" $ 
+                                 all (elementCommute (Weyl.generators s3s1e6Group) 0) [1..6] @? "S3 generator should be independent from others"
