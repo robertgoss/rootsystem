@@ -25,7 +25,10 @@ testThesisUnit = testGroup "Unit tests" [testSpin16QuotientElementNumber,
 										testS3E7Gens,
 										testS3E7Independence,
 										testS3S1E6Gens,
-										testS3S1E6Independence
+										testS3S1E6Independence,
+										testE8SystemType,
+										testSubSpin16SystemType,
+										testSubS3E7SystemType
 										]
 
 testSpin16QuotientElementNumber = testCase "The quotients of the weyl groups of E8 and Spin16 has order 135" $ 
@@ -67,7 +70,7 @@ testS3S1E6Gens = testCase "There should be 7 generators of S3S1E6" $ length (Wey
 testS3S1E6Independence = testCase "The S3 generator should commute with other generators" $ 
                                  all (elementCommute (Weyl.generators s3s1e6Group) 0) [1..6] @? "S3 generator should be independent from others"
 
-testSubE8SystemType = testCase "The e8 system is of type E8" $ determine e8System @?= fromSimples 0 [E8]
+testE8SystemType = testCase "The e8 system is of type E8" $ determine e8System @?= fromSimples 0 [E8]
 
 testSubS3E7SystemType = testCase "The sub S3E7 system is of type S3E7" $ 
                                  determine (subSystem e8SubS3E7System) `isomorphic` fromSimples 0 [A 1,E7] @? "Non isomorphic"
