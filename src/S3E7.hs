@@ -33,7 +33,10 @@ instance SubRootSystem S3E7SubS3S1E6System S3E7System E8Root where
 
 instance SubRootSystem S3E7SubSpin4Spin12System S3E7System E8Root where
     ambientSystem _ = S3E7System
-    subGenerators _ = (E8SpinRoot $ SignSwapRoot 7 8) : tail (RootSystem.generators S3E7System)
+    subGenerators _ =  s3Root : s3Root' : spin12
+        where s3Root = E8SpinRoot $ SwapRoot 7 8 
+              s3Root' = E8SpinRoot $ SignSwapRoot 7 8 
+              spin12 = init $ tail (RootSystem.generators E8System)
     subCartan _ = cartanAlgebra E8System
 
 
