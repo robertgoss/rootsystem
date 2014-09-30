@@ -4,6 +4,8 @@
 {-# LANGUAGE UndecidableInstances #-}
 module Quotient where
 
+import Data.Ord
+
 import Weyl
 import SubGroup
 import Generate
@@ -12,6 +14,9 @@ import RootSystem
 class (WeylGroup w e r rt) => QuotientWeylGroup qw w e r rt | qw -> w, qw -> e, qw -> r, qw -> rt where
     superGroup :: qw -> w
     quoWeylEq :: qw -> e -> e -> Bool
+
+class (QuotientWeylGroup qw w e r rt) => QuotientWeylGroupCmp qw w e r rt where
+    quoWeylCmp :: qw -> e -> e -> Ordering
 
 data SubGroupQuotient s w e = SubQuo s [e]
 
@@ -29,6 +34,12 @@ data QuotientElement qw a = QuoE qw a
 instance (QuotientWeylGroup qw w e r rt) => Eq (QuotientElement qw e) where
     (QuoE quo x) == (QuoE _ y) = (quoWeylEq quo) x y
 
+instance (QuotientWeylGroupCmp qw w e r rt) => Ord (QuotientElement qw e) where
+    (QuoE quo x) `compare` (QuoE _ y) = quoWeylCmp quo x y
+
+
+image :: qw -> e -> QuotientElement qw e
+image = QuoE
 
 preimage :: QuotientElement qw e -> e
 preimage (QuoE _ a) = a
