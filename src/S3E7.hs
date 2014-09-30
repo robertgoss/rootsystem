@@ -12,7 +12,7 @@ import Spin
 data S3E7System = S3E7System
 data S3E7Weyl = S3E7Weyl
 
-data S3E7SubS1S3E6 = S3E7SubS1S3E6
+data S3E7SubS3S1E6 = S3E7SubS3S1E6
 data S3E7Spin4Spin12Quotient = S3E7Spin4Spin12Quotient
 
 
@@ -33,7 +33,7 @@ instance QuotientWeylGroup S3E7Spin4Spin12Quotient S3E7Weyl E8WeylElement S3E7Sy
     superGroup _ = S3E7Weyl
     quoWeylEq _ = quoWeylEq E8Spin16Quotient
 
-instance QuotientWeylGroupCmp S3E7SpinSpin4Spin12Quotient S3E7Weyl E8WeylElement S3E7System E8Root where
+instance QuotientWeylGroupCmp S3E7Spin4Spin12Quotient S3E7Weyl E8WeylElement S3E7System E8Root where
     quoWeylCmp _ = quoWeylCmp E8Spin16Quotient
 
 instance SubWeylGroup S3E7SubS3S1E6 S3E7Weyl E8WeylElement S3E7System E8Root where
