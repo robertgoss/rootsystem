@@ -291,6 +291,20 @@ instance WeylGroupElement E8WeylElement E8Root where
     weylAction (E8Type3' sign spin) root = signAct tw $ sAct $ signAct sign $ sAct $ spinAct spin root
         where tw = twist sign
  
+leftDominate EQ a = a
+leftDominate b  _ = b
+
+instance Ord E8WeylElement where
+    (E8Type1 spin1) `compare` (E8Type1 spin2) = spin1 `compare` spin2
+    (E8Type1 _) `compare` _ = LT
+    (E8Type2 sign1 spin1) `compare` (E8Type2 sign2 spin2) = leftDominate (sign1 `compare` sign2 ) (spin1 `compare` spin2)
+    (E8Type2 _ _) `compare` (E8Type1 _) = GT
+    (E8Type2 _ _) `compare` _ = LT
+    (E8Type3 sign1 spin1) `compare` (E8Type3 sign2 spin2) = leftDominate (sign1 `compare` sign2 ) (spin1 `compare` spin2)
+    (E8Type3 _ _) `compare` (E8Type3' _ _) = LT
+    (E8Type3 _ _) `compare` _ = GT
+    (E8Type3' sign1 spin1) `compare` (E8Type3' sign2 spin2) = leftDominate (sign1 `compare` sign2 ) (spin1 `compare` spin2)
+    (E8Type3' _ _) `compare` _ = GT
 
 instance WeylGroup E8Weyl E8WeylElement E8System E8Root where
     one _ = e8Unit
@@ -307,6 +321,9 @@ instance QuotientWeylGroup E8Spin16Quotient E8Weyl E8WeylElement E8System E8Root
     quoWeylEq _ (E8Type3 _ _) _ = False
     quoWeylEq _ (E8Type3' sign1 _) (E8Type3' sign2 _) = sign1 == sign2
     quoWeylEq _ (E8Type3' _ _) _ = False
+
+instance QuotientWeylGroupCmp E8Spin16Quotient E8Weyl E8WeylElement E8System E8Root where
+    quoWeylCmp q a b = if quoWeylEq q a b then EQ else a `compare` b
 
 instance SubWeylGroup E8SubE7 E8Weyl E8WeylElement E8System E8Root where
     ambientGroup _ = E8Weyl
