@@ -68,3 +68,8 @@ commute2 a b = (a `multiply` b) `multiply` (a `multiply` b) == b `multiply` a
 e8System = E8System
 e8SubS3E7System = E8SubS3E7System
 e8SubSpin16System = E8SubSpin16System
+
+s3E7System = S3E7System
+s3E7SubS3S1E6System = S3E7SubS3S1E6System
+s3E7SubSpin4Spin12System = S3E7SubSpin4Spin12System
+

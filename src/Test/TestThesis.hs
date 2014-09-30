@@ -28,7 +28,10 @@ testThesisUnit = testGroup "Unit tests" [testSpin16QuotientElementNumber,
 										testS3S1E6Independence,
 										testE8SystemType,
 										testSubSpin16SystemType,
-										testSubS3E7SystemType
+										testSubS3E7SystemType,
+										testS3E7SystemType,
+										testSubSpin4Spin12SystemType,
+										testSubS3S1E6SystemType
 										]
 
 testSpin16QuotientElementNumber = testCase "The quotients of the weyl groups of E8 and Spin16 has order 135" $ 
@@ -77,3 +80,11 @@ testSubS3E7SystemType = testCase "The sub S3E7 system is of type S3E7" $
 
 testSubSpin16SystemType = testCase "The sub spin16 system is of type D8" $ 
                                  determine (subSystem e8SubSpin16System) `isomorphic` fromSimples 0 [D 8] @? "Non isomorphic"
+
+testS3E7SystemType = testCase "The s3e7 system is of type S3E7" $ determine s3E7System `isomorphic` fromSimples 0 [A 1,E7] @? "Non isomorphic"
+
+testSubS3S1E6SystemType = testCase "The sub S3S1E6 system is of type S3S1E6" $ 
+                                 determine (subSystem s3E7SubS3S1E6System) `isomorphic` fromSimples 1 [A 1,E6] @? "Non isomorphic"
+
+testSubSpin4Spin12SystemType = testCase "The sub spin4spin12 system is of type D2D6" $ 
+                                 determine (subSystem s3E7SubSpin4Spin12System) `isomorphic` fromSimples 0 [D 2,D 6] @? "Non isomorphic"

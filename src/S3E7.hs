@@ -8,12 +8,16 @@ import CartanAlgebra
 import SubGroup
 import Quotient
 import Spin
+import SubSystem
 
 data S3E7System = S3E7System
+
 data S3E7Weyl = S3E7Weyl
 
 data S3E7SubS3S1E6 = S3E7SubS3S1E6
 data S3E7Spin4Spin12Quotient = S3E7Spin4Spin12Quotient
+data S3E7SubS3S1E6System = S3E7SubS3S1E6System
+data S3E7SubSpin4Spin12System = S3E7SubSpin4Spin12System
 
 
 instance RootSystem S3E7System E8Root where
@@ -21,6 +25,14 @@ instance RootSystem S3E7System E8Root where
         where s3Root = E8SpinRoot $ SwapRoot 7 8 
     rank _ = 8
     cartanAlgebra _ = fullSubAlgebra 8
+
+instance SubRootSystem S3E7SubS3S1E6System S3E7System E8Root where
+    ambientSystem _ = S3E7System
+    subGenerators _ = init $ RootSystem.generators S3E7System
+
+instance SubRootSystem S3E7SubSpin4Spin12System S3E7System E8Root where
+    ambientSystem _ = S3E7System
+    subGenerators _ = (E8SpinRoot $ SignSwapRoot 7 8) : tail (RootSystem.generators S3E7System)
 
 
 instance WeylGroup S3E7Weyl E8WeylElement S3E7System E8Root where
