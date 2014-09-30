@@ -7,7 +7,8 @@ import Test.Tasty.HUnit
 
 import Thesis
 import Weyl
-
+import SubSystem
+import SemiSimple
 
 import Data.Set (fromList)
 
@@ -65,3 +66,11 @@ testS3S1E6Gens = testCase "There should be 7 generators of S3S1E6" $ length (Wey
 
 testS3S1E6Independence = testCase "The S3 generator should commute with other generators" $ 
                                  all (elementCommute (Weyl.generators s3s1e6Group) 0) [1..6] @? "S3 generator should be independent from others"
+
+testSubE8SystemType = testCase "The e8 system is of type E8" $ determine e8System @?= fromSimples 0 [E8]
+
+testSubS3E7SystemType = testCase "The sub S3E7 system is of type S3E7" $ 
+                                 determine (subSystem e8SubS3E7System) `isomorphic` fromSimples 0 [A 1,E7] @? "Non isomorphic"
+
+testSubSpin16SystemType = testCase "The sub spin16 system is of type D8" $ 
+                                 determine (subSystem e8SubSpin16System) `isomorphic` fromSimples 0 [D 8] @? "Non isomorphic"

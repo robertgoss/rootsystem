@@ -64,3 +64,7 @@ spin4spin12X7SS3S1E6 = generatePointed multiply quoS3S1E6Gens x7s'
 commute a b = a `multiply` b == b `multiply` a
 
 commute2 a b = (a `multiply` b) `multiply` (a `multiply` b) == b `multiply` a
+
+e8System = E8System
+e8SubS3E7System = E8SubS3E7System
+e8SubSpin16System = E8SubSpin16System
