@@ -12,6 +12,7 @@ import Rational
 import RootSystem
 import CartanAlgebra
 import Generate
+import SubSystem
 
 class (Eq g,Root r) => WeylGroupElement g r | g -> r where
 
@@ -98,3 +99,9 @@ elements group = generate multiply (one group:gens)
 
 order :: (WeylGroup w e r rt, Ord e) => w -> Integer
 order = toInteger . length . elements
+
+data ActedSubSystem sr g = ActSub g sr
+
+instance (SubRootSystem sr r rt, WeylGroupElement e rt) => SubRootSystem (ActedSubSystem sr e) r rt where
+  ambientSystem (ActSub _ sr) = ambientSystem sr
+  subGenerators (ActSub g sr) = map (weylAction g) $ subGenerators sr
