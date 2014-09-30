@@ -105,6 +105,7 @@ data ActedSubSystem sr g = ActSub g sr
 instance (SubRootSystem sr r rt, WeylGroupElement e rt) => SubRootSystem (ActedSubSystem sr e) r rt where
   ambientSystem (ActSub _ sr) = ambientSystem sr
   subGenerators (ActSub g sr) = map (weylAction g) $ subGenerators sr
+  subCartan (ActSub _ sr) = subCartan sr
 
 actOnSubSytem :: (SubRootSystem sr r rt, WeylGroupElement e rt) => sr -> e -> ActedSubSystem sr e
 actOnSubSytem = flip ActSub
