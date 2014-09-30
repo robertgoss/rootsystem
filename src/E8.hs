@@ -139,12 +139,12 @@ instance RootSystem E8System E8Root where
 instance SubRootSystem E8SubSpin16System E8System E8Root where
     ambientSystem _ = E8System
     subGenerators _ = E8SpinRoot (SwapRoot 7 8) : tail (RootSystem.generators E8System)
-    subCartan = cartanAlgebra E8System
+    subCartan _ = cartanAlgebra E8System
 
 instance SubRootSystem E8SubS3E7System E8System E8Root where
     ambientSystem _ = E8System
     subGenerators _ = E8SpinRoot (SwapRoot 7 8) : init (RootSystem.generators E8System)
-    subCartan = cartanAlgebra E8System
+    subCartan _ = cartanAlgebra E8System
 
 sMatrix = Data.Matrix.identity 8 - fromList 8 8 (replicate 64 (1/4)) 
 
