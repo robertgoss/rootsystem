@@ -12,6 +12,7 @@ import Rational
 import CartanAlgebra
 import SubGroup
 import Quotient
+import SubSystem
 import qualified Permutation as Perm
 
 type Signs0 = Signs
@@ -137,11 +138,11 @@ instance RootSystem E8System E8Root where
 
 instance SubRootSystem E8SubSpin16System E8System E8Root where
     ambientSystem _ = E8System
-    subGenerators = E8SpinRoot (SwapRoot 7 8) : tail (RootSystem.generators E8System)
+    subGenerators _ = E8SpinRoot (SwapRoot 7 8) : tail (RootSystem.generators E8System)
 
 instance SubRootSystem E8SubS3E7System E8System E8Root where
     ambientSystem _ = E8System
-    subGenerators = E8SpinRoot (SignSwapRoot 7 8) : init (RootSystem.generators E8System)
+    subGenerators _ = E8SpinRoot (SignSwapRoot 7 8) : init (RootSystem.generators E8System)
 
 sMatrix = Data.Matrix.identity 8 - fromList 8 8 (replicate 64 (1/4)) 
 
