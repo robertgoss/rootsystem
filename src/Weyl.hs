@@ -115,5 +115,5 @@ instance (SubRootSystem sr r rt, WeylGroupElement e rt) => SubRootSystem (ActedS
   subGenerators (ActSub g sr) = map (weylAction g) $ subGenerators sr
   subCartan (ActSub g sr) = torusAction g $ subCartan sr
 
-actOnSubSytem :: (SubRootSystem sr r rt, WeylGroupElement e rt) => sr -> e -> ActedSubSystem sr e
-actOnSubSytem = flip ActSub
+actOnSubSystem :: (SubRootSystem sr r rt, WeylGroupElement e rt) => sr -> e -> ActedSubSystem sr e
+actOnSubSystem = flip ActSub
