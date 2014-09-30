@@ -39,6 +39,15 @@ span vectors = span' $ map pad vectors
 cartanRank :: CartanAlgebra -> Int
 cartanRank = length . orthogonalBasis
 
+intersect :: CartanAlgebra -> CartanAlgebra -> CartanAlgebra
+intersect (CartanAlgebra basis1) (CartanAlgebra basis2) = CartanAlgebra.span intersectSpan
+    where intersectSpan = reducedBasis1 ++ reducedBasis2
+          reduceVec [] v = v
+          reduceVec (x:xs) y = y - scaleMatrix (dot x y) x
+            where dot v w = getElem 1 1 $ v * transpose w
+          reducedBasis1 = map (reduceVec basis2) basis1
+          reducedBasis2 = map (reduceVec basis1) basis2 
+
 
 cartanProduct :: CartanAlgebra -> CartanAlgebra -> CartanAlgebra
 cartanProduct cartan (CartanAlgebra []) = cartan
