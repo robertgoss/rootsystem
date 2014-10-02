@@ -97,7 +97,7 @@ isNonZero :: BasicRoot -> Bool
 isNonZero root = dot root root /= 0
 
 instance (Root r) => RootSystem (BasicRootSystem r) r where
-    generators (BasicRootSystem _ roots) = roots
+    simpleRoots (BasicRootSystem _ roots) = roots
     rank (BasicRootSystem cartan _) = cartanRank cartan
     cartanAlgebra (BasicRootSystem cartan _) = cartan
 
