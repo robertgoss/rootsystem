@@ -28,6 +28,9 @@ add (PWeight xs) (PWeight ys) = PWeight $ zipWith (+) xs' ys'
         xs' = xs ++ replicate (n-m) 0
         ys' = ys ++ replicate (m-n) 0
 
+innerProduct :: PrincipleWeight -> PrincipleWeight -> Int
+innerProduct (PWeight xs) (PWeight ys) = sum $ zipWith (*) xs ys
+
 zeroWeight = PWeight []
 
 weightLattice :: (RootSystem r rt) => r -> WeightLattice r
@@ -39,7 +42,15 @@ generators (WL r) = map basicWeight [1..nRoots]
           basicWeight i = PWeight $ replicate (i-1) 0 ++ [1] 
 
 weylDimension :: (RootSystem r rt) => WeightLattice r -> PrincipleWeight -> Int
-weylDimension = undefined
+weylDimension lattice@(WL r) weight = numerator `div` denominator
+  where pWeights = map (associatedPWeight lattice) $ positiveRoots r
+        rho = foldl WeightLattice.add zeroWeight pWeights
+        numerator = sum $ map (\pw -> WeightLattice.add weight rho `innerProduct` pw) pWeights
+        denominator = sum $ map (\pw -> rho `innerProduct` pw) pWeights
+
+associatedPWeight :: (RootSystem r rt) => WeightLattice r -> rt -> PrincipleWeight
+associatedPWeight lattice root | not (positive root) =  associatedPWeight lattice (RootSystem.negate root)
+                               | otherwise = undefined
 
 pWeightsRestrictedWeylDimension :: (RootSystem r rt) => WeightLattice r -> Int -> [PrincipleWeight]
 pWeightsRestrictedWeylDimension lattice n = pWeightsRestrictedWeylDimension' lattice n zeroWeight gens
