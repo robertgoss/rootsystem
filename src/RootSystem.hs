@@ -39,7 +39,7 @@ class (Root rt) => RootSystem r rt | r -> rt where
     simpleRoots :: (RootSystem r rt) => r -> [rt]
     simpleRoots r = Set.toList $ Set.difference (Set.fromList positiveR) (Set.fromList sums)
         where positiveR = positiveRoots r
-            sums = catMaybes $ [r `add` s | r<-positiveR, s<-positiveR, r > s]
+              sums = catMaybes $ [r `add` s | r<-positiveR, s<-positiveR, r > s]
 
 
 rootsScan :: (RootSystem r rt) => r -> [([rt],[rt])]
