@@ -16,7 +16,6 @@ import           CartanAlgebra
 import           Rational
 import           Generate
 
-import Debug.Trace
 
 class (Ord r) => Root r where
     reflect :: r -> r -> r
