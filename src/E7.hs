@@ -34,3 +34,5 @@ instance QuotientWeylGroup E7Spin14Quotient E7Weyl E8WeylElement E7System E8Root
 instance SubWeylGroup E7SubE6 E7Weyl E8WeylElement E7System E8Root where
     ambientGroup _ = E7Weyl
     subGenerators _ = init $ Weyl.generators E7Weyl
+
+ 
