@@ -3,7 +3,7 @@ module WeightLattice where
 import RootSystem
 
 
-newtype PrincipleWeight = PWeight [Int]
+newtype PrincipleWeight = PWeight [Int] deriving(Show)
 newtype WeightLattice r = WL r
 
 instance Eq PrincipleWeight where
