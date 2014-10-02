@@ -20,7 +20,9 @@ data SpinRoot = SwapRoot Int Int
 
 newtype SpinSystem = SpinSystem Int deriving(Eq,Ord,Show)
 
-data SpinWeylElement = SpinElement Signs Permutation deriving(Eq,Show)
+data SpinWeylElement = SpinElement Signs Permutation deriving(Eq,Show,Ord)
+
+data SpinWeyl = SpinWeyl Int deriving(Eq,Ord,Show)
 
 
 makeSwapRoot pos neg | pos < neg = SwapRoot pos neg
@@ -92,9 +94,9 @@ instance Root SpinRoot where
     reflect (Neg root1) root2 = makeNeg $ reflect root1 root2
     reflect root1 (Neg root2) = reflect root1 root2
 
-    coroot (SwapRoot i j) = M.setElem 1 (1,i) $ M.setElem (-1) (1,j)  $ M.zero 1 j
-    coroot (SignSwapRoot i j) = M.setElem 1 (1,i) $ M.setElem 1 (1,j)  $ M.zero 1 j
-    coroot (Neg root) = scaleMatrix (-1) $ coroot root
+    coroot (SwapRoot i j) = BasicRoot $ M.setElem 1 (1,i) $ M.setElem (-1) (1,j)  $ M.zero 1 j
+    coroot (SignSwapRoot i j) = BasicRoot $ M.setElem 1 (1,i) $ M.setElem 1 (1,j)  $ M.zero 1 j
+    coroot (Neg root) = RootSystem.negate $ coroot root
 
     positive (SwapRoot _ _) = True
     positive (SignSwapRoot _ _ ) = True
@@ -105,7 +107,7 @@ instance Root SpinRoot where
                     | positive root2 && reflected < root1 = Nothing
                     | (not $ positive root2) && reflected > root1 = Nothing
                     | otherwise = Just reflected
-        where reflected = root1 `reflect` (root2)
+        where reflected = root1 `reflect` root2
 
     negate (Neg root) = root
     negate root = Neg root
@@ -127,10 +129,12 @@ instance WeylGroupElement SpinWeylElement SpinRoot where
         where iperm = Permutation.inverse perm
               isign = permute iperm sign
 
-    torusRepresentation (SpinElement sign perm) = (Signs.toMatrix (Signs.pad m sign)) * (Permutation.toMatrix (Permutation.pad m perm))
+    torusRepresentation (SpinElement sign perm) = BasicElement $ signMatrix * permMatrix
         where (Signs v) = sign
               (Perm w) = perm
               m = max (nrows v) (nrows w)
+              signMatrix = Signs.toMatrix (Signs.pad m sign)
+              permMatrix = Permutation.toMatrix (Permutation.pad m perm)
 
     simpleReflection (SwapRoot i j) = SpinElement sign perm
         where perm = swap i j $ Permutation.identity 1
@@ -139,6 +143,38 @@ instance WeylGroupElement SpinWeylElement SpinRoot where
         where perm = swap i j $ Permutation.identity 1
               sign = dSwap i j $ Signs.identity (max i j)
     simpleReflection (Neg root) = simpleReflection root
+
+    weylAction (SpinElement sign perm) = spinSignAct sign . spinPermAct perm
+
+
+spinSignAct :: Signs -> SpinRoot -> SpinRoot
+spinSignAct sign (SwapRoot i j) | signI == 1 && signJ == 1 = SwapRoot i j
+                                | signI == 1 && signJ == -1 = SignSwapRoot i j
+                                | signI == -1 && signJ == 1 = Neg $ SignSwapRoot i j
+                                | signI == -1 && signJ == -1 = Neg $ SwapRoot i j
+     where signI = Signs.at i sign
+           signJ = Signs.at j sign
+spinSignAct sign (SignSwapRoot i j) | signI == 1 && signJ == 1 = SignSwapRoot i j
+                                    | signI == 1 && signJ == -1 = SwapRoot i j
+                                    | signI == -1 && signJ == 1 = Neg $ SwapRoot i j
+                                    | signI == -1 && signJ == -1 = Neg $ SignSwapRoot i j
+     where signI = Signs.at i sign
+           signJ = Signs.at j sign
+spinSignAct sign (Neg root) = RootSystem.negate $ spinSignAct sign root
+
+
+spinPermAct :: Permutation -> SpinRoot -> SpinRoot
+spinPermAct perm (SwapRoot i j) = makeSwapRoot (Permutation.at i perm) (Permutation.at j perm)
+spinPermAct perm (SignSwapRoot i j) = makeSSwapRoot (Permutation.at i perm) (Permutation.at j perm)
+spinPermAct perm (Neg root) = RootSystem.negate $ spinPermAct perm root
+
+
+instance WeylGroup SpinWeyl SpinWeylElement SpinSystem SpinRoot where
+   weylGroup (SpinSystem n) = SpinWeyl n
+
+   one (SpinWeyl n) = SpinElement (Signs.identity n) (Permutation.identity n)
+
+   generators (SpinWeyl n) = map simpleReflection $ RootSystem.generators $ SpinSystem n
 
 
 instance Arbitrary SpinRoot where

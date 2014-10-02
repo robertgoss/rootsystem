@@ -12,6 +12,7 @@ import Rational
 import CartanAlgebra
 import SubGroup
 import Quotient
+import SubSystem
 import qualified Permutation as Perm
 
 type Signs0 = Signs
@@ -40,11 +41,16 @@ data E8WeylElement = E8Type1 SpinWeylElement
 data E8Weyl = E8Weyl
 
 data E8SubE7 = E8SubE7
+data E8SubS3E7 = E8SubS3E7
+data E8SubS3S1E6 = E8SubS3S1E6
 data E8Spin16Quotient = E8Spin16Quotient
+
+data E8SubS3E7System = E8SubS3E7System
+data E8SubSpin16System = E8SubSpin16System
 
 instance Eq E8Root where
     (E8SpinRoot root1) == (E8SpinRoot root2) = root1 == root2
-    (E8SRoot sign1) == (E8SRoot sign2) = (pad 8 sign1) == (pad 8 sign2)
+    (E8SRoot sign1) == (E8SRoot sign2) = pad 8 sign1 == pad 8 sign2
     (E8SRoot _) == (E8SpinRoot _) = False
     (E8SpinRoot _) == (E8SRoot _) = False
 
@@ -72,33 +78,33 @@ instance Ord E8Root where
                             LT -> GT
 
 instance Root E8Root where
-    coroot (E8SpinRoot root) = extendTo 0 1 8 $ coroot root
-    coroot (E8SRoot signs) = scaleMatrix (1/2) $ toVector $ pad 8 signs
+    coroot (E8SpinRoot root) = coroot root
+    coroot (E8SRoot signs) = BasicRoot $ scaleMatrix (1/2) $ toVector $ pad 8 signs
 
     positive (E8SpinRoot root) = positive root
-    positive (E8SRoot signs) = (at 1 signs) == 1
+    positive (E8SRoot signs) = at 1 signs == 1
 
     (E8SpinRoot root1) `reflect` (E8SpinRoot root2) = E8SpinRoot $ root1 `reflect` root2
 
-    (E8SRoot sign) `reflect` (E8SpinRoot (SwapRoot i j)) = E8SRoot $ exchange i j $ sign
-    (E8SRoot sign) `reflect` (E8SpinRoot (SignSwapRoot i j)) = E8SRoot $ dSwap i j $ exchange i j $ sign
-    root1 `reflect` (E8SpinRoot (Neg root2)) = root1 `reflect` (E8SpinRoot root2)
+    (E8SRoot sign) `reflect` (E8SpinRoot (SwapRoot i j)) = E8SRoot $ exchange i j sign
+    (E8SRoot sign) `reflect` (E8SpinRoot (SignSwapRoot i j)) = E8SRoot $ dSwap i j $ exchange i j sign
+    root1 `reflect` (E8SpinRoot (Neg root2)) = root1 `reflect` E8SpinRoot root2
 
-    r@(E8SpinRoot (SwapRoot i j)) `reflect` (E8SRoot sign) | (at i sign) == (at j sign) = r
-                                                           | (at i sign) == -1          = E8SRoot $ dSwap i j sign
-                                                           | otherwise                  = E8SRoot $ dSwap i j $ neg $ pad 8 sign
-    r@(E8SpinRoot (SignSwapRoot i j)) `reflect` (E8SRoot sign) | (at i sign) == -(at j sign) = r
-                                                               | (at i sign) == -1           = E8SRoot $ dSwap i j sign
-                                                               | otherwise                   = E8SRoot $ dSwap i j $ neg $ pad 8 $ sign
-    (E8SpinRoot (Neg root)) `reflect` s@(E8SRoot sign) = RootSystem.negate $ (E8SpinRoot root) `reflect` s
+    r@(E8SpinRoot (SwapRoot i j)) `reflect` (E8SRoot sign) | at i sign == at j sign = r
+                                                           | at i sign == -1          = E8SRoot $ dSwap i j sign
+                                                           | otherwise                = E8SRoot $ dSwap i j $ neg $ pad 8 sign
+    r@(E8SpinRoot (SignSwapRoot i j)) `reflect` (E8SRoot sign) | at i sign == -(at j sign) = r
+                                                               | at i sign == -1           = E8SRoot $ dSwap i j sign
+                                                               | otherwise                 = E8SRoot $ dSwap i j $ neg $ pad 8 sign
+    (E8SpinRoot (Neg root)) `reflect` s@(E8SRoot sign) = RootSystem.negate $ E8SpinRoot root `reflect` s
 
     s@(E8SRoot sign1) `reflect` (E8SRoot sign2) | null disagree = E8SRoot $ neg $ pad 8 sign1
                                                 | length disagree == 2 = E8SpinRoot $ root2 disagree
                                                 | length disagree == 4 = s
-                                                | length disagree == 6 = s `reflect` (E8SRoot (neg $ pad 8 sign2))
+                                                | length disagree == 6 = s `reflect` E8SRoot (neg $ pad 8 sign2)
                                                 | otherwise =  E8SRoot $ neg $ pad 8 sign1
         where disagree = disagreement sign1 sign2
-              root2 disagree2 = if negative then (Neg root) else root
+              root2 disagree2 = if negative then Neg root else root
                       where [i,j] = disagree
                             sameSign = at i sign2 == at j sign2
                             negative = at i sign1 == -1
@@ -110,16 +116,37 @@ instance Root E8Root where
     add root1 root2 | reflected == root1 = Nothing
                     | reflected == RootSystem.negate root1 = Nothing
                     | positive root2 && reflected < root1 = Nothing
-                    | (not $ positive root2) && reflected > root1 = Nothing
+                    | not (positive root2) && reflected > root1 = Nothing
                     | otherwise = Just reflected
         where reflected = root1 `reflect` root2
+
+sAct :: E8Root -> E8Root
+sAct r = r `reflect` (E8SRoot $ Signs.identity 8)
+
+signAct :: Signs -> E8Root -> E8Root
+signAct sign (E8SpinRoot root) = E8SpinRoot $ weylAction (SpinElement sign (Perm.identity 8)) root
+signAct sign (E8SRoot ssign) = E8SRoot $ sign `combine` ssign
+
+spinAct :: SpinWeylElement -> E8Root -> E8Root
+spinAct spin (E8SpinRoot root) = E8SpinRoot $ weylAction spin root
+spinAct (SpinElement sign perm) (E8SRoot ssign) = E8SRoot $ sign `combine` permute perm ssign 
 
 instance RootSystem E8System E8Root where
     rank _ = 8
     cartanAlgebra _ = fullSubAlgebra 8
-    generators _ = E8SRoot (Signs.identity 8) : (map E8SpinRoot $ RootSystem.generators $ SpinSystem 7)
+    generators _ = E8SRoot (Signs.identity 8) : map E8SpinRoot (RootSystem.generators $ SpinSystem 7)
 
-sMatrix = (Data.Matrix.identity 8) - fromList 8 8 (replicate 64 (1/4)) 
+instance SubRootSystem E8SubSpin16System E8System E8Root where
+    ambientSystem _ = E8System
+    subGenerators _ = E8SpinRoot (SwapRoot 7 8) : tail (RootSystem.generators E8System)
+    subCartan _ = cartanAlgebra E8System
+
+instance SubRootSystem E8SubS3E7System E8System E8Root where
+    ambientSystem _ = E8System
+    subGenerators _ = E8SpinRoot (SwapRoot 7 8) : init (RootSystem.generators E8System)
+    subCartan _ = cartanAlgebra E8System
+
+sMatrix = Data.Matrix.identity 8 - fromList 8 8 (replicate 64 (1/4)) 
 
 twist :: Signs4 -> Signs2
 twist sign = dSwap firstPos firstNeg $ Signs.identity n
@@ -163,10 +190,10 @@ sMult (E8Type2 sign spin@(SpinElement sign1 perm))
                           | sType == 8 = E8Type1 (SpinElement (neg $ pad 8 sign) perm)
     where sType = signType sign
           signSwap1 = permute (sign2perm sign) sign1
-          signSwapP = perm `Perm.combine` (sign2perm sign)
+          signSwapP = perm `Perm.combine` sign2perm sign
           sign' = neg $ pad 8 sign
           signSwap1' = permute (sign2perm sign') sign1
-          signSwapP' = perm `Perm.combine` (sign2perm sign')
+          signSwapP' = perm `Perm.combine` sign2perm sign'
 sMult (E8Type3 sign spin) = makeType2 sign spin
 sMult (E8Type3' sign spin) = signMult tw $ sMult $ signMult tw $ permMult spinSwap $ makeType2 sign spin
     where tw = twist sign
@@ -183,25 +210,25 @@ sign2Mult sign2 (E8Type3 sign4 (SpinElement sign perm))
                 | signType mid == 2 = sign2Mult_2 sign2 sign4 sign perm
                 | signType mid == 6 = sign2Mult_2 sign2 (neg $ pad 8 sign4) (neg $ pad 8 sign) perm
                 | signType mid == 4 = sign2Mult_4 sign2 sign4 sign perm
-    where mid = sign2 `combine` (permute (sign2perm sign2) sign4)
+    where mid = sign2 `combine` permute (sign2perm sign2) sign4
 sign2Mult sign2 (E8Type3' sign4 spin)
                 | signType twSign == 0 = makeType3 False sign4 spin
                 | signType twSign == 2 = sign2Mult twSign (E8Type3 sign4 spin)
-                | signType twSign == 4 = sign2Mult sign2pos $ (sign2Mult sign2neg $ E8Type3 sign4 spin)
-    where twSign = sign2 `combine` (twist sign4)
+                | signType twSign == 4 = sign2Mult sign2pos $ sign2Mult sign2neg $ E8Type3 sign4 spin
+    where twSign = sign2 `combine` twist sign4
           (sign2pos, sign2neg) = splitSign4 twSign
 
 sign2Mult_2 sign2 sign4 sign perm = makeType3 False sign4' $ SpinElement (mid `combine` sign') perm'
     where mid = sign2 `combine` sign4'
           sign4' = permute sign2swap sign4
-          sign2swap =  (sign2perm sign2)
+          sign2swap =  sign2perm sign2
           midSwap = sign2perm mid
           sign' = permute midSwap $ permute sign2swap sign
           perm' = (perm `Perm.combine` sign2swap) `Perm.combine` midSwap
 
 sign2Mult_4 sign2 sign4 sign perm | signType twsign2 == 0 = makeType3 True sign4 $ SpinElement sign perm
-                                  | signType twsign2 == 2 = sign2Mult tw $ (sign2Mult twsign2 $ E8Type3 sign4 $ SpinElement sign perm)
-                                  | signType twsign2 == 4 = sign2Mult sign2pos $ (sign2Mult sign2neg $ E8Type3 sign4 $ SpinElement sign perm)
+                                  | signType twsign2 == 2 = sign2Mult tw $ sign2Mult twsign2 $ E8Type3 sign4 $ SpinElement sign perm
+                                  | signType twsign2 == 4 = sign2Mult sign2pos $ sign2Mult sign2neg $ E8Type3 sign4 $ SpinElement sign perm
     where tw = twist sign4
           twsign2 = tw `combine` sign2
           (Signs v2) = sign2
@@ -237,22 +264,27 @@ signMult sign w | signType sign == 0 = w
 e8Unit :: E8WeylElement
 e8Unit = E8Type1 $ SpinElement (Signs.identity 8) (Perm.identity 8)
 
+
+
 instance WeylGroupElement E8WeylElement E8Root where
 
     simpleReflection (E8SpinRoot root) = E8Type1 $ simpleReflection root
-    simpleReflection (E8SRoot sign) = makeType2 sign $ SpinElement (Signs.identity 8) (Perm.identity 8)
+    simpleReflection (E8SRoot sign) = makeType2 sign $ SpinElement sign (Perm.identity 8)
 
     torusRepresentation (E8Type1 wspin) = torusRepresentation (spad 8 wspin)
-    torusRepresentation (E8Type2 sign wspin) = signMatrix * sMatrix * spinMatrix
-        where spinMatrix = torusRepresentation (spad 8 wspin)
+    torusRepresentation (E8Type2 sign wspin) = BasicElement $ signMatrix * sMatrix * spinMatrix
+        where spinMatrix = toMat $ torusRepresentation (spad 8 wspin)
               signMatrix = toMatrix (pad 8 sign)
-    torusRepresentation (E8Type3 sign wspin) = sMatrix * signMatrix * sMatrix * spinMatrix
-        where spinMatrix = torusRepresentation (spad 8 wspin)
+              toMat (BasicElement m) = m
+    torusRepresentation (E8Type3 sign wspin) = BasicElement $ sMatrix * signMatrix * sMatrix * spinMatrix
+        where spinMatrix = toMat $ torusRepresentation (spad 8 wspin)
               signMatrix = toMatrix (pad 8 sign)
-    torusRepresentation (E8Type3' sign wspin) = twSignMatrix * sMatrix * signMatrix * sMatrix * spinMatrix
-        where spinMatrix = torusRepresentation (spad 8 wspin)
+              toMat (BasicElement m) = m
+    torusRepresentation (E8Type3' sign wspin) = BasicElement $ twSignMatrix * sMatrix * signMatrix * sMatrix * spinMatrix
+        where spinMatrix = toMat $ torusRepresentation (spad 8 wspin)
               signMatrix = toMatrix (pad 8 sign)
               twSignMatrix = toMatrix (twist $ pad 8 sign)
+              toMat (BasicElement m) = m
 
     inverse (E8Type1 wspin) = E8Type1 $ inverse wspin
     inverse (E8Type2 sign (SpinElement sSign perm)) = permMult iperm $ signMult sSign $ sMult $ signMult sign e8Unit
@@ -268,6 +300,27 @@ instance WeylGroupElement E8WeylElement E8Root where
     multiply (E8Type3 sign (SpinElement sSign perm)) g = sMult $ signMult sign $ sMult $ signMult sSign $ permMult perm g
     multiply (E8Type3' sign (SpinElement sSign perm)) g = signMult tw $ sMult $ signMult sign $ sMult $ signMult sSign $ permMult perm g
         where tw = twist sign
+
+    weylAction (E8Type1 spin) root = spinAct spin root
+    weylAction (E8Type2 sign spin) root = signAct sign $ sAct $ spinAct spin root
+    weylAction (E8Type3 sign spin) root = sAct $ signAct sign $ sAct $ spinAct spin root
+    weylAction (E8Type3' sign spin) root = signAct tw $ sAct $ signAct sign $ sAct $ spinAct spin root
+        where tw = twist sign
+ 
+leftDominate EQ a = a
+leftDominate b  _ = b
+
+instance Ord E8WeylElement where
+    (E8Type1 spin1) `compare` (E8Type1 spin2) = spin1 `compare` spin2
+    (E8Type1 _) `compare` _ = LT
+    (E8Type2 sign1 spin1) `compare` (E8Type2 sign2 spin2) = leftDominate (sign1 `compare` sign2 ) (spin1 `compare` spin2)
+    (E8Type2 _ _) `compare` (E8Type1 _) = GT
+    (E8Type2 _ _) `compare` _ = LT
+    (E8Type3 sign1 spin1) `compare` (E8Type3 sign2 spin2) = leftDominate (sign1 `compare` sign2 ) (spin1 `compare` spin2)
+    (E8Type3 _ _) `compare` (E8Type3' _ _) = LT
+    (E8Type3 _ _) `compare` _ = GT
+    (E8Type3' sign1 spin1) `compare` (E8Type3' sign2 spin2) = leftDominate (sign1 `compare` sign2 ) (spin1 `compare` spin2)
+    (E8Type3' _ _) `compare` _ = GT
 
 instance WeylGroup E8Weyl E8WeylElement E8System E8Root where
     one _ = e8Unit
@@ -285,9 +338,22 @@ instance QuotientWeylGroup E8Spin16Quotient E8Weyl E8WeylElement E8System E8Root
     quoWeylEq _ (E8Type3' sign1 _) (E8Type3' sign2 _) = sign1 == sign2
     quoWeylEq _ (E8Type3' _ _) _ = False
 
+instance QuotientWeylGroupCmp E8Spin16Quotient E8Weyl E8WeylElement E8System E8Root where
+    quoWeylCmp q a b = if quoWeylEq q a b then EQ else a `compare` b
+
 instance SubWeylGroup E8SubE7 E8Weyl E8WeylElement E8System E8Root where
     ambientGroup _ = E8Weyl
     subGenerators _ = init $ Weyl.generators E8Weyl
+
+instance SubWeylGroup E8SubS3E7 E8Weyl E8WeylElement E8System E8Root where
+    ambientGroup _ = E8Weyl
+    subGenerators _ = s3gen : init (Weyl.generators E8Weyl)
+      where s3gen = E8Type1 $ SpinElement (Signs.identity 8) (Perm.swap 7 8 $ Perm.identity 8)
+
+instance SubWeylGroup E8SubS3S1E6 E8Weyl E8WeylElement E8System E8Root where
+    ambientGroup _ = E8Weyl
+    subGenerators _ = s3gen : take 6 (Weyl.generators E8Weyl)
+      where s3gen = E8Type1 $ SpinElement (Signs.identity 8) (Perm.swap 7 8 $ Perm.identity 8)
 
 instance Arbitrary E8Root where
     arbitrary = do rootType <- arbitrary

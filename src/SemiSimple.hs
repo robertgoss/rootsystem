@@ -79,7 +79,7 @@ rank :: SemiSimple -> Int
 rank (SemiSimple torus simples) = torus + sum (map rankSimple simples)
 
 
-rootSystemSimple :: Simple -> BasicRootSystem
+rootSystemSimple :: Simple -> BasicRootSystem BasicRoot
 rootSystemSimple (A 0) = trivialSystem
 rootSystemSimple (B 0) = trivialSystem
 rootSystemSimple (C 0) = trivialSystem
@@ -103,7 +103,7 @@ rootSystemSimple F4 = fromRoots $ map (BasicRoot . M.fromList 1 4) $ [[0,1,-1,0]
                                                                       [1/2,-1/2,-1/2,-1/2]]
 rootSystemSimple E8 = fromRoots $ excepRoot : spin14Roots'
     where (BasicRootSystem _ spin14Roots) = rootSystemSimple (D 7)
-          spin14Roots' = map (BasicRoot . (M.extendTo 0 1 8) . coroot) spin14Roots
+          spin14Roots' = map coroot spin14Roots
           excepRoot = BasicRoot $ (M.fromList 1 8) $ replicate 8 (-1/2)
 rootSystemSimple E7 = fromRoots $ take 7 e8roots
     where (BasicRootSystem _ e8roots) = rootSystemSimple E8
@@ -112,7 +112,7 @@ rootSystemSimple E6 = fromRoots $ take 6 e8roots
 
 
 
-rootSystem :: SemiSimple -> BasicRootSystem
+rootSystem :: SemiSimple -> BasicRootSystem BasicRoot
 rootSystem (SemiSimple torusDim simples) = foldl basicSystemProduct torusSystem simpleSystems
     where torusSystem = torus $ fullSubAlgebra torusDim
           simpleSystems = map rootSystemSimple simples
@@ -122,7 +122,7 @@ bondNum (a,b) = 4*(dot a b * dot b a) / (dot a a * dot b b)
 
 determine :: (RootSystem r rt) => r -> SemiSimple
 determine system = fromSimples torusPart simpleParts
-    where connectedComps = components connected $ toBasics $ simpleRoots system
+    where connectedComps = components connected $ map coroot $ simpleRoots system
           connected r1 r2 = dot r1 r2 /= 0
           simpleParts = map determineSimple connectedComps
           simpleRank = sum $ map rankSimple simpleParts

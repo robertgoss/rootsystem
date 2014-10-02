@@ -6,7 +6,21 @@ import Test.QuickCheck.Arbitrary
 
 import Rational
 
-newtype Permutation = Perm (Matrix Int) deriving(Eq,Show)
+newtype Permutation = Perm (Matrix Int) deriving(Show)
+
+instance Eq Permutation where
+    p@(Perm v) == q@(Perm w) | m == n = v == w
+                             | m < n = pad n p == q
+                             | otherwise = p == pad m q
+      where m = nrows v
+            n = nrows w
+
+instance Ord Permutation where
+    p@(Perm v) `compare` q@(Perm w) | m == n = toList v `compare` toList w
+                                    | m < n = pad n p `compare` q
+                                    | otherwise = p `compare` pad m q
+      where m = nrows v
+            n = nrows w
 
 identity :: Int -> Permutation
 identity n = Perm $ fromList n 1 [1..n]

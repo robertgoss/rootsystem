@@ -18,7 +18,8 @@ data E7Spin14Quotient = E7Spin14Quotient
 instance RootSystem E7System E8Root where
     generators _ = init $ RootSystem.generators E8System
     rank _ = 7
-    cartanAlgebra _ = CartanAlgebra.span $ map coroot $ RootSystem.generators E7System
+    cartanAlgebra _ = CartanAlgebra.span $ map (vec . coroot) $ RootSystem.generators E7System
+        where vec (BasicRoot v) = v
 
 
 instance WeylGroup E7Weyl E8WeylElement E7System E8Root where

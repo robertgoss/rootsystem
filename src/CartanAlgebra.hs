@@ -22,8 +22,8 @@ trivialAlgebra = CartanAlgebra []
 orthogonalBasis :: CartanAlgebra -> [Vector QQ]
 orthogonalBasis (CartanAlgebra basis) = basis
 
-span :: [Vector QQ] -> CartanAlgebra
-span vectors = CartanAlgebra . reverse $ foldl gSmitt [] vectors
+span' :: [Vector QQ] -> CartanAlgebra
+span' vectors = CartanAlgebra . reverse $ foldl gSmitt [] vectors
     where gSmitt partialBasis vector
             | dot reducedVector reducedVector == 0 = partialBasis
             | otherwise = reducedVector : partialBasis
@@ -31,8 +31,22 @@ span vectors = CartanAlgebra . reverse $ foldl gSmitt [] vectors
                   reduce vec base = vec - scaleMatrix ((dot vec base) / (dot base base)) base
                   dot v w = getElem 1 1 $ v * transpose w
 
+span :: [Vector QQ] -> CartanAlgebra
+span vectors = span' $ map pad vectors
+  where dim = maximum $ map ncols vectors
+        pad v = v <|> zero 1 (dim - ncols v)
+
 cartanRank :: CartanAlgebra -> Int
 cartanRank = length . orthogonalBasis
+
+intersect :: CartanAlgebra -> CartanAlgebra -> CartanAlgebra
+intersect (CartanAlgebra basis1) (CartanAlgebra basis2) = CartanAlgebra.span intersectSpan
+    where intersectSpan = reducedBasis1 ++ reducedBasis2
+          reduceVec [] v = v
+          reduceVec (x:xs) y = y - scaleMatrix (dot x y) x
+            where dot v w = getElem 1 1 $ v * transpose w
+          reducedBasis1 = map (reduceVec basis2) basis1
+          reducedBasis2 = map (reduceVec basis1) basis2 
 
 
 cartanProduct :: CartanAlgebra -> CartanAlgebra -> CartanAlgebra
