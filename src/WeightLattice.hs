@@ -42,7 +42,15 @@ weylDimension :: (RootSystem r rt) => WeightLattice r -> PrincipleWeight -> Int
 weylDimension = undefined
 
 pWeightsRestrictedWeylDimension :: (RootSystem r rt) => WeightLattice r -> Int -> [PrincipleWeight]
-pWeightsRestrictedWeylDimension = undefined
+pWeightsRestrictedWeylDimension lattice n = pWeightsRestrictedWeylDimension' lattice n zeroWeight gens
+ where gens = WeightLattice.generators lattice
+
+pWeightsRestrictedWeylDimension' lattice n base [] = [base]
+pWeightsRestrictedWeylDimension' lattice n base (gen:gens) = concatMap rebaseRestrict validWeights
+    where validWeights = takeWhile validDim $ iterate (WeightLattice.add gen) base
+          validDim pWeight = weylDimension lattice pWeight <= n
+          rebaseRestrict pWeight = pWeightsRestrictedWeylDimension' lattice n pWeight gens
 
 pWeightsWithWeylDimension :: (RootSystem r rt) => WeightLattice r -> Int -> [PrincipleWeight]
-pWeightsWithWeylDimension = undefined
+pWeightsWithWeylDimension lattice n = filter (\pw->n == weylDimension lattice pw) $ pweights
+  where pweights = pWeightsRestrictedWeylDimension lattice n
