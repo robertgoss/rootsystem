@@ -1,6 +1,6 @@
 module Generate where
 
-import Debug.Trace
+import Data.Maybe as Maybe
 import Data.Set as Set
 
 generate :: (Ord a) => (a -> a -> a) -> [a] -> [a]
@@ -48,3 +48,11 @@ generateUnOrd comb gens = generateUnOrdStep gens gens
                                         | otherwise = generateUnOrdStep (unOrdUnion old new) (unOrdDifference new old)
             where new = unOrdUnions $ Prelude.map (act current) gens
                   act x g = Prelude.map (comb g) x
+
+generateWithFailure :: (Ord a) => (a -> a -> Maybe a) -> [a] -> [a]
+generateWithFailure comb gens = toList $ generateStep genSet genSet
+    where generateStep old current | Set.null current = old
+                                   | otherwise = generateStep (union old new) (difference new old)
+            where new = Set.unions $ Prelude.map (act current) gens
+                  act x g = fromList $ Maybe.catMaybes $ Prelude.map (comb g) (toList x)
+          genSet = fromList gens
