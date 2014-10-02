@@ -2,6 +2,7 @@ module WeightLattice where
 
 import RootSystem
 import Generate
+import qualified Data.Set as Set
 
 newtype PrincipleWeight = PWeight [Int] deriving(Show)
 newtype WeightLattice r = WL r
@@ -20,6 +21,9 @@ instance Ord PrincipleWeight where
               n = length ys
               xs' = xs ++ replicate (n-m) 0
               ys' = ys ++ replicate (m-n) 0
+
+negate :: PrincipleWeight -> PrincipleWeight
+negate (PWeight xs) = PWeight $ map (0-) xs
 
 add :: PrincipleWeight -> PrincipleWeight -> PrincipleWeight
 add (PWeight xs) (PWeight ys) = PWeight $ zipWith (+) xs' ys'
@@ -44,17 +48,23 @@ generators (WL r) = map basicWeight [1..nRoots]
 weylDimension :: (RootSystem r rt) => WeightLattice r -> PrincipleWeight -> Int
 weylDimension lattice@(WL r) weight = numerator `div` denominator
     where rootWeights' = rootWeights lattice
-          rho = foldl (WeightLattice.add) zeroWeight rootWeights
-          numerator = sum $ map (\pw -> WeightLattice.add weight rho `innerProduct` pw) rootWeights
-          denominator = sum $ map (\pw -> rho `innerProduct` pw) rootWeights
+          rho = foldl (WeightLattice.add) zeroWeight rootWeights'
+          numerator = sum $ map (\pw -> WeightLattice.add weight rho `innerProduct` pw) rootWeights'
+          denominator = sum $ map (\pw -> rho `innerProduct` pw) rootWeights'
 
 rootWeights :: (RootSystem r rt) => WeightLattice r -> [PrincipleWeight]
-rootWeights lattice@(WL r) = map snd $ generateWithFailure comb $ zip rGens pGens
+rootWeights lattice@(WL r) = map snd $ filter (positive . fst) $ generateWithFailure comb $ zip (rGens++rGensN) (pGens++pGensN)
     where rGens = simpleRoots r
-          pGens = WeightLattice.generators lattice
+          rGensN = map RootSystem.negate rGens
+          pGens = WeightLattice.generators lattice ++ map WeightLattice.negate (WeightLattice.generators lattice)
+          pGensN = map WeightLattice.negate pGens
+          rootsSet = Set.fromList $ roots r
           comb (r1,pw1) (r2,pw2) = case RootSystem.add r1 r2 of
                                        Nothing -> Nothing
-                                       (Just rSum) -> Just $ (rSum,WeightLattice.add pw1 pw2)
+                                       (Just rSum) -> if rSum `Set.member` rootsSet then
+                                                          Just (rSum, WeightLattice.add pw1 pw2)
+                                                      else
+                                                          Nothing
 
 pWeightsRestrictedWeylDimension :: (RootSystem r rt) => WeightLattice r -> Int -> [PrincipleWeight]
 pWeightsRestrictedWeylDimension lattice n = pWeightsRestrictedWeylDimension' lattice n zeroWeight gens
