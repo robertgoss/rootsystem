@@ -41,5 +41,8 @@ generators (WL r) = map basicWeight [1..nRoots]
 weylDimension :: (RootSystem r rt) => WeightLattice r -> PrincipleWeight -> Int
 weylDimension = undefined
 
-weightsByWeylDimension :: (RootSystem r rt) => WeightLattice r -> [PrincipleWeight]
-weightsByWeylDimension = undefined
+pWeightsRestrictedWeylDimension :: (RootSystem r rt) => WeightLattice r -> Int -> [PrincipleWeight]
+pWeightsRestrictedWeylDimension = undefined
+
+pWeightsWithWeylDimension :: (RootSystem r rt) => WeightLattice r -> Int -> [PrincipleWeight]
+pWeightsWithWeylDimension = undefined
