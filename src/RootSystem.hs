@@ -16,6 +16,8 @@ import           CartanAlgebra
 import           Rational
 import           Generate
 
+import Debug.Trace
+
 class (Ord r) => Root r where
     reflect :: r -> r -> r
     coroot :: r -> BasicRoot
@@ -99,10 +101,19 @@ instance (Root r) => RootSystem (BasicRootSystem r) r where
     rank (BasicRootSystem cartan _) = cartanRank cartan
     cartanAlgebra (BasicRootSystem cartan _) = cartan
 
-fromRoots :: (Root rt)  => [rt] -> BasicRootSystem rt
-fromRoots roots = BasicRootSystem cartan roots
+data BasicGeneratorRootSystem r = BGRS [r] 
+
+instance (Root rt) => RootSystem (BasicGeneratorRootSystem rt) rt where
+  rank r = cartanRank $ cartanAlgebra r
+  cartanAlgebra (BGRS gens) = CartanAlgebra.span $ map (vec . coroot) gens
+    where vec (BasicRoot v) = v
+  generators (BGRS gens) = gens
+ 
+fromRoots :: (Root rt) => [rt] -> BasicRootSystem rt
+fromRoots roots =  BasicRootSystem cartan roots
   where vec (BasicRoot v) = v
         cartan = CartanAlgebra.span $ map (vec . coroot) roots
+        sRoots = simpleRoots (BGRS roots) 
 
 torus :: CartanAlgebra -> BasicRootSystem r
 torus cartan = BasicRootSystem cartan []
