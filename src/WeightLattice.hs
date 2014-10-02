@@ -49,8 +49,17 @@ weylDimension lattice@(WL r) weight = numerator `div` denominator
         denominator = sum $ map (\pw -> rho `innerProduct` pw) pWeights
 
 associatedPWeight :: (RootSystem r rt) => WeightLattice r -> rt -> PrincipleWeight
-associatedPWeight lattice root | not (positive root) =  associatedPWeight lattice (RootSystem.negate root)
-                               | otherwise = undefined
+associatedPWeight lattice@(WL r) root | not (positive root) =  associatedPWeight lattice (RootSystem.negate root)
+                                      | otherwise = associatedPWeight' rGens pGens root
+  where rGens = simpleRoots r
+        pGens = WeightLattice.generators lattice
+
+associatedPWeight' rGens@(rGen:rRest) pGens@(pGen:pRest) root
+           | root == rGen = pGen
+           | otherwise = case (sub rGen root) of
+                            Nothing -> associatedPWeight' rRest pRest root
+                            (Just root') ->  WeightLattice.add pGen $ associatedPWeight' rGens pGens root'
+    where sub r1 r2 = RootSystem.add r2 (RootSystem.negate r1)
 
 pWeightsRestrictedWeylDimension :: (RootSystem r rt) => WeightLattice r -> Int -> [PrincipleWeight]
 pWeightsRestrictedWeylDimension lattice n = pWeightsRestrictedWeylDimension' lattice n zeroWeight gens
