@@ -16,6 +16,8 @@ import           CartanAlgebra
 import           Rational
 import           Generate
 
+import Debug.Trace
+
 class (Ord r) => Root r where
     reflect :: r -> r -> r
     coroot :: r -> BasicRoot
@@ -25,23 +27,25 @@ class (Ord r) => Root r where
 
 class (Root rt) => RootSystem r rt | r -> rt where
     generators :: (Root rt) => r -> [rt]
+    generators = simpleRoots
+    
     rank :: r -> Int
     cartanAlgebra :: r -> CartanAlgebra
+
+    roots :: (RootSystem r rt) => r -> [rt]
+    roots system = generate (flip reflect) $ generators system
+
+    positiveRoots :: (RootSystem r rt) => r -> [rt]
+    positiveRoots = filter positive . roots
+
+    simpleRoots :: (RootSystem r rt) => r -> [rt]
+    simpleRoots r = Set.toList $ Set.difference (Set.fromList positiveR) (Set.fromList sums)
+        where positiveR = positiveRoots r
+              sums = catMaybes $ [r `add` s | r<-positiveR, s<-positiveR, r > s]
 
 
 rootsScan :: (RootSystem r rt) => r -> [([rt],[rt])]
 rootsScan = generateScan (flip reflect) . generators
-
-roots :: (RootSystem r rt) => r -> [rt]
-roots system = generate (flip reflect) $ generators system
-
-positiveRoots :: (RootSystem r rt) => r -> [rt]
-positiveRoots = filter positive . roots
-
-simpleRoots :: (RootSystem r rt) => r -> [rt]
-simpleRoots r = Set.toList $ Set.difference (Set.fromList positiveR) (Set.fromList sums)
-    where positiveR = positiveRoots r
-          sums = catMaybes $ [r `add` s | r<-positiveR, s<-positiveR, r > s]
 
 dim :: (RootSystem r rt) => r -> Int
 dim system = rank system + length (roots system)
@@ -93,14 +97,23 @@ isNonZero :: BasicRoot -> Bool
 isNonZero root = dot root root /= 0
 
 instance (Root r) => RootSystem (BasicRootSystem r) r where
-    generators (BasicRootSystem _ roots) = roots
+    simpleRoots (BasicRootSystem _ roots) = roots
     rank (BasicRootSystem cartan _) = cartanRank cartan
     cartanAlgebra (BasicRootSystem cartan _) = cartan
 
-fromRoots :: (Root rt)  => [rt] -> BasicRootSystem rt
-fromRoots roots = BasicRootSystem cartan roots
+data BasicGeneratorRootSystem r = BGRS [r] 
+
+instance (Root rt) => RootSystem (BasicGeneratorRootSystem rt) rt where
+  rank r = cartanRank $ cartanAlgebra r
+  cartanAlgebra (BGRS gens) = CartanAlgebra.span $ map (vec . coroot) gens
+    where vec (BasicRoot v) = v
+  generators (BGRS gens) = gens
+ 
+fromRoots :: (Root rt) => [rt] -> BasicRootSystem rt
+fromRoots roots =  BasicRootSystem cartan roots
   where vec (BasicRoot v) = v
         cartan = CartanAlgebra.span $ map (vec . coroot) roots
+        sRoots = simpleRoots (BGRS roots) 
 
 torus :: CartanAlgebra -> BasicRootSystem r
 torus cartan = BasicRootSystem cartan []
