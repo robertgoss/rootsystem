@@ -25,23 +25,25 @@ class (Ord r) => Root r where
 
 class (Root rt) => RootSystem r rt | r -> rt where
     generators :: (Root rt) => r -> [rt]
+    generators = simpleRoots
+    
     rank :: r -> Int
     cartanAlgebra :: r -> CartanAlgebra
+
+    roots :: (RootSystem r rt) => r -> [rt]
+    roots system = generate (flip reflect) $ generators system
+
+    positiveRoots :: (RootSystem r rt) => r -> [rt]
+    positiveRoots = filter positive . roots
+
+    simpleRoots :: (RootSystem r rt) => r -> [rt]
+    simpleRoots r = Set.toList $ Set.difference (Set.fromList positiveR) (Set.fromList sums)
+        where positiveR = positiveRoots r
+            sums = catMaybes $ [r `add` s | r<-positiveR, s<-positiveR, r > s]
 
 
 rootsScan :: (RootSystem r rt) => r -> [([rt],[rt])]
 rootsScan = generateScan (flip reflect) . generators
-
-roots :: (RootSystem r rt) => r -> [rt]
-roots system = generate (flip reflect) $ generators system
-
-positiveRoots :: (RootSystem r rt) => r -> [rt]
-positiveRoots = filter positive . roots
-
-simpleRoots :: (RootSystem r rt) => r -> [rt]
-simpleRoots r = Set.toList $ Set.difference (Set.fromList positiveR) (Set.fromList sums)
-    where positiveR = positiveRoots r
-          sums = catMaybes $ [r `add` s | r<-positiveR, s<-positiveR, r > s]
 
 dim :: (RootSystem r rt) => r -> Int
 dim system = rank system + length (roots system)
