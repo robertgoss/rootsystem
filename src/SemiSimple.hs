@@ -9,6 +9,7 @@ import RootSystem
 import Weyl
 import CartanAlgebra
 import Components
+import WeightLattice
 
 import Data.List(sort)
 
