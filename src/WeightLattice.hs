@@ -1,7 +1,7 @@
 module WeightLattice where
 
 import RootSystem
-
+import Generate
 
 newtype PrincipleWeight = PWeight [Int] deriving(Show)
 newtype WeightLattice r = WL r
@@ -42,7 +42,16 @@ generators (WL r) = map basicWeight [1..nRoots]
           basicWeight i = PWeight $ replicate (i-1) 0 ++ [1] 
 
 weylDimension :: (RootSystem r rt) => WeightLattice r -> PrincipleWeight -> Int
-weylDimension lattice@(WL r) weight = undefined
+weylDimension lattice@(WL r) weight = numerator `div` denominator
+    where rootWeights = map snd $ generateWithFailure comb $ zip rGens pGens
+          rGens = simpleRoots r
+          pGens = WeightLattice.generators lattice
+          comb (r1,pw1) (r2,pw2) = case RootSystem.add r1 r2 of
+                                     Nothing -> Nothing
+                                     (Just rSum) -> Just $ (rSum,WeightLattice.add pw1 pw2)
+          rho = foldl (WeightLattice.add) zeroWeight rootWeights
+          numerator = sum $ map (\pw -> WeightLattice.add weight rho `innerProduct` pw) rootWeights
+          denominator = sum $ map (\pw -> rho `innerProduct` pw) rootWeights
 
 pWeightsRestrictedWeylDimension :: (RootSystem r rt) => WeightLattice r -> Int -> [PrincipleWeight]
 pWeightsRestrictedWeylDimension lattice n = pWeightsRestrictedWeylDimension' lattice n zeroWeight gens
