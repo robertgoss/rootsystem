@@ -43,15 +43,18 @@ generators (WL r) = map basicWeight [1..nRoots]
 
 weylDimension :: (RootSystem r rt) => WeightLattice r -> PrincipleWeight -> Int
 weylDimension lattice@(WL r) weight = numerator `div` denominator
-    where rootWeights = map snd $ generateWithFailure comb $ zip rGens pGens
-          rGens = simpleRoots r
-          pGens = WeightLattice.generators lattice
-          comb (r1,pw1) (r2,pw2) = case RootSystem.add r1 r2 of
-                                     Nothing -> Nothing
-                                     (Just rSum) -> Just $ (rSum,WeightLattice.add pw1 pw2)
+    where rootWeights' = rootWeights lattice
           rho = foldl (WeightLattice.add) zeroWeight rootWeights
           numerator = sum $ map (\pw -> WeightLattice.add weight rho `innerProduct` pw) rootWeights
           denominator = sum $ map (\pw -> rho `innerProduct` pw) rootWeights
+
+rootWeights :: (RootSystem r rt) => WeightLattice r -> [PrincipleWeight]
+rootWeights lattice@(WL r) = map snd $ generateWithFailure comb $ zip rGens pGens
+    where rGens = simpleRoots r
+          pGens = WeightLattice.generators lattice
+          comb (r1,pw1) (r2,pw2) = case RootSystem.add r1 r2 of
+                                       Nothing -> Nothing
+                                       (Just rSum) -> Just $ (rSum,WeightLattice.add pw1 pw2)
 
 pWeightsRestrictedWeylDimension :: (RootSystem r rt) => WeightLattice r -> Int -> [PrincipleWeight]
 pWeightsRestrictedWeylDimension lattice n = pWeightsRestrictedWeylDimension' lattice n zeroWeight gens
