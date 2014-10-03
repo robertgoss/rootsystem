@@ -15,6 +15,7 @@ import Test.TestE8
 import Test.TestE7
 import Test.TestWeyl
 import Test.TestThesis
+import Test.TestWeightLattice
 
 main = defaultMain tests
 
@@ -29,4 +30,5 @@ tests = testGroup "Tests" [testBasicRoot,
                            testSigns,
                            testE8,
                            testE7,
+                           testWeightLattice,
                            testThesis]
