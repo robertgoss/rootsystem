@@ -1,10 +1,14 @@
+{-# LANGUAGE FunctionalDependencies #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
 module WeightLattice where
 
 import RootSystem
 import Generate
 
+import Data.Map as Map
+
 newtype PrincipleWeight = PWeight [Int] deriving(Show)
-newtype WeightLattice r = WL r
+data BasicLattice r rt = BasicLattice r (Map.Map rt PrincipleWeight)
 
 instance Eq PrincipleWeight where
     (PWeight xs) == (PWeight ys) = xs' == ys'
@@ -28,41 +32,10 @@ add (PWeight xs) (PWeight ys) = PWeight $ zipWith (+) xs' ys'
         xs' = xs ++ replicate (n-m) 0
         ys' = ys ++ replicate (m-n) 0
 
-innerProduct :: PrincipleWeight -> PrincipleWeight -> Int
-innerProduct (PWeight xs) (PWeight ys) = sum $ zipWith (*) xs ys
+class (RootSystem r rt) => WeightLattice wl r rt | wl -> r, wl -> rt where
+    generators :: wl -> [PrincipleWeight]
+    innerProduct :: wl -> PrincipleWeight -> rt -> Integer
+    assosiatedWeight :: wl -> rt -> PrincipleWeight
+    underlyingSystem :: wl -> r
 
-zeroWeight = PWeight []
-
-weightLattice :: (RootSystem r rt) => r -> WeightLattice r
-weightLattice = WL
-
-generators :: (RootSystem r rt) => WeightLattice r -> [PrincipleWeight]
-generators (WL r) = map basicWeight [1..nRoots] 
-    where nRoots = length $ simpleRoots r
-          basicWeight i = PWeight $ replicate (i-1) 0 ++ [1] 
-
-weylDimension :: (RootSystem r rt) => WeightLattice r -> PrincipleWeight -> Int
-weylDimension lattice@(WL r) weight = numerator `div` denominator
-    where rootWeights = map snd $ generateWithFailure comb $ zip rGens pGens
-          rGens = simpleRoots r
-          pGens = WeightLattice.generators lattice
-          comb (r1,pw1) (r2,pw2) = case RootSystem.add r1 r2 of
-                                     Nothing -> Nothing
-                                     (Just rSum) -> Just $ (rSum,WeightLattice.add pw1 pw2)
-          rho = foldl (WeightLattice.add) zeroWeight rootWeights
-          numerator = sum $ map (\pw -> WeightLattice.add weight rho `innerProduct` pw) rootWeights
-          denominator = sum $ map (\pw -> rho `innerProduct` pw) rootWeights
-
-pWeightsRestrictedWeylDimension :: (RootSystem r rt) => WeightLattice r -> Int -> [PrincipleWeight]
-pWeightsRestrictedWeylDimension lattice n = pWeightsRestrictedWeylDimension' lattice n zeroWeight gens
- where gens = WeightLattice.generators lattice
-
-pWeightsRestrictedWeylDimension' lattice n base [] = [base]
-pWeightsRestrictedWeylDimension' lattice n base (gen:gens) = concatMap rebaseRestrict validWeights
-    where validWeights = takeWhile validDim $ iterate (WeightLattice.add gen) base
-          validDim pWeight = weylDimension lattice pWeight <= n
-          rebaseRestrict pWeight = pWeightsRestrictedWeylDimension' lattice n pWeight gens
-
-pWeightsWithWeylDimension :: (RootSystem r rt) => WeightLattice r -> Int -> [PrincipleWeight]
-pWeightsWithWeylDimension lattice n = filter (\pw->n == weylDimension lattice pw) $ pweights
-  where pweights = pWeightsRestrictedWeylDimension lattice n
+  
