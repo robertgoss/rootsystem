@@ -5,6 +5,7 @@ module WeightLattice where
 
 import RootSystem
 import Generate
+import qualified Data.Set as Set
 
 import Data.Set as Set
 import Data.Map as Map
@@ -27,14 +28,15 @@ instance Ord PrincipleWeight where
               xs' = xs ++ replicate (n-m) 0
               ys' = ys ++ replicate (m-n) 0
 
+negate :: PrincipleWeight -> PrincipleWeight
+negate (PWeight xs) = PWeight $ Prelude.map (0-) xs
+
 add :: PrincipleWeight -> PrincipleWeight -> PrincipleWeight
 add (PWeight xs) (PWeight ys) = PWeight $ zipWith (+) xs' ys'
   where m = length xs
         n = length ys
         xs' = xs ++ replicate (n-m) 0
         ys' = ys ++ replicate (m-n) 0
-
-negate (PWeight xs) = PWeight $ Prelude.map (0-) xs
 
 basicWeight i = PWeight $ replicate (i-1) 0 ++ [1]
 
@@ -46,6 +48,7 @@ class (RootSystem r rt) => WeightLattice wl r rt | wl -> r, wl -> rt where
     innerProduct :: wl -> PrincipleWeight -> rt -> Integer
     associatedWeight :: wl -> rt -> PrincipleWeight
     underlyingSystem :: wl -> r
+
 
 instance (RootSystem r rt) => WeightLattice (BasicLattice r rt) r rt where
     generators (BasicLattice r _) = Prelude.map basicWeight [1..nRoots]
