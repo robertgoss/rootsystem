@@ -28,6 +28,9 @@ instance Ord PrincipleWeight where
               xs' = xs ++ replicate (n-m) 0
               ys' = ys ++ replicate (m-n) 0
 
+zeroWeight :: PrincipleWeight
+zeroWeight = PWeight []
+
 negate :: PrincipleWeight -> PrincipleWeight
 negate (PWeight xs) = PWeight $ Prelude.map (0-) xs
 
@@ -37,6 +40,9 @@ add (PWeight xs) (PWeight ys) = PWeight $ zipWith (+) xs' ys'
         n = length ys
         xs' = xs ++ replicate (n-m) 0
         ys' = ys ++ replicate (m-n) 0
+
+scaleWeight :: Int -> PrincipleWeight -> PrincipleWeight
+scaleWeight n (PWeight xs)  = PWeight $ Prelude.map (*n) xs
 
 basicWeight i = PWeight $ replicate (i-1) 0 ++ [1]
 
@@ -72,3 +78,13 @@ basicLattice r = BasicLattice r rMap
                                                         Just (rSum, WeightLattice.add pw1 pw2)
                                                      else
                                                         Nothing
+
+weylDimension :: WeightLattice wl r rt => wl -> PrincipleWeight -> Integer
+weylDimension lattice weight = numerator `div` denominator
+  where system = underlyingSystem lattice
+        pRoots = positiveRoots system
+        rho = Prelude.foldl WeightLattice.add zeroWeight $ Prelude.map (associatedWeight lattice) pRoots
+        weightSum = weight' `WeightLattice.add` rho
+        weight' = scaleWeight 2 weight 
+        numerator = product . Prelude.map (innerProduct lattice weightSum) $ pRoots
+        denominator = product . Prelude.map (innerProduct lattice weight') $ pRoots
