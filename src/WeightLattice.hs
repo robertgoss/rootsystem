@@ -61,7 +61,8 @@ instance (RootSystem r rt) => WeightLattice (BasicLattice r rt) r rt where
         where nRoots = length $ simpleRoots r
     underlyingSystem (BasicLattice r _) = r
     associatedWeight (BasicLattice _ rMap) root = rMap ! root
-    innerProduct (BasicLattice _ rMap) weight root = weightProduct weight $ rMap ! root
+    innerProduct lattice@(BasicLattice _ rMap) weight root = weightProduct weight rWeight
+      where rWeight = associatedWeight lattice weight
 
 basicLattice :: (RootSystem r rt) => r -> BasicLattice r rt
 basicLattice r = BasicLattice r rMap
