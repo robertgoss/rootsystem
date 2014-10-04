@@ -112,7 +112,7 @@ instance (Root rt) => RootSystem (BasicGeneratorRootSystem rt) rt where
   generators (BGRS gens) = gens
  
 fromRoots :: (Root rt) => [rt] -> BasicRootSystem rt
-fromRoots roots =  BasicRootSystem cartan roots
+fromRoots roots =  BasicRootSystem cartan sRoots
   where vec (BasicRoot v) = v
         cartan = CartanAlgebra.span $ map (vec . coroot) roots
         sRoots = simpleRoots (BGRS roots) 
