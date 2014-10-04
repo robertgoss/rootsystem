@@ -112,6 +112,8 @@ instance Root SpinRoot where
     negate (Neg root) = root
     negate root = Neg root
 
+    lengthSq _ = 1
+
 instance RootSystem SpinSystem SpinRoot where
     generators (SpinSystem 0) = []
     generators (SpinSystem 1) = []

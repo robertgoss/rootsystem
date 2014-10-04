@@ -120,6 +120,8 @@ instance Root E8Root where
                     | otherwise = Just reflected
         where reflected = root1 `reflect` root2
 
+    lengthSq _ = 1
+
 sAct :: E8Root -> E8Root
 sAct r = r `reflect` (E8SRoot $ Signs.identity 8)
 
