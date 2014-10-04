@@ -46,6 +46,8 @@ scaleWeight n (PWeight xs)  = PWeight $ Prelude.map (*n) xs
 
 basicWeight i = PWeight $ replicate (i-1) 0 ++ [1]
 
+coordScale xs (PWeight ys) = PWeight $ zipWith (*) xs ys
+
 weightProduct :: PrincipleWeight -> PrincipleWeight -> Integer
 weightProduct (PWeight xs) (PWeight ys)= fromIntegral . sum $ zipWith (*) xs ys
 
@@ -80,12 +82,14 @@ basicLattice r = BasicLattice r rMap
                                                      else
                                                         Nothing
 
-weylDimension :: WeightLattice wl r rt => wl -> PrincipleWeight -> Integer
-weylDimension lattice weight = numerator `div` denominator
+--weylDimension :: WeightLattice wl r rt => wl -> PrincipleWeight -> Integer
+weylDimension lattice weight = product numerator `div` product denominator
   where system = underlyingSystem lattice
         pRoots = positiveRoots system
-        rho = Prelude.foldl WeightLattice.add zeroWeight $ Prelude.map (associatedWeight lattice) pRoots
-        weightSum = weight' `WeightLattice.add` rho
-        weight' = scaleWeight 2 weight 
-        numerator = product . Prelude.map (innerProduct lattice weightSum) $ pRoots
-        denominator = product . Prelude.map (innerProduct lattice weight') $ pRoots
+        sRoots = simpleRoots system
+        sLengths = Prelude.map (fromInteger . lengthSq) sRoots
+        rho = Prelude.foldl WeightLattice.add zeroWeight $ Prelude.map (associatedWeight lattice) sRoots
+        weightSum = coordScale sLengths $ weight `WeightLattice.add` rho
+        rho' = coordScale sLengths rho
+        numerator = Prelude.filter (/=0) $ Prelude.map (innerProduct lattice weightSum) $ pRoots
+        denominator = Prelude.filter (/=0) $ Prelude.map (innerProduct lattice rho') $ pRoots
