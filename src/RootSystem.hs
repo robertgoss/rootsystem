@@ -23,6 +23,8 @@ class (Ord r) => Root r where
     add :: r -> r -> Maybe r
     positive :: r -> Bool
     negate :: r -> r
+    lengthSq :: r -> Integer
+    lengthSq = lengthSq . coroot
 
 class (Root rt) => RootSystem r rt | r -> rt where
     generators :: (Root rt) => r -> [rt]
@@ -87,6 +89,7 @@ instance Root BasicRoot where
                  | otherwise = s <|> zero 1 (ncols r - ncols s)
     positive r = r > (BasicRoot $ zero 1 (basicDim r))
     negate (BasicRoot v) = BasicRoot $ scaleMatrix (-1) v
+    lengthSq r = toInt $ dot r r
 
 
 dot :: BasicRoot -> BasicRoot -> QQ

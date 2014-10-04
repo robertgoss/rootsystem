@@ -12,7 +12,8 @@ instance Show Rational.Rational where
 
 type QQ = Rational.Rational
 
-
+toInt :: QQ -> Integer
+toInt (Rational q) = numerator q `div` denominator q
 
 instance Arbitrary Rational.Rational where
     arbitrary = do a <- arbitrary
