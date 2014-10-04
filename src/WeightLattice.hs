@@ -69,12 +69,10 @@ instance (RootSystem r rt) => WeightLattice (BasicLattice r rt) r rt where
 basicLattice :: (RootSystem r rt) => r -> BasicLattice r rt
 basicLattice r = BasicLattice r rMap
     where rMap = Map.fromAscList pairs
-          pairs = generateWithFailure comb $ zip (rGens++rGensN) (pGens++pGensN)
+          pairs = generateWithFailure comb $ zip rGens pGens
           rootSet = Set.fromList $ roots r
           rGens = simpleRoots r
-          rGensN = Prelude.map RootSystem.negate rGens
           pGens = Prelude.map basicWeight [1..(length rGens)]
-          pGensN = Prelude.map WeightLattice.negate pGens
           comb (r1,pw1) (r2,pw2) = case r1 `RootSystem.add` r2 of
                                       Nothing -> Nothing
                                       (Just rSum) -> if rSum `Set.member` rootSet then
@@ -82,7 +80,7 @@ basicLattice r = BasicLattice r rMap
                                                      else
                                                         Nothing
 
---weylDimension :: WeightLattice wl r rt => wl -> PrincipleWeight -> Integer
+weylDimension :: WeightLattice wl r rt => wl -> PrincipleWeight -> Integer
 weylDimension lattice weight = product numerator `div` product denominator
   where system = underlyingSystem lattice
         pRoots = positiveRoots system
@@ -91,5 +89,5 @@ weylDimension lattice weight = product numerator `div` product denominator
         rho = Prelude.foldl WeightLattice.add zeroWeight $ Prelude.map (associatedWeight lattice) sRoots
         weightSum = coordScale sLengths $ weight `WeightLattice.add` rho
         rho' = coordScale sLengths rho
-        numerator = Prelude.filter (/=0) $ Prelude.map (innerProduct lattice weightSum) $ pRoots
-        denominator = Prelude.filter (/=0) $ Prelude.map (innerProduct lattice rho') $ pRoots
+        numerator = Prelude.map (innerProduct lattice weightSum) pRoots
+        denominator = Prelude.map (innerProduct lattice rho') pRoots
