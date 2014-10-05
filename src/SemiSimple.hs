@@ -80,6 +80,8 @@ rank :: SemiSimple -> Int
 rank (SemiSimple torus simples) = torus + sum (map rankSimple simples)
 
 
+excepRoot = BasicRoot . (M.fromList 1 8) $ replicate 8 (-1/2)
+
 rootSystemSimple :: Simple -> BasicRootSystem BasicRoot
 rootSystemSimple (A 0) = trivialSystem
 rootSystemSimple (B 0) = trivialSystem
@@ -87,29 +89,21 @@ rootSystemSimple (C 0) = trivialSystem
 rootSystemSimple (D 0) = trivialSystem
 rootSystemSimple (A n) = fromRoots $ map (BasicRoot . swapRoot (n+1)) [1..n]
     where swapRoot m i = M.setElem 1 (1,i) $ M.setElem (-1) (1,i+1) $ M.zero 1 m
-rootSystemSimple (B n) = fromRoots $ negRoot : aRoots
-    where (BasicRootSystem _ aRoots) = rootSystemSimple (A (n-1))
-          negRoot = BasicRoot $ M.setElem 1 (1,1) $ M.zero 1 n
-rootSystemSimple (C n) = fromRoots $ negLongRoot : aRoots
-    where (BasicRootSystem _ aRoots) = rootSystemSimple (A (n-1))
-          negLongRoot = BasicRoot $ M.setElem 2 (1,1) $ M.zero 1 n
+rootSystemSimple (B n) = fromRoots $ negRoot : simpleRoots (rootSystemSimple (A (n-1)))
+    where negRoot = BasicRoot $ M.setElem 1 (1,1) $ M.zero 1 n
+rootSystemSimple (C n) = fromRoots $ negLongRoot : simpleRoots (rootSystemSimple (A (n-1)))
+    where negLongRoot = BasicRoot $ M.setElem 2 (1,1) $ M.zero 1 n
 rootSystemSimple (D 1) = torus . fullSubAlgebra $ 1
-rootSystemSimple (D n) = fromRoots $ negSwapRoot : aRoots
-    where (BasicRootSystem _ aRoots) = rootSystemSimple (A (n-1))
-          negSwapRoot = BasicRoot $ M.setElem 1 (1,1) $ M.setElem 1 (1,2) $ M.zero 1 n
+rootSystemSimple (D n) = fromRoots $ negSwapRoot : simpleRoots (rootSystemSimple (A (n-1)))
+    where negSwapRoot = BasicRoot $ M.setElem 1 (1,1) $ M.setElem 1 (1,2) $ M.zero 1 n
 rootSystemSimple G2 = fromRoots $ map (BasicRoot . M.fromList 1 3) $ [[0,1,-1] , [1,-2,1]]
 rootSystemSimple F4 = fromRoots $ map (BasicRoot . M.fromList 1 4) $ [[0,1,-1,0],
                                                                       [0,0,1,-1],
                                                                       [0,0,0,1],
                                                                       [1/2,-1/2,-1/2,-1/2]]
-rootSystemSimple E8 = fromRoots $ excepRoot : spin14Roots'
-    where (BasicRootSystem _ spin14Roots) = rootSystemSimple (D 7)
-          spin14Roots' = map coroot spin14Roots
-          excepRoot = BasicRoot $ (M.fromList 1 8) $ replicate 8 (-1/2)
-rootSystemSimple E7 = fromRoots $ take 7 e8roots
-    where (BasicRootSystem _ e8roots) = rootSystemSimple E8
-rootSystemSimple E6 = fromRoots $ take 6 e8roots
-    where (BasicRootSystem _ e8roots) = rootSystemSimple E8
+rootSystemSimple E8 = fromRoots $ excepRoot : simpleRoots (rootSystemSimple (D 7))
+rootSystemSimple E7 = fromRoots $ excepRoot : simpleRoots (rootSystemSimple (D 6))
+rootSystemSimple E6 = fromRoots $ excepRoot : simpleRoots (rootSystemSimple (D 5))
 
 
 
