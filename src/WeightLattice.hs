@@ -6,8 +6,6 @@ module WeightLattice where
 import RootSystem
 import Generate
 import qualified Data.Set as Set
-
-import qualified Data.Set as Set
 import qualified Data.Map as Map
 
 newtype PrincipleWeight = PWeight [Int] deriving(Show)
